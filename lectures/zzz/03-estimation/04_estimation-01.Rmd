@@ -1,0 +1,661 @@
+---
+title: "BIOL 220 Estimation"
+output: binb::metropolis
+header-includes:
+  - \usepackage{array}
+  - \usepackage{xcolor}
+  - \usepackage[export]{adjustbox}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, 
+                      eval = TRUE, message = FALSE)
+library(cowplot)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(grid)
+```
+
+
+## Learning Objectives
+
+1. Describe the \alert{sampling distribution} of an estimate
+2. Describe how the size and bias of a sample affects the \alert{sampling distribution}
+3. Calculate the \alert{standard error of the mean}
+4. Calculate \alert{confidence intervals} using the \alert{standard error of the mean}
+5. Know how to correctly interpret \alert{confidence intervals}
+6. Display and correctly interpret \alert{error bars} on a graph
+
+## Describe the \alert{sampling distribution} of an estimate
+
+Back to our uhu example
+
+```{r fig.align='center', fig.width=8, fig.height=3.25, cache=TRUE}
+
+library(magick)
+library(grid)
+
+uhu <- image_read("01_activity_uhu/uhu4measure.png") |> 
+    image_flop() |> 
+    image_resize(geometry = geometry_size_percent(50)) |> 
+    image_transparent("white")
+
+uhuloa <- function(loa = 1) {
+    par(mar = rep(0, 4))
+    plot(0:50, type = "n", axes = FALSE)
+    rect(-0.5, 6, 50.5, 13, col = "gray")
+    text(0.5, 7, labels = "cm", cex = 0.75)
+    
+    segments(x0 = 0, y0 = 12, x1 = 50, lwd = 0.5)
+    segments(x0 = 0:50, y0 = 10, y1 = 12, lwd = 0.5)
+    segments(x0 = (0:49) + 0.5, y0 = 10.75, y1 = 12, lwd = 0.5)
+    segments(x0 = seq(0.1, 49.9, by = 0.1), y0 = 11.25, y1 = 12, lwd = 0.25)
+    
+    text(0:50, rep(11, 51), labels = 0:50, cex = 0.5, pos = 1)
+    
+    
+    xr <- par("usr")[1:2]
+    p <- 1
+    grid.raster(uhu, x = (0 - xr[1]) / diff(xr), 
+                hjust = 0, width = loa * 50 / diff(xr)) 
+}
+
+
+uhuloa(0.8)
+```
+
+
+## Describe the \alert{sampling distribution} of an estimate
+
+5 sections produced 5 \alert{samples} from an unknown \alert{population}
+
+```{r fig.align='center', fig.width=5, fig.height=3}
+uhu <- read.csv("data/section_sample_uhu.csv")
+uhu <- uhu[uhu$length_cm > 18, ]
+uhu$Section <- sprintf("%02d", uhu$Section)
+uhu <- uhu[uhu$Section != "NA", ]
+
+uhu_p <- ggplot(uhu, aes(x = Section, y = length_cm, color = Section)) +
+    geom_jitter(width = 0.1) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    scale_color_viridis_d(alpha = 0.5)
+
+uhu_p
+```
+
+
+## Describe the \alert{sampling distribution} of an estimate
+
+We can calculate the \alert{estimate} of the means for each \alert{samples}
+
+```{r fig.align='center', fig.width=5, fig.height=3}
+uhu_pm <- uhu_p + stat_summary(fun = mean, geom = "crossbar", 
+                               width = 0.75, color = viridis::viridis(5))
+
+uhu_pm
+```
+
+
+## Describe the \alert{sampling distribution} of an estimate
+
+Look at the collection of all \alert{estimates} of the means 
+
+```{r fig.align='center', fig.width=5, fig.height=3}
+uhu_m <- group_by(uhu, Section) |> 
+    summarize(m = mean(length_cm)) |> 
+    ungroup() |> 
+    ggplot(aes(x = m, y = 0, color = Section)) +
+    geom_point(shape = 18, size = 5) +
+    scale_color_viridis_d() +
+    theme_cowplot() +
+    theme(legend.position = "none", 
+          axis.line.y = element_blank(), 
+          axis.ticks.y = element_blank(), 
+          axis.text.y = element_blank()) + 
+    ylab("") +
+    scale_y_continuous(limits = c(0, 3)) +
+    scale_x_continuous(limits = c(28.5, 32))
+
+
+uhu_all <- plot_grid(uhu_pm, uhu_m)
+ggsave("04_estimation-01_files/figure-beamer/uhu_all.pdf", device = "pdf", width = 5, height = 3)
+
+
+```
+
+![](img/uhu_arrows.png)
+
+## Describe the \alert{sampling distribution} of an estimate
+
+Now imagine we could collect many **many** **MANY** samples and look at the collection of all their mean \alert{estimates} 
+
+```{r fig.align='center', fig.width=3, fig.height=3}
+uhu_s <- uhu_m +
+    geom_point(data = data.frame(x = rnorm(20, 30.4), 
+                                 y = 0, Section = "06"), 
+               mapping = aes(x = x, y = y), 
+               shape = 18, size = 5, 
+               color = "gray", alpha = 0.5)
+
+uhu_s 
+```
+
+## Describe the \alert{sampling distribution} of an estimate
+
+The \alert{estimated} means of those many **many** **MANY** \alert{samples} come from the \alert{sampling distribution}
+
+```{r fig.align='center', fig.width=3.5, fig.height=2.5}
+uhu_s + stat_function(fun = \(x) 4 * dnorm(x, 30.25, sd = 0.75), 
+                      color = "black") +
+    ylab("\"Probability\"") + 
+    theme(axis.line.y = element_line())
+```
+
+## Describe the \alert{sampling distribution} of an estimate
+
+The \alert{sampling distribution} describes all the possible outcomes (and how likely or unlikely those outcomes are) of taking infinite hypothetical \alert{samples} from the same \alert{population} and calculating an \alert{estimate} (like the mean) for each.
+
+
+## Describe how the size and bias of a sample affects the \alert{sampling distribution}
+
+* Greater sample size ($N$) decreases variability in the \alert{sampling distribution}
+* Biased samples shift the sampling distribution away from the true population parameter
+
+<!-- ## A population of "circles" -->
+
+<!-- ::: columns -->
+
+<!-- :::: {.column width=0.6} -->
+
+<!-- ```{r, eval = TRUE, out.height="50%"} -->
+<!-- # Diamond example from slides that came with book ---- -->
+
+<!-- set.seed(1) -->
+
+<!-- df <- expand.grid(x = 1:20, y = 1:9) -->
+
+<!-- info <- data.frame(size_cm = rnorm(20 * 9,  -->
+<!--                                    mean = rep(c(18, 50, 12), c(20, 10, 30) * 3),  -->
+<!--                                    sd = rep(c(2, 10, 2), c(20, 10, 30) * 3)),  -->
+<!--                    color = c(rep("pāku'iku'i", 20 * 3),  -->
+<!--                              rep("uhu", 10 * 3),  -->
+<!--                              rep("lau'ipala", 30 * 3))) -->
+
+<!-- info$color <- factor(info$color, levels = c("pāku'iku'i", "uhu", "lau'ipala")) -->
+<!-- info$size <- cut(info$size_cm, c(0, 20, 40, 1000),  -->
+<!--                  labels = c("under 20 cm", "20 - 40 cm", "over 40 cm")) -->
+
+<!-- df <- cbind(df, info[sample(nrow(info)), ]) -->
+
+
+<!-- df_circle <- df # to use later one -->
+
+<!-- ggplot(df, aes(x, y, color = color, size = as.numeric(size))) + -->
+<!--     geom_point(show.legend = FALSE) + -->
+<!--     scale_size(range = c(3, 10) + 2) + -->
+<!--     scale_colour_viridis_d() + -->
+<!--     theme_void() -->
+
+<!-- tout <- table(info[, c("size", "color")]) -->
+
+<!-- tout <- rbind(tout, "total" = colSums(tout)) -->
+
+<!-- knitr::kable(tout) -->
+<!-- ``` -->
+
+<!-- :::: -->
+
+<!-- :::: {.column width=0.4} -->
+
+<!-- **pāku\`iku\`i** -->
+
+<!-- \definecolor{purp}{HTML}{440154} -->
+
+<!-- \includegraphics[width = 0.65\textwidth, cfbox=purp 2pt 0pt]{img/pakuikui.png} -->
+
+
+<!-- **uhu** -->
+
+<!-- \definecolor{grn}{HTML}{21908C} -->
+
+<!-- \includegraphics[width = 0.65\textwidth, cfbox=grn 2pt 0pt]{img/uhu.png} -->
+
+
+
+<!-- **lau\`ipala** -->
+
+<!-- \definecolor{ylw}{HTML}{FDE725} -->
+
+<!-- \includegraphics[width = 0.65\textwidth, cfbox=ylw 2pt 0pt]{img/lauipala.jpg} -->
+
+
+
+<!-- :::: -->
+
+<!-- ::: -->
+
+<!-- ## A population of "circles" -->
+
+<!-- ::: columns -->
+
+<!-- :::: {.column width=0.6} -->
+
+<!-- ```{r, eval = TRUE, out.height="50%"} -->
+<!-- ggplot(df, aes(x, y, color = color, size = as.numeric(size))) + -->
+<!--     geom_point(show.legend = FALSE) + -->
+<!--     scale_size(range = c(3, 10) + 2) + -->
+<!--     scale_colour_viridis_d() + -->
+<!--     theme_void() -->
+<!-- ``` -->
+
+<!-- A quick note on the word "population": -->
+
+<!-- In **biology**, population = individuals of one species -->
+
+<!-- In **statistics**, population = *entire* collection of *anything*. It could be multiple biological populations -->
+
+<!-- :::: -->
+
+<!-- :::: {.column width=0.4} -->
+
+<!-- **pāku\`iku\`i** -->
+
+<!-- \definecolor{purp}{HTML}{440154} -->
+
+<!-- \includegraphics[width = 0.65\textwidth, cfbox=purp 2pt 0pt]{img/pakuikui.png} -->
+
+
+<!-- **uhu** -->
+
+<!-- \definecolor{grn}{HTML}{21908C} -->
+
+<!-- \includegraphics[width = 0.65\textwidth, cfbox=grn 2pt 0pt]{img/uhu.png} -->
+
+
+
+<!-- **lau\`ipala** -->
+
+<!-- \definecolor{ylw}{HTML}{FDE725} -->
+
+<!-- \includegraphics[width = 0.65\textwidth, cfbox=ylw 2pt 0pt]{img/lauipala.jpg} -->
+
+
+
+<!-- :::: -->
+
+<!-- ::: -->
+
+
+<!-- ## A population of "circles" -->
+
+<!-- ::: columns -->
+
+<!-- :::: {.column width=0.6} -->
+
+<!-- ```{r, eval = TRUE, out.height="50%"} -->
+<!-- ggplot(df, aes(x, y, color = color, size = as.numeric(size))) + -->
+<!--     geom_point(show.legend = FALSE) + -->
+<!--     scale_size(range = c(3, 10) + 2) + -->
+<!--     scale_colour_viridis_d() + -->
+<!--     theme_void() -->
+
+
+
+<!-- knitr::kable(tout) -->
+<!-- ``` -->
+
+<!-- :::: -->
+
+<!-- :::: {.column width=0.4} -->
+
+<!-- **pāku\`iku\`i** -->
+
+<!-- \definecolor{purp}{HTML}{440154} -->
+
+<!-- \includegraphics[width = 0.65\textwidth, cfbox=purp 2pt 0pt]{img/pakuikui.png} -->
+
+
+<!-- **uhu** -->
+
+<!-- \definecolor{grn}{HTML}{21908C} -->
+
+<!-- \includegraphics[width = 0.65\textwidth, cfbox=grn 2pt 0pt]{img/uhu.png} -->
+
+
+
+<!-- **lau\`ipala** -->
+
+<!-- \definecolor{ylw}{HTML}{FDE725} -->
+
+<!-- \includegraphics[width = 0.65\textwidth, cfbox=ylw 2pt 0pt]{img/lauipala.jpg} -->
+
+
+
+<!-- :::: -->
+
+<!-- ::: -->
+
+
+<!-- ## A \alert{sample} of 20 circles -->
+
+<!-- ::: columns -->
+
+<!-- :::: {.column width=0.6} -->
+
+<!-- ```{r, eval = TRUE, out.height="50%"} -->
+
+<!-- df1 <- df[sample(nrow(df), 20), ] -->
+
+<!-- ggplot(df1, aes(x, y, color = color, size = as.numeric(size))) + -->
+<!--     geom_point(show.legend = FALSE) + -->
+<!--     scale_size(range = c(3, 10) + 2) + -->
+<!--     scale_colour_viridis_d() + -->
+<!--     theme_void() -->
+
+
+
+<!-- knitr::kable(tout) -->
+<!-- ``` -->
+
+<!-- :::: -->
+
+<!-- :::: {.column width=0.4} -->
+
+<!-- **pāku\`iku\`i** -->
+
+<!-- \definecolor{purp}{HTML}{440154} -->
+
+<!-- \includegraphics[width = 0.65\textwidth, cfbox=purp 2pt 0pt]{img/pakuikui.png} -->
+
+
+<!-- **uhu** -->
+
+<!-- \definecolor{grn}{HTML}{21908C} -->
+
+<!-- \includegraphics[width = 0.65\textwidth, cfbox=grn 2pt 0pt]{img/uhu.png} -->
+
+
+
+<!-- **lau\`ipala** -->
+
+<!-- \definecolor{ylw}{HTML}{FDE725} -->
+
+<!-- \includegraphics[width = 0.65\textwidth, cfbox=ylw 2pt 0pt]{img/lauipala.jpg} -->
+
+
+
+<!-- :::: -->
+
+<!-- ::: -->
+
+<!-- ## And another sample of 20 circles -->
+
+<!-- ::: columns -->
+
+<!-- :::: {.column width=0.6} -->
+
+<!-- ```{r, eval = TRUE, out.height="50%"} -->
+
+<!-- df1 <- df[sample(nrow(df), 20), ] -->
+
+<!-- ggplot(df1, aes(x, y, color = color, size = as.numeric(size))) + -->
+<!--     geom_point(show.legend = FALSE) + -->
+<!--     scale_size(range = c(3, 10) + 2) + -->
+<!--     scale_colour_viridis_d() + -->
+<!--     theme_void() -->
+
+
+
+<!-- knitr::kable(tout) -->
+<!-- ``` -->
+
+<!-- :::: -->
+
+<!-- :::: {.column width=0.4} -->
+
+<!-- **pāku\`iku\`i** -->
+
+<!-- \definecolor{purp}{HTML}{440154} -->
+
+<!-- \includegraphics[width = 0.65\textwidth, cfbox=purp 2pt 0pt]{img/pakuikui.png} -->
+
+
+<!-- **uhu** -->
+
+<!-- \definecolor{grn}{HTML}{21908C} -->
+
+<!-- \includegraphics[width = 0.65\textwidth, cfbox=grn 2pt 0pt]{img/uhu.png} -->
+
+
+
+<!-- **lau\`ipala** -->
+
+<!-- \definecolor{ylw}{HTML}{FDE725} -->
+
+<!-- \includegraphics[width = 0.65\textwidth, cfbox=ylw 2pt 0pt]{img/lauipala.jpg} -->
+
+
+
+<!-- :::: -->
+
+<!-- ::: -->
+
+
+<!-- ## What do you mean by "random sample"? -->
+
+<!-- 1. Samples will differ from true population by random chance (sampling error) -->
+
+<!-- 2. Random sample does not mean every outcome has the same probability -->
+
+<!--     e.g. uhu range in size from roughly 30 cm to 75 cm (in these fake data) but not every value between those extremes are equally likely, medium sizes are more common -->
+
+<!-- *Random means every unit has the same probability of being selected and sampling one unit doesn't effect probability of sampling another* -->
+
+## Greater sample size decreases variability among estimates
+
+```{r fig.align='center', fig.width=6, fig.height=4}
+set.seed(123)
+dfsamp <- lapply(c(20, 40, 80), function(n) {
+    p <- replicate(1000, {
+        s <- rnorm(n, 50, 10)
+        mean(s)
+    })
+    
+    data.frame(p = p, n = n)
+})
+
+dfsamp <- do.call(rbind, dfsamp)
+
+
+dfse <- group_by(dfsamp, n) |> 
+    summarize(x = mean(p) - 10 / sqrt(n[1]), 
+              xend = mean(p) + 10 / sqrt(n[1])) |> 
+    ungroup()
+
+dfsamp$n <- paste("n =", dfsamp$n)
+dfse$n <- paste("n =", dfse$n)
+dfse$y <- dfse$yend <- 50
+
+names(dfsamp)[2] <- names(dfse)[1] <- "Sample size"
+
+
+
+sampdp <- ggplot(dfsamp, aes(p)) +
+    facet_grid(rows = vars(`Sample size`)) +
+    geom_histogram(show.legend = FALSE, fill = "gray") + 
+    theme_cowplot() +
+    geom_vline(xintercept = 50, linetype = "dashed", color = "black", linewidth = 1) +
+    theme(axis.text = element_text(size = 18),
+          axis.title = element_text(size = 18),
+          strip.text = element_text(size = 18)) +
+    xlab("Mean length (cm)")
+
+sampdp
+```
+
+
+
+## The \alert{standard error} quantifies the spread of estimates
+
+> The \alert{standard error} of an estimate is the standard deivation of the estimate's sampling distribution
+
+You can calculate a standard error for any population parameter, but we will start with the standard error of the sample mean
+
+## Standard error of the sample mean
+
+\begin{tabular}{rl}
+
+Sample mean: & $\overline{Y} = \frac{1}{n} \sum_{i = 1}^n Y_i$ \\
+
+Sample variance: & $s^2 = \frac{1}{n - 1} \sum_{i = 1}^n (Y_i - \overline{Y})^2$ \\
+
+Sample standard deviation: & $s = \sqrt{s^2}$ \\
+
+Sample mean \alert{standard error}: & $\text{SE}_{\overline{Y}} = \frac{s}{\sqrt{n}}$
+
+\end{tabular}
+
+
+## Standard error of the sample mean
+
+\begin{tabular}{rl}
+
+Sample mean: & $\overline{Y} = \frac{1}{n} \sum_{i = 1}^n Y_i$ \\
+
+Sample mean \alert{standard error}: & $\text{SE}_{\overline{Y}} = \frac{s}{\sqrt{n}}$
+
+\end{tabular}
+
+
+The \alert{standard error} is an *estimate* of an **estimate** (e.g. the mean)
+
+As with any estimate we don't know the true value, but it's our best guess
+
+
+## Greater sample size decreases the \alert{standard error}!!!
+
+```{r fig.align='center', fig.width=6, fig.height=4}
+sampdp +
+    geom_segment(data = dfse,
+                 aes(x = x, y = y, yend = yend, xend = xend), 
+                 color = "#DD8739", linewidth = 2) +
+    ylab("Count")
+```
+
+
+
+
+<!-- ## Example: uhu length -->
+
+<!-- ```{r, echo = TRUE} -->
+<!-- # read in data -->
+<!-- uhu <- read.csv("data/fake_uhu.csv") -->
+
+<!-- # look at it -->
+<!-- head(uhu) -->
+<!-- ``` -->
+
+
+<!-- ## Example: uhu length -->
+
+<!-- Let's pretend this *sample* is actually a population and take a subset of it (i.e. *re-*sample it) -->
+
+<!-- ```{r, echo = TRUE} -->
+<!-- # random sample of 20 sizes -->
+<!-- samp20 <- uhu$size_cm[sample(nrow(uhu), 20)] -->
+
+<!-- # look at it -->
+<!-- samp20 -->
+
+<!-- # calculate the mean -->
+<!-- mean(samp20) -->
+<!-- ``` -->
+
+<!-- ## Example: uhu length -->
+
+<!-- Let's pretend we could sample from the population *many*, **many** times, and estimate the mean for each sample: -->
+
+<!-- ```{r, echo = TRUE} -->
+<!-- # we can with a computer! -->
+<!-- many_samp20 <- replicate(1000, { -->
+<!--     samp20 <- uhu$size_cm[sample(nrow(uhu), 20)] -->
+<!--     mean(samp20) -->
+<!-- }) -->
+
+<!-- many_samp20 -->
+<!-- ``` -->
+
+<!-- ## Example: uhu length -->
+
+<!-- The distribution of estimates from **many** hypothetical samples is called the \alert{sampling distribution} -->
+
+<!-- ```{r, echo = FALSE, message=FALSE, warning=FALSE} -->
+<!-- many_samp20 <- data.frame(ybar = many_samp20) -->
+
+<!-- ggplot(many_samp20, aes(ybar)) + -->
+<!--   geom_histogram() + -->
+<!--   xlab("Mean length (cm)") + -->
+<!--   theme_cowplot() + -->
+<!--   theme( -->
+<!--     axis.text = element_text(size = 18), -->
+<!--     axis.title = element_text(size = 18) -->
+<!--   ) -->
+<!-- ``` -->
+
+
+<!-- ## Example: uhu length -->
+
+<!-- The standard *deviation* of the \alert{sampling distribution} is the standard *error* of the estimate! -->
+
+<!-- ```{r, echo = TRUE} -->
+<!-- # SD of the sampling distribution -->
+<!-- sd(many_samp20$ybar) -->
+
+<!-- # SE of one estimate -->
+<!-- samp20 <- uhu$size_cm[sample(nrow(uhu), 20)] -->
+
+<!-- sd(samp20) / sqrt(20) -->
+<!-- ``` -->
+
+## Key take-aways:
+
+- \alert{Standard error} describes the spread of the \alert{sampling distribution}
+- The \alert{standard error} is the standard deviation of the \alert{sampling distribution}
+- The \alert{standard error} is **not** the standard deviation of the data (SE < SD *always*)
+- Greater sample size decreases the \alert{standard error}!
+
+## Calculating the \alert{standard error} in *R*
+
+Read in the uhu data you all generated
+
+```{r eval = FALSE, echo = TRUE}
+uhu <- read.csv("data/section_sample_uhu.csv")
+```
+
+```{r echo = TRUE}
+head(uhu, n = 3)
+```
+
+
+## Calculating the \alert{standard error} in *R*
+
+Calculate estimate of standard deviation for Section 01
+
+```{r echo = TRUE}
+# subset data to just section 01
+uhu_01 <- subset(uhu, Section == "01")
+
+# calcualte SD
+s <- sd(uhu_01$length_cm)
+s
+```
+
+From `s` we can calculate \alert{standard error}
+
+```{r echo = TRUE}
+se <- s / sqrt(length(uhu_01))
+se
+```
+

@@ -1,0 +1,539 @@
+---
+title: "BIOL 220 Confidence Intervals"
+output: binb::metropolis
+header-includes:
+  - \usepackage{array}
+  - \usepackage{xcolor}
+  - \usepackage[export]{adjustbox}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, eval = TRUE)
+library(cowplot)
+library(ggplot2)
+library(tibble)
+library(dplyr)
+library(tidyr)
+```
+
+## Ka hua \`ōlelo o ka lā
+
+\centering \Large
+\alert{momona}
+
+
+
+
+## Learning Objectives
+
+1. Describe the \alert{sampling distribution} of an estimate $\checkmark$
+2. Describe how the size and bias of a sample affects the \alert{sampling distribution} $\checkmark$ (li\`ili\`i bit more)
+3. Calculate the \alert{standard error of the mean} $\checkmark$
+4. Calculate \alert{confidence intervals} using the \alert{standard error of the mean}
+5. Know how to correctly interpret \alert{confidence intervals}
+6. Display and correctly interpret \alert{error bars} on a graph
+
+## Review of \alert{standard error} and \alert{sampling distribution}
+
+Suppose we're interested in the \alert{mean} length of *uhu*
+
+\definecolor{grn}{HTML}{21908C}
+\begin{center}
+\includegraphics[width = 0.5\textwidth, cfbox=grn 2pt 0pt]{img/uhu.png}
+\end{center}
+
+We collect a sample of \alert{$n = 20$} measurements
+
+
+## Review of \alert{standard error} and \alert{sampling distribution}
+
+We collect a sample of \alert{$n = 20$} measurements, here it is:
+
+```
+35.16, 23.81, 32.65, 22.94, 32.35, 
+33.57, 37.94, 33.08, 22.13, 32.05, 
+25.24, 36.67, 28.64, 33.49, 27.11, 
+27.55, 26.89, 37.60, 34.26, 27.82
+```
+
+The mean is `30.548`
+\vspace{1em}
+
+\LARGE
+But how certain are we in that \alert{estimate} of the \alert{sample mean}???
+
+## Review of \alert{standard error} and \alert{sampling distribution}
+
+\LARGE
+But how certain are we in that \alert{estimate} of the \alert{sample mean}???
+
+\normalsize
+...or...
+
+\LARGE
+If we went out again and collected a different sample of 20 individuals, would we get roughly the same estimate or not?
+
+
+## Review of \alert{standard error} and \alert{sampling distribution}
+
+If we went out again and collected a different sample of 20 individuals, would we get roughly the same estimate or not?
+
+\LARGE
+Answering that question is the job of the \alert{sampling distribution} and the \alert{standard error}
+
+## Review of \alert{standard error} and \alert{sampling distribution}
+
+If we went out again and collected a different sample of 20 individuals (*many* **many** times)
+
+```{r echo = FALSE, eval = TRUE, warning=FALSE, message=FALSE}
+x <- data.frame(y = rnorm(100000, 30, 5 / sqrt(20)))
+
+g <- ggplot(x, aes(y)) + 
+  geom_histogram(fill = viridis::viridis(3)[2]) + 
+  xlab("mean Uhu length (cm)") +
+  theme_cowplot() +
+  theme(
+    axis.text = element_text(size = 18),
+    axis.title = element_text(size = 18),
+    strip.text = element_text(size = 18)
+  )
+
+ggsave("img/uhu_samp_dist.pdf", g, width = 6, height = 4)
+
+```
+
+![](img/uhu_samp_dist-1.png)
+
+## Review of \alert{standard error} and \alert{sampling distribution}
+
+If we went out again and collected a different sample of 20 individuals (*many* **many** times) would we get roughly the same estimate or not? **SE tells us!**
+
+![](img/uhu_samp_dist-2.png)
+
+
+## Review of \alert{standard error} and \alert{sampling distribution}
+
+If we went out again and collected a different sample of 20 individuals (*many* **many** times) would we get roughly the same estimate or not? **SE tells us!**
+
+- The wider the sampling distribution, the bigger the SE
+- (The SE is the SD of the sampling distribution)
+- The bigger the SE, the less likely we are to get similar estimates across repeated samples
+- The less likely we are to get similar estimates across samples, the less \alert{confident} we are in the accuracy of any one sample
+
+
+# Why do we care?
+
+We collect a sample of \alert{$n = 20$} measurements, here it is:
+
+```
+35.16, 23.81, 32.65, 22.94, 32.35, 
+33.57, 37.94, 33.08, 22.13, 32.05, 
+25.24, 36.67, 28.64, 33.49, 27.11, 
+27.55, 26.89, 37.60, 34.26, 27.82
+```
+
+The mean is `30.548` cm
+
+\Large
+But the *historic* mean length of uhu was 42 cm.  So do our data give us confidence they are really smaller today?  
+
+# Confidence Intervals 
+
+## 4. Calculate \alert{confidence intervals} using the \alert{standard error of the mean}
+
+Note: We can calculate CIs for any parameter, but for now we'll focus on the CIs of the mean
+
+## 4. Calculate \alert{confidence intervals} using the \alert{standard error of the mean}
+
+Recall that the mean $\pm$ 2 standard deviations covers roughly 95% of the probability of different values
+
+```{r, fig.width=3, fig.height=2.5, fig.align='center'}
+library(socorro)
+
+par(mar = c(2, 1, 2, 0) + 0.5)
+denFill(rnorm(10000000), main = "mean = 0, sd = 1", xlim = c(-4, 4), yaxt = "n")
+mtext("Probability density", 2)
+text(0, 0.1, "95% of\nprobability")
+```
+
+
+## 4. Calculate \alert{confidence intervals} using the \alert{standard error of the mean}
+
+
+The \alert{confidence interval} is a range of values surrounding the sample estimate that is
+likely to contain the true population parameter
+
+\Large
+It is simply the mean $\pm$ 2 \alert{standard errors}
+
+
+## Are uhu smaller now than in the past?
+
+```{r, fig.align='center', fig.width=5, fig.height=3}
+x <- c(35.16, 23.81, 32.65, 22.94, 32.35, 
+       33.57, 37.94, 33.08, 22.13, 32.05, 
+       25.24, 36.67, 28.64, 33.49, 27.11, 
+       27.55, 26.89, 37.60, 34.26, 27.82)
+
+
+se_x <- sd(x) / sqrt(length(x)) 
+lower_ci <- mean(x) - 2 * se_x
+upper_ci <- mean(x) + 2 * se_x
+
+colz <- viridis::viridis(3)[2]
+
+ggplot() +
+    geom_errorbarh(aes(xmin = lower_ci, xmax = upper_ci, y = 1), 
+                   height = 0.1, color = colz) +
+    geom_point(aes(x = mean(x), y = 1), size = 3, color = colz) +
+    geom_vline(xintercept = 42, size = 1, color = colz) + 
+    theme_cowplot() +
+    labs(x = "Uhu, mean length (cm)", y = "") + 
+    xlim(lower_ci - 10, 42 + 10) +
+    ylim(0.5, 1.5) +
+    theme(axis.text.y = element_blank(), 
+          axis.ticks.y = element_blank(), 
+          axis.line.y = element_blank()) +
+    annotate("text", x = mean(x), y = 1.05, label = "present mean and 95% CI", 
+             hjust = 0.5, vjust = -0.5) + 
+    annotate("text", x = 42, y = 1.05, label = "historic mean", 
+             hjust = -0.1, vjust = -0.5) 
+
+```
+
+
+## Confidence interval of the mean
+
+Imagine a single sample with mean $\bar{Y}$ collected from a population 
+
+The population has a true mean value $\mu$
+
+The 95% confidence interval for the mean is $\bar{Y} \pm 2 \times \text{SE}$
+
+95% of the time, the 95% confidence interval will overlap the true (but unknown) population mean
+
+## Confidence interval of the mean
+
+```{r, fig.align='center', out.height="50%"}
+
+df <- tibble(
+  x = 0.1,
+  y = 0,
+  ymin = 0, ymax = 0,
+  xmin = -0.9, xmax = 1.1
+)
+
+ggplot(df, aes(x, y)) +
+  geom_point(size = 10) +
+  geom_vline(xintercept = 0) +
+  geom_errorbarh(aes(xmin = xmin, xmax = xmax), height = 0,
+                 show.legend = FALSE, size = 2) +
+  annotate("text", -0.9, 0, label = "lower\nlimit", vjust = -0.25, size = 18) +
+  annotate("text", 1.1, 0, label = "upper\nlimit", vjust = -0.25, size = 18) +
+  annotate("text", 0.1, 0, label = expression(italic(bar(Y))), vjust = -0.5, size = 18) +
+  annotate("label", 0, 0.05, label = expression(mu), size = 18) +
+  theme_cowplot() +
+  scale_x_continuous(limits = c(-1.5, 1.5)) +
+  scale_y_continuous(limits = c(-0.1, 0.1)) +
+  theme(
+    axis.title = element_blank(),
+    axis.text = element_blank(),
+    axis.line.y = element_blank(),
+    axis.ticks = element_blank()
+  )
+
+```
+
+## Confidence interval of the mean
+
+Sometimes the confidence interval will not include the population parameter
+
+The confidence interval in red does not include $\mu$
+
+```{r, fig.align='center', out.height="50%"}
+
+df <- tibble(
+  x = c(0.1, 1.1),
+  y = c(-0.5, 0.5),
+  ymin = y, ymax = y,
+  xmin = x - 1, xmax = x + 1,
+  color = LETTERS[1:2]
+)
+
+ggplot(df, aes(x, y, color = color)) +
+  scale_color_manual(values = c("black", "red")) +
+  geom_point(size = 10, show.legend = FALSE) +
+  geom_vline(xintercept = 0) +
+  geom_errorbarh(aes(xmin = xmin, xmax = xmax), height = 0,
+                 show.legend = FALSE, size = 2) +
+  annotate("label", 0, 0.05, label = expression(mu), size = 18) +
+  theme_cowplot() +
+  # scale_x_continuous(limits = c(-1.5, 1.5)) +
+  scale_y_continuous(limits = c(-1, 1)) +
+  theme(
+    axis.title = element_blank(),
+    axis.text = element_blank(),
+    axis.line.y = element_blank(),
+    axis.ticks = element_blank()
+  )
+
+```
+
+
+
+
+## 95% confidence intervals
+
+On average, 19 of 20 CIs will include the population parameter
+
+```{r, fig.align="center", out.height="70%", warning=FALSE, message=FALSE}
+
+ci_rand <- function(nrep, size, bias = 0, seed = 123) {
+    mu <- 0
+    sig <- 1
+    
+    set.seed(seed)
+    
+    # draw ybar from sampling dist
+    ybar <- rnorm(nrep, mu, sig / sqrt(size))
+    
+    # sd^2 * (n-1) is chisq distrib with df n - 1, so se is this...
+    se <- sqrt(rchisq(nrep, size - 1) / (size - 1) / size)
+    
+    lwr <- ybar - 2 * se + bias
+    upr <- ybar + 2 * se + bias
+    
+    res <- data.frame(ybar = ybar + bias, 
+                      se = se,
+                      lwr = lwr,
+                      upr = upr,
+                      overlap = lwr <= mu & upr >= mu,
+                      r = rank(ybar))
+    
+    return(res)
+}
+
+
+ci_show <- function(df) {
+    ggplot(df, aes(ybar, r, color = overlap)) +
+        geom_vline(xintercept = 0) +
+        geom_errorbarh(aes(xmin = lwr, xmax = upr), height = 0,
+                       show.legend = FALSE, size = 2) +
+        scale_color_manual(values = c("red", "black")) +
+        geom_point(show.legend = FALSE, size = 5) +
+        theme_cowplot() +
+        theme(
+            axis.title = element_blank(),
+            axis.text = element_blank(),
+            axis.line.y = element_blank(),
+            axis.ticks = element_blank()
+        )
+}
+
+# 
+# for(i in sample(1000000, 100)) {
+#     df <- ci_rand(nrep = 20, size = 10, seed = i)
+#     
+#     df1 <- mutate(df, lwr = ybar - 1.8 * se, upr = ybar + 1.8 * se) |>
+#         mutate(overlap = (lwr <= 0 & upr >= 0))
+#     
+#     if(sum(df$overlap) == 19 & sum(df1$overlap) == 18) {
+#         print(i)
+#         break
+#     }
+# }
+
+df <- ci_rand(nrep = 20, size = 10, seed = 868239)
+
+
+ci_show(df)
+
+```
+
+## Different levels of confidence
+
+95% Confidence Intervals ara a common choice, but we could choose any percent
+
+\begin{alertblock}{Pause \& Think}
+
+Will 90\% confidence intervals be wider or narrower than 95\% confidence intervals?
+  
+\end{alertblock}
+
+
+## 90% CIs are narrower than 95% CIs
+
+18 of 20 CIs include the population parameter
+
+Less stringent CIs are narrower because they do not have to include the population parameter as often
+
+```{r, fig.align="center", out.height="70%"}
+df1 <- mutate(df, lwr = ybar - 1.8 * se, upr = ybar + 1.8 * se) |>
+    mutate(overlap = (lwr <= 0 & upr >= 0))
+
+ci_show(df1)
+```
+
+
+
+
+## Bias shifts the sampling distribution
+
+* If your sample is biased, increasing sample size doesn't help
+* Because of increased precision, you're estimate is probably farther from the population parameter
+
+
+## Bias shifts the sampling distribution
+
+Confidence intervals from biased samples will include the population parameter less often
+
+```{r, fig.align='center', out.height="60%"}
+
+df$bias <- "Unbiased"
+df2 <- ci_rand(20, 10, 0.75, 868239)
+df2$bias <- "Biased"
+
+df3 <- rbind(df, df2)
+
+ggplot(df3, aes(ybar, r, color = overlap)) +
+    facet_grid(cols = vars(bias)) +
+    geom_vline(xintercept = 0) +
+    geom_errorbarh(aes(xmin = lwr, xmax = upr), height = 0,
+                   show.legend = FALSE, size = 2) +
+    scale_color_manual(values = c("red", "black")) +
+    geom_point(show.legend = FALSE, size = 5) +
+    theme_cowplot() +
+    theme(
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.line.y = element_blank(),
+        axis.ticks = element_blank(),
+        strip.text = element_text(size = 24)
+    )
+
+```
+
+
+## Pseudoreplication leads to overconfidence
+
+Pseudoreplication occurs when two sampled units are not independent
+
+* Multiple measurements from the same patient 
+* Genetic variation of related individuals
+* Species within the same genus
+
+Usually, this leads to overconfidence because we've underestimated the spread of the sampling distribution
+
+Pseudoreplication can occur with or without bias
+
+## Pseudoreplication leads to overconfidence
+
+With pseudoreplication, our CIs are too narrow, meaning **overconfident**. That overconfidence leads to failing to include the population parameter more often
+
+```{r, fig.align='center', out.height="60%"}
+
+df$random <- "All independent"
+df4 <- mutate(df, lwr = ybar - 1 * se, upr = ybar + 1 * se) |>
+    mutate(overlap = (lwr <= 0 & upr >= 0))
+df4$random <- "Pseudoreplicated"
+
+df4 <- rbind(df, df4)
+
+ggplot(df4, aes(ybar, r, color = overlap)) +
+    facet_grid(cols = vars(random)) +
+    geom_vline(xintercept = 0) +
+    geom_errorbarh(aes(xmin = lwr, xmax = upr), height = 0,
+                   show.legend = FALSE, size = 2) +
+    scale_color_manual(values = c("red", "black")) +
+    geom_point(show.legend = FALSE, size = 5) +
+    theme_cowplot() +
+    theme(
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.line.y = element_blank(),
+        axis.ticks = element_blank(),
+        strip.text = element_text(size = 24)
+    )
+
+```
+
+## \alert{Pause \& Think}
+
+Compared to the 95% confidence interval of a sample of size $n = 10$, would the 95% confidence interval of a sample of size $n = 20$ be wider or narrower?
+
+
+## \alert{Error bars}
+
+- Standard error of the mean or CIs are most common
+- Clearly label if error bars are $\pm$ 1 SE, 2 SE, $s$, etc.
+- Think carefully about what you are trying to *show* 
+
+
+## \alert{Error bars}
+
+- Think carefully about what you are trying to *show* 
+
+If the spread of the data, show standard deviation (or just use a box plot which shows inner quartile range)
+
+```{r fig.align='center', fig.width=5.5, fig.height=2.5}
+set.seed(123)
+dat <- data.frame(group = rep(LETTERS[1:2], 20), 
+                  y = rnorm(40))
+dat$y[dat$group == "B"] <- dat$y[dat$group == "B"] + 2
+
+gd1 <- ggplot(dat, aes(x = group, y = y, color = group)) + 
+    geom_jitter(width = 0.1, alpha = 0.5) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    ggtitle("Data with\nSD error bars") +
+    stat_summary(fun = mean,
+                 fun.min = function(x) mean(x) - sd(x),
+                 fun.max = function(x) mean(x) + sd(x),
+                 geom = "errorbar",
+                 width = 0.2,
+                 size = 1)
+
+gd2 <- ggplot(dat, aes(x = group, y = y, color = group)) + 
+    geom_boxplot() +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    ggtitle("Boxplot")
+    
+
+plot_grid(gd1, gd2)
+```
+
+
+## \alert{Error bars}
+
+- Think carefully about what you are trying to *show* 
+
+If the estimate of the mean and its uncertainty, show standard error or confidence intervals
+
+```{r fig.align='center', fig.width=5.5, fig.height=2.5}
+
+gm <- ggplot(dat, aes(x = group, y = y, color = group)) + 
+    geom_jitter(width = 0.1, color = "gray") +
+    theme_cowplot() +
+    theme(legend.position = "none")
+
+gm1 <- gm + 
+    ggtitle("Mean with\nSE error bars") +
+    stat_summary(fun = mean,
+                 fun.min = function(x) mean(x) - sd(x) / sqrt(length(x)),
+                 fun.max = function(x) mean(x) + sd(x) / sqrt(length(x)),
+                 geom = "errorbar",
+                 width = 0.2,
+                 size = 1)
+
+gm2 <- gm + 
+    ggtitle("Mean with\n95% CI error bars") +
+    stat_summary(fun = mean,
+                 fun.min = function(x) mean(x) - 2 * sd(x) / sqrt(length(x)),
+                 fun.max = function(x) mean(x) + 2 * sd(x) / sqrt(length(x)),
+                 geom = "errorbar",
+                 width = 0.2,
+                 size = 1)
+
+plot_grid(gm1, gm2)
+```

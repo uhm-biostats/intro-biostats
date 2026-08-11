@@ -1,0 +1,521 @@
+---
+title: "BIOL 220 Probability"
+output: binb::metropolis
+header-includes:
+  - \usepackage{array}
+  - \usepackage{xcolor}
+  - \usepackage[export]{adjustbox}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, 
+                      eval = TRUE)
+
+library(cowplot)
+library(ggplot2)
+library(tibble)
+library(dplyr)
+library(tidyr)
+library(wordcloud)
+library(tm)
+library(viridis)
+```
+
+
+## Ka hua \`ōlelo o ka ha\`awina
+
+\centering \Large
+\alert{lūlū}
+
+
+## Learning Objectives
+
+
+1. Define \alert{random trial}, \alert{event}, and \alert{outcome}
+2. Define \alert{probability}
+3. Describe discrete and continuous \alert{probability distributions}
+
+Next lecture: 
+
+3. More on discrete and continuous \alert{probability distributions}
+4. Determine if events are \alert{mutually exclusive}
+5. Determine if events are \alert{indipendent}
+
+
+## Define \alert{random trial}
+
+- What's going to happen tomorrow?
+- If I flip a coin---heads or tails?
+- If I roll a die, what number comes up?
+- If I measure a fish, how long is it?
+- If I conduct an insect survey in the Koʻolau Mountains, how many species will I find?
+- What is the effect of a new drug on a patient enrolled in a clinical trial?
+
+These are all \alert{random trials}
+
+
+## Define \alert{random trial}
+
+\it A \alert{random trial} is a process or experiment that has two or more possible outcomes whose occurrence cannot be predicted with certainty
+
+
+![](../../img/die_roll.png)
+
+
+## Define \alert{event} and \alert{outcome}
+
+\it An \alert{event} is one observation of a random trial
+
+\it The \alert{outcomes} of a random trial describe all the possible events
+
+
+## Define \alert{random trial}, \alert{event}, and \alert{outcome} {.t}
+
+
+\begin{center}
+\begin{tabular}[t]{p{3cm} p{2.5cm} p{3.5cm}}
+The \alert{random trial:} & An \alert{event:} & All possible \alert{outcomes:} \\
+you roll the die & you get a 5 &  \\
+\includegraphics[width = 3cm]{../../img/die_roll.png} &
+\includegraphics[width = 1.5cm]{../../img/5_die.png} &
+all integers 1---6
+\end{tabular}
+\end{center}
+
+
+## Define \alert{probability}
+
+\it The \alert{probability} of an event is the proportion of times that event would occur if we repeated a random trial over and over again under the same conditions. Probability *always* ranges between 0 and 1
+
+
+
+## Define \alert{probability}
+
+With a fair die, every outcome has equal probability:
+
+```{r}
+library(tidydice)
+library(gridExtra)
+
+
+d1 <- roll_dice(times = 1, prob = c(1, 0, 0, 0, 0, 0)) |>
+    plot_dice(detailed = FALSE) + labs(title = NULL)
+d2 <- roll_dice(times = 1, prob = c(0, 1, 0, 0, 0, 0)) |>
+    plot_dice(detailed = FALSE) + labs(title = NULL)
+d3 <- roll_dice(times = 1, prob = c(0, 0, 1, 0, 0, 0)) |>
+    plot_dice(detailed = FALSE) + labs(title = NULL)
+d4 <- roll_dice(times = 1, prob = c(0, 0, 0, 1, 0, 0)) |>
+    plot_dice(detailed = FALSE) + labs(title = NULL)
+d5 <- roll_dice(times = 1, prob = c(0, 0, 0, 0, 1, 0)) |>
+    plot_dice(detailed = FALSE) + labs(title = NULL)
+d6 <- roll_dice(times = 1, prob = c(0, 0, 0, 0, 0, 1), success = 1) |>
+    plot_dice(detailed = FALSE) + labs(title = NULL)
+
+
+pr <- data.frame(rep("= 1/6", 6))
+names(pr) <- NULL
+rownames(pr) <- paste0("Pr(rolling a ", 1:6, ")")
+
+grid.arrange(d1, tableGrob(pr[1, ], theme = ttheme_default(base_size = 32)),
+             d2, tableGrob(pr[2, ], theme = ttheme_default(base_size = 32)),
+             d3, tableGrob(pr[3, ], theme = ttheme_default(base_size = 32)),
+             d4, tableGrob(pr[4, ], theme = ttheme_default(base_size = 32)),
+             d5, tableGrob(pr[5, ], theme = ttheme_default(base_size = 32)),
+             d6, tableGrob(pr[6, ], theme = ttheme_default(base_size = 32)),
+             ncol = 2)
+
+```
+
+
+## Define \alert{probability}
+
+Probability is just counting, sometimes *very complex* counting.
+
+But with a die it is simple counting:
+
+$Pr(rolling~a~5) = 1/6$
+
+because there is only **1** way to roll a 5, and there are **6** possible outcomes
+
+Probability is all the ways you could get a specific event, divided by the number of possible outcomes
+
+
+## Define \alert{probability}
+
+Probability is all the ways you could get a specific event, divided by the number of possible outcomes
+
+Consider rolling **2 dice** what are all the possible outcomes?
+
+\begin{alertblock}{Pause \& Think}
+  Why is 7 a lucky number in many cultures?
+\end{alertblock}
+
+
+## Define \alert{probability}
+
+Probability is all the ways you could get a specific event, divided by the number of possible outcomes
+
+\small
+```{r eval = FALSE, echo = TRUE}
+# all the ways to get 7 from 2 dice:
+# (1, 6); (6, 1); (2, 5); (5, 2)
+# (3, 4); (4, 3)
+6
+
+# number of possible outcomes of 2 dice:
+6 * 6
+
+# probability of rolling a 7:
+6 / 36 # = 1/6
+```
+
+
+## Define \alert{probability}
+
+Probability is all the ways you could get a specific event, divided by the number of possible outcomes
+
+\small
+```{r echo = TRUE, eval = FALSE}
+# simulate it
+nroll <- 10000
+crap <- replicate(nroll, {
+    d1 <- sample(6, 1)
+    d2 <- sample(6, 1)
+    
+    d1 + d2
+})
+
+sum(crap == 7) / nroll # this should be about 1/6
+```
+
+## Define \alert{probability}
+
+Probability is all the ways you could get a specific event, divided by the number of possible outcomes
+
+\small
+```{r echo = TRUE, eval = TRUE}
+# simulate it
+nroll <- 10000
+crap <- replicate(nroll, {
+    d1 <- sample(6, 1)
+    d2 <- sample(6, 1)
+    
+    d1 + d2
+})
+```
+
+Instead of looking at one probability:
+
+```{r echo = TRUE, eval = FALSE}
+sum(crap == 7) / nroll # this should be about 1/6
+```
+
+
+## Define \alert{probability distribution}
+
+We could make a histogram-looking thing of all probabilities:
+\vspace{2em}
+
+```{r dicedist, echo = FALSE, eval = TRUE, fig.width=4, fig.height=2, cache=TRUE}
+ggplot(data.frame(sum_of_2_dice = crap), aes(x = sum_of_2_dice)) +
+    geom_histogram(aes(y = after_stat(density)), 
+                   binwidth = 1, color = "black") + 
+    scale_x_continuous(breaks = seq(2, 12, by = 1)) +
+    theme_cowplot()
+```
+
+This histogram-looking thing is called a \alert{probability distribution}
+
+## Define \alert{probability distribution}
+
+![](../../img/2_dice_hist.png)
+
+This histogram-looking thing is called a \alert{discrete probability distribution}
+
+
+
+## Why do we care?
+
+Probability is everywhere!
+
+<https://www.youtube.com/watch?v=zJN5W-EreVs&ab>
+
+
+## Why do we care?
+
+::: columns
+
+:::: column
+Probability is everywhere!
+\vspace{2em}
+
+*If I conduct an insect survey, how many species will I find?*
+
+::::
+
+:::: column
+
+![](../../img/hi_arth.png)
+::::
+
+:::
+
+
+## Why do we care?
+
+Probability is everywhere!
+
+*If I conduct an insect survey, how many species will I find?* What are all the outcomes:
+
+\begin{tabular}{p{7cm} l}
+Process & Event \\
+\hline
+No populations establish & $S = 0$ \\
+A population establishes and goes extinct & $S = 0$ \\
+2 population establish and 1 goes extinct & $S = 1$ \\
+$\cdots$ & $\cdots$ \\
+N populations establish, M go extinct & $S = N - M$ \\
+$\cdots$ & $\cdots$ \\
+N populations establish, none go extinct & $S = N$ \\
+$\cdots$ & $\cdots$
+\end{tabular}
+
+\LARGE
+*Complex counting!*
+
+## Why do we care?
+
+::: columns
+
+:::: column
+Probability is everywhere!
+\vspace{2em}
+
+*If I conduct an insect survey, how many species will I find?*
+\vspace{2em}
+
+Different forces in nature, like speciation or species interactions, change the probability of different processes.  In effect, those forces *load the dice* differently 
+::::
+
+:::: column
+
+![](../../img/hi_arth.png)
+::::
+
+:::
+
+
+## Why do we care?
+
+::: columns
+
+:::: column
+Probability is everywhere!
+\vspace{2em}
+
+*If I conduct an insect survey, how many species will I find?*
+\vspace{2em}
+
+Different forces in nature, like speciation or species interactions, change the probability of different processes.  In effect, those forces *load the dice* differently 
+::::
+
+:::: column
+
+```{r echo = FALSE, eval = TRUE, fig.width=3, fig.height=4}
+dat <- data.frame(y = c(rpois(100, 50), rpois(100, 80)), 
+                  speciation = c(rep("less speciation", 100), 
+                                 rep("more speciation", 100)))
+
+
+ggplot(dat, aes(x = y, fill = speciation)) +
+    geom_histogram(aes(y = after_stat(density)), bins = 20) + 
+    facet_grid(rows = vars(speciation)) + 
+    # scale_x_continuous(breaks = seq(2, 12, by = 1)) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    xlab("Number of species")
+        
+```
+::::
+
+:::
+
+## Why do we care?
+
+
+::: columns
+
+:::: column
+
+*Remember noni?*
+  
+Suppose we run a clinical study of the effect of noni juice on inflammatory arthritis. We randomly assign half the patients to receive 10mg noni extract and the other half to receive a placebo. We measure change in erythrocyte sedimentation rate (*sed rate*) in all patients before and after treatment (either 10mg noni or placebo)
+
+::::
+
+:::: column
+
+\includegraphics[width = \textwidth]{../../img/noni.jpg}
+
+::::
+
+:::
+
+
+## Why do we care?
+
+
+::: columns
+
+:::: column
+
+*Remember noni?*
+  
+Noni is a crop brought to Hawai\`i by Kānaka Moali. The \`ike of its use comes from inter-generational kilo. 
+
+- Who gets to decide whether/how to commodify noni?
+- This clinical trial should be led by Native Hawaiian practitioners in collaboration with scholars who may or may not also be Native Hawaiian
+
+::::
+
+:::: column
+
+\includegraphics[width = \textwidth]{../../img/noni.jpg}
+
+::::
+
+:::
+
+
+## Why do we care?
+
+
+::: columns
+
+:::: column
+
+*Remember noni?*
+  
+Suppose we run a clinical study of the effect of noni juice on inflammatory arthritis. We randomly assign half the patients to receive 10mg noni extract and the other half to receive a placebo. We measure change in erythrocyte sedimentation rate (*sed rate*) in all patients before and after treatment (either 10mg noni or placebo)
+
+::::
+
+:::: column
+
+```{r, fig.width=3, fig.height=4}
+set.seed(1)
+dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)), 
+                  group = c(rep("10mg noni", 100), 
+                            rep("placebo", 100)))
+
+ggplot(dat, aes(x = sed, fill = group)) +
+    geom_histogram(aes(y = after_stat(density)), bins = 20) +
+    facet_grid(rows = vars(group)) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    xlab("Change in sed rate [mm/hr]\n(after - before)")
+
+```
+
+::::
+
+:::
+
+## Define \alert{continuous probability distribution}
+
+```{r sedhist, echo = FALSE, eval = TRUE, fig.width=4, fig.height=2, cache=TRUE}
+ggplot(dat[dat$group != "placebo", ], aes(x = sed, fill = group)) +
+    geom_histogram(aes(y = after_stat(density)), bins = 20) +
+    facet_grid(rows = vars(group)) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    xlab("Change in sed rate [mm/hr]\n(after - before)")
+```
+
+*Change in sed rate [mm/hr] is* **not** *an integer*
+
+\LARGE What do we do?!
+
+
+## Define \alert{continuous probability distribution}
+
+![](../../img/sed_hist.png)
+
+
+## Define \alert{continuous probability distribution}
+
+Imagine we had millions of data points, and we could draw very narrow bins
+
+```{r echo = FALSE, eval = TRUE, fig.width=4, fig.height=2}
+dat <- data.frame(sed = rnorm(1000000, -2), group = "10mg noni")
+
+ggplot(dat, aes(x = sed, fill = group)) +
+    geom_histogram(aes(y = after_stat(density)), bins = 100) +
+    facet_grid(rows = vars(group)) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    xlab("Change in sed rate [mm/hr]\n(after - before)")
+```
+
+We would get a very smooth looking distribution
+
+## Define \alert{continuous probability distribution}
+
+Continuous probability distributions are typically visualized as smooth curves, *without bars*
+
+```{r seddens, echo = FALSE, eval = TRUE, fig.width=4, fig.height=2, cache=TRUE}
+ggplot(dat, aes(x = sed, fill = group)) +
+    geom_density() +
+    facet_grid(rows = vars(group)) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    xlab("Change in sed rate [mm/hr]\n(after - before)")
+```
+
+
+## Define \alert{continuous probability distribution}
+
+Continuous probability distributions are typically visualized as smooth curves, *without bars*
+
+![](../../img/sed_den_area.png)
+
+
+<!-- # next  -->
+
+
+
+<!-- - confidence interval and sampling distribution  -->
+<!-- - do we conclude this drug works? -->
+<!-- - go back over previous slides with sed rate eg? -->
+
+<!-- # final bit of this lecture -->
+
+<!-- - distributions -->
+<!--     - use # patients with good sed rate v bad to introduce binomial -->
+<!--         - sample dist -->
+<!--     - use actual sed rates to introduce continuous  -->
+<!--         - sample dist -->
+
+<!-- ## next -->
+
+<!-- - the A B diagram of events -->
+<!-- - adding probs -->
+<!-- - back to buckskin -->
+<!-- - multiplying probs -->
+<!-- - bayes -->
+<!-- - quiz -->
+
+
+```{r, eval = FALSE, echo = FALSE}
+rich <- replicate(1000, {
+    nspp <- 500
+    mus <- rgamma(nspp, 10, 0.1)
+    ks <- rexp(nspp, 10)
+    
+    ps <- 1 - dnbinom(0, mu = mus, size = ks)
+    # sum(ps >= runif(nspp))
+    sum(rbinom(nspp, 1, ps * runif(nspp, min = 0.1)))
+})
+
+hist(rich)
+```

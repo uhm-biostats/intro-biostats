@@ -1,0 +1,790 @@
+---
+title: "BIOL 220 Contingency Analysis"
+output: binb::metropolis
+header-includes:
+  - \usepackage{array}
+  - \usepackage{xcolor}
+  - \usepackage{colortbl}
+  - \usepackage[export]{adjustbox}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, 
+                      message = FALSE, eval = TRUE)
+
+library(cowplot)
+library(ggplot2)
+library(dplyr)
+library(viridis)
+library(glue)
+library(stringr)
+library(tidyr)
+```
+
+
+
+## Ka hua `ōlelo o ka lā
+
+\centering
+\Large
+\alert{hānau}
+
+
+## Learning Objectives
+
+1. Analyze two or more categorical variable with $\ge 2$ categories using the \alert{$\chi^2$ distribution} and \alert{contingency analysis}
+
+## Review of $\chi^2$ goodness of fit test
+
+
+|           | **$\chi^2$ goodness-of-fit test** |
+|-----------------------|-----------------------|
+| Number of variables   | 1                     |
+| Type of data          | categorical **(>2 categories)** |
+| Parameter             | $\vec{p}$             |
+| Estimate              | $\vec{\hat{p}}$       |
+| Sampling distribution | $\chi^2$ distribution |
+| Test statistic        | $\chi^2$ statistic    |
+
+
+## \alert{$\chi^2$ goodness-of-fit test}
+
+> The \alert{$\chi^2$ goodness-of-fit test} compares frequency data to a probability model stated by the null hypothesis
+
+
+
+## M&M colors
+
+```{r}
+
+E <- 210 * c(0.24, 0.20, 0.16, 0.14, 0.13, 0.13)
+O <- c(43, 40, 37, 37, 33, 20)
+
+```
+
+ Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
+--------|------------|----------|----------|-----------------
+ Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
+ Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
+ Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
+ Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
+ Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
+ Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
+ **Total**  | 1.00   | 210      | 210
+
+
+$$\chi^2_i = \frac{(Observed_i - Expected_i) ^ 2}{\mathit{Expected}_i}$$
+
+$\chi^2_i$ measures discrepancy between observed and expected frequency
+
+
+## \alert{$\chi^2$ statistic}
+
+> The \alert{$\chi^2$} statistic measures the discrepency between observed frequencies from the data and expected frequencies from the null hypothesis
+
+\alert{$\chi^2$ statistic} is calculated by summing up all $n$ $\chi^2_i$ values
+
+$$\chi^2 = \sum_{i=1}^n \chi^2_i= \sum_{i=1}^n \frac{(O_i - E_i) ^ 2}{E_i}$$
+
+
+
+## M&M colors
+
+ Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
+--------|:----------:|:--------:|:--------:|:---------------:
+ Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
+ Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
+ Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
+ Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
+ Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
+ Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
+ **Total**  | 1.00   | 210      | 210      | `r round(sum((O - E) ^ 2 / E), 2)`
+
+\begin{columns}
+\column{\textwidth}
+  \metroset{block=fill}
+
+  \begin{alertblock}{Pause \& Think}
+
+What is the test statistic?
+
+$$\chi^2= \sum_{i=1}^n \frac{(O_i - E_i) ^ 2}{E_i} = `r round(sum((O - E) ^ 2 / E), 2)`$$ 
+  \end{alertblock}
+
+\end{columns}
+
+##
+
+How often would we expect a discrepancy of $\ge `r round(sum((O - E) ^ 2 / E), 2)`$ under $H_0$?
+
+## \alert{Null Hypothesis Significance Testing}
+
+1. State $H_0$ and $H_\mathrm{A}$
+2. Calculate the test statistic
+3. **Generate the null distribution**
+4. Calculate the $P$-value
+6. Decide:
+    - Reject $H_0$ if test statistic is $\ge$ critical value ($P \le \alpha$)
+    - Fail to reject $H_0$ if test statistic is < critical value ($P > \alpha$)
+
+## \alert{$\chi^2$ distribution}
+
+> The **\alert{$\chi^2$ distribution}** is the sampling distribution for $\chi^2$ test statistic
+
+**Assumptions**
+
+* None of the categories should have an expected frequency of less than 1
+* No more than 20% of the categories should have expected frequencies less than 5
+
+
+## \alert{$\chi^2$ distribution} {.t}
+
+> The **\alert{$\chi^2$ distribution}** is the sampling distribution for $\chi^2$ test statistic
+
+Under the null hypothesis, the more categories, the larger the test statistic 
+
+\begin{columns}[t]
+
+\column{0.5\textwidth}
+
+\bf 3 categories
+
+\scriptsize
+
+$$
+\begin{aligned}
+\chi^2 &= \sum_{i=1}^3 \frac{(O_i - E_i) ^ 2}{E_i} \\ 
+&= \frac{(O_1 - E_1) ^ 2}{E_1} + \frac{(O_2 - E_2) ^ 2}{E_2} + \frac{(O_3 - E_3) ^ 2}{E_3}
+\end{aligned}
+$$
+
+
+\column{0.5\textwidth}
+
+\bf 6 categories
+
+\scriptsize
+
+$$
+\begin{aligned}
+\chi^2 = &\sum_{i=1}^3 \frac{(O_i - E_i) ^ 2}{E_i} \\
+= &\frac{(O_1 - E_1) ^ 2}{E_1} + \frac{(O_2 - E_2) ^ 2}{E_2} + \frac{(O_3 - E_3) ^ 2}{E_3} + \\
+&\frac{(O_4 - E_4) ^ 2}{E_4} + \frac{(O_5 - E_5) ^ 2}{E_5} + \frac{(O_6 - E_6) ^ 2}{E_6}
+\end{aligned}
+$$
+
+\end{columns}
+
+
+
+## \alert{Degrees of freedom for $\chi^2$ distribution}
+
+> The \alert{degrees of freedom} of a $\chi^2$ statistic capture this fact that more categories equates to larger values
+
+$$df = \mathrm{(Number~of~categories)} - 1$$
+
+
+
+## M&M colors
+
+ Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
+--------|:----------:|:--------:|:--------:|:---------------:
+ Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
+ Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
+ Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
+ Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
+ Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
+ Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
+ **Total**  | 1.00   | 210      | 210      | `r round(sum((O - E) ^ 2 / E), 2)`
+
+
+$$df =  \mathrm{(Number~of~categories)} - 1 $$
+
+$$\mathit{df} = 6 - 1 = 5$$
+
+
+## $\chi_5^2$ distribution with test statistic
+
+Recall we calculated for the M&Ms: $\chi^2 = 6.63$
+
+```{r, fig.align='center', out.width="95%"}
+
+mm_test_stat <- sum((O - E) ^ 2 / E)
+
+df <- tibble(
+  x = seq(0, 20, 0.01),
+  y = dchisq(x, 5)
+)
+
+gp <- ggplot(df, aes(x, y)) +
+  geom_area(fill = "tomato") +
+  xlab(expression(chi^2~statistic)) +
+  ylab("Probability density") +
+  theme_cowplot() +
+  theme(
+    strip.text = element_text(size = 18),
+    axis.text = element_text(size = 18),
+    axis.title = element_text(size = 24),
+    title = element_text(size = 24)
+  )
+
+gp + 
+  geom_area(data = filter(df, x < mm_test_stat), fill = "white", 
+            size = 2, color = "tomato") +
+  geom_vline(xintercept = mm_test_stat, size = 2) 
+
+```
+
+## $\chi_\mathit{df}^2$ distribution
+
+
+The $P$-value will be the area to the right of test statistic.
+
+So this is a \alert{one-tailed} test. Why?
+
+We are only interested if the discrepancy between *Expected* and *Observed* is **more** than we expect under $H_0$
+
+$$\frac{(O_i - E_i)^2}{E_i}$$
+
+Higher test statistics = more discrepancy between *Expected* and *Observed*
+
+
+## \alert{$P$-value}
+
+$\chi^2~\text{statistic} = `r mm_test_stat`$, $\mathit{df} = 5$
+
+```{r, echo = TRUE}
+
+pchisq(q = 6.632544, 
+       df = 5, 
+       lower.tail = FALSE)
+
+```
+
+
+## Contingency analysis: from 1 variable to **2**!
+
+
+|           | **$\chi^2$ goodness-of-fit test** | **Contingency test** |
+|-----------------------|-----------------------|-----------------------|
+| Number of variables   | 1                     | **2**                     |
+| Type of data          | categorical           | categorical  |
+| Parameter             | $\vec{p}$             | *???*  |
+| Estimate              | $\vec{\hat{p}}$       | *???*  |
+| Sampling distribution | $\chi^2$ distribution | $\chi^2$ distribution |
+| Test statistic        | $\chi^2$ statistic    | $\chi^2$ statistic    |
+
+
+## Contingency analysis: from 1 variable to **2**! 
+
+::: columns
+
+:::: column
+
+\centering
+$\chi^2$ goodness of fit
+
+| Category   | Frequency |
+|:----------:|:---------:|
+| category 1 | $O_1$     |
+| category 2 | $O_2$     |
+| category 3 | $O_3$     |
+
+
+::::
+
+:::: column
+
+\centering
+Contingency Analysis
+
+|            | category A | category B |
+|:----------:|:----------:|:----------:|
+| category 1 | $O_{1A}$      | $O_{1B}$      |
+| category 2 | $O_{2A}$      | $O_{2B}$      |
+| category 3 | $O_{3A}$      | $O_{3B}$      |
+
+::::
+
+:::
+
+
+## Contingency analysis: this is a \alert{contigency table}
+
+::: columns
+
+:::: column
+
+We will put the \alert{response variable} across rows
+
+
+::::
+
+:::: column
+
+\centering
+We will put the \alert{explanatory variable} across columns
+
+|            | category A | category B |
+|:----------:|:----------:|:----------:|
+| category 1 | $O_{1A}$      | $O_{1B}$      |
+| category 2 | $O_{2A}$      | $O_{2B}$      |
+| category 3 | $O_{3A}$      | $O_{3B}$      |
+
+::::
+
+:::
+
+## Example: birth outcomes for non-English and English speakers in Hawai\`i
+
+|                            | non-English speaker | English speaker |
+|---------------------------:|:--------------------|:----------------|
+| Primary Caesarean delivery | 127                 | 934             |
+| Primary vaginal delivery   | `r 1149-127`        | `r 10270 - 934` |
+
+> Are non-English speakers more likely to undergo C-section in their first delivery?
+
+\vspace{4em}
+
+data from: Sentell et al. (2016). Maternal language and adverse birth outcomes in a statewide analysis. *Women & Health*
+
+## Example: birth outcomes for non-English and English speakers in Hawai\`i
+
+**Context**
+
+```{r, fig.align = "center", out.width="75%"}
+knitr::include_graphics("img/csection-fridays.png")
+```
+
+C-section rates have increased due to physician choices that disregard maternal/parental choice and health for parent and baby
+
+## Example: birth outcomes for non-English and English speakers in Hawai\`i
+
+**Context**
+
+![](img/healthcare_women.png)
+
+There's a breakdown in trust, ethics, and real healthcare
+
+
+## Example: birth outcomes for non-English and English speakers in Hawai\`i
+
+**Context**
+
+
+![](img/healthcare_race.png)
+
+The breakdown intersects with race
+
+## Example: birth outcomes for non-English and English speakers in Hawai\`i
+
+**Context**
+
+```{r, fig.align = "center", out.width="70%"}
+knitr::include_graphics("img/healthcare_trans.png")
+```
+
+The breakdown intersects with gender identity 
+
+
+## Example: birth outcomes for non-English and English speakers in Hawai\`i
+
+\begin{tabular}{r l l}
+ \hline
+ & non-English speaker & English speaker \\
+ \hline
+ Primary Caesarean delivery & 127 & 934 \\
+ Primary vaginal delivery  & 1022 &  9336 \\
+ \hline
+\end{tabular}
+
+\vspace{2em}
+
+> Are non-English speakers more likely to undergo C-section in their first delivery?
+
+
+## \alert{Null Hypothesis Significance Testing} 
+
+1. State $H_0$ and $H_\mathrm{A}$
+2. Calculate the test statistic
+3. Generate the null distribution
+5. Calculate the $P$-value
+6. Decide:
+    - Reject $H_0$ if test statistic is $\ge$ critical value ($P \le \alpha$)
+    - Fail to reject $H_0$ if test statistic is < critical value ($P > \alpha$)
+
+
+## Example: birth outcomes for non-English and English speakers in Hawai\`i
+
+Contingency analysis uses the $\chi^2$ test statistic, so we need *observed* and *expected* frequencies 
+
+\begin{tabular}{r l l l l}
+ \hline
+ & \multicolumn{2}{c}{non-English speaker} & \multicolumn{2}{c}{English speaker} \\
+ \hline
+ & $O$ & \cellcolor{gray!50}$E$ & $O$ & \cellcolor{gray!50}$E$ \\
+ Primary Caesarean delivery & 127 & \cellcolor{gray!50}?? & 934 & \cellcolor{gray!50}?? \\
+ Primary vaginal delivery  & 1022 & \cellcolor{gray!50}?? & 9336 & \cellcolor{gray!50}?? \\
+ \hline
+\end{tabular}
+
+## Example: simpler numbers
+
+Contingency analysis uses the $\chi^2$ test statistic, so we need *observed* and *expected* frequencies 
+
+\begin{tabular}{r l l l l}
+ \hline
+ & \multicolumn{2}{c}{non-English speaker} & \multicolumn{2}{c}{English speaker} \\
+ \hline
+ & $O$ & \cellcolor{gray!50}$E$ & $O$ & \cellcolor{gray!50}$E$ \\
+ Primary Caesarean delivery & 1 & \cellcolor{gray!50}?? & 2 & \cellcolor{gray!50}?? \\
+ Primary vaginal delivery  & 5 & \cellcolor{gray!50}?? & 16 & \cellcolor{gray!50}?? \\
+ \hline
+\end{tabular}
+
+\vspace{2em}
+
+\begin{columns}
+\column{\textwidth}
+  \metroset{block=fill}
+
+  \begin{alertblock}{Pause \& Think}
+
+What should the expected frequencies be?
+  
+  \end{alertblock}
+
+\end{columns}
+
+## Example: simpler numbers
+
+Contingency analysis uses the $\chi^2$ test statistic, so we need *observed* and *expected* frequencies 
+
+\begin{tabular}{r l l l l}
+ \hline
+ & \multicolumn{2}{c}{non-English speaker} & \multicolumn{2}{c}{English speaker} \\
+ \hline
+ & $O$ & \cellcolor{gray!50}$E$ & $O$ & \cellcolor{gray!50}$E$ \\
+ Primary Caesarean delivery & 1 & \cellcolor{gray!50}1.5 & 2 & \cellcolor{gray!50}1.5 \\
+ Primary vaginal delivery  & 5 & \cellcolor{gray!50}10 & 16 & \cellcolor{gray!50}10 \\
+ \hline
+\end{tabular}
+
+\vspace{2em}
+
+\begin{columns}
+\column{\textwidth}
+  \metroset{block=fill}
+
+  \begin{alertblock}{Pause \& Think}
+
+Is that right?...No...
+  
+  \end{alertblock}
+
+\end{columns}
+
+
+## Example: simpler numbers
+
+Contingency analysis uses the $\chi^2$ test statistic, so we need *observed* and *expected* frequencies 
+
+\begin{tabular}{r l l l l}
+ \hline
+ & \multicolumn{2}{c}{non-English speaker} & \multicolumn{2}{c}{English speaker} \\
+ \hline
+ & $O$ & \cellcolor{gray!50}$E$ & $O$ & \cellcolor{gray!50}$E$ \\
+ Primary Caesarean delivery & 1 & \cellcolor{gray!50}?? & 2 & \cellcolor{gray!50}?? \\
+ Primary vaginal delivery  & 5 & \cellcolor{gray!50}?? & 16 & \cellcolor{gray!50}?? \\
+ \hline
+\end{tabular}
+
+\vspace{2em}
+
+\begin{columns}
+\column{\textwidth}
+  \metroset{block=fill}
+
+  \begin{alertblock}{Pause \& Think}
+
+Expected frequencies come from the null hypothesis. What is the null hypothesis?
+  
+  \end{alertblock}
+
+\end{columns}
+
+
+## Example: simpler numbers
+
+Contingency analysis uses the $\chi^2$ test statistic, so we need *observed* and *expected* frequencies 
+
+\begin{tabular}{r l l l l}
+ \hline
+ & \multicolumn{2}{c}{non-English speaker} & \multicolumn{2}{c}{English speaker} \\
+ \hline
+ & $O$ & \cellcolor{gray!50}$E$ & $O$ & \cellcolor{gray!50}$E$ \\
+ Primary Caesarean delivery & 1 & \cellcolor{gray!50}?? & 2 & \cellcolor{gray!50}?? \\
+ Primary vaginal delivery  & 5 & \cellcolor{gray!50}?? & 16 & \cellcolor{gray!50}?? \\
+ \hline
+\end{tabular}
+
+\vspace{2em}
+
+\begin{columns}
+\column{\textwidth}
+  \metroset{block=fill}
+
+  \begin{alertblock}{Pause \& Think}
+
+Expected frequencies come from the null hypothesis. What is the null hypothesis? {\bf equal proportions across explanatory groups}
+  
+  \end{alertblock}
+
+\end{columns}
+
+
+## Example: simpler numbers
+
+Contingency analysis uses the $\chi^2$ test statistic, so we need *observed* and *expected* frequencies 
+
+\begin{tabular}{r l l l l l}
+ \hline
+ & \multicolumn{2}{c}{non-English speaker} & \multicolumn{2}{c}{English speaker} & {\bf Totals}\\
+ \hline
+ & $O$ & \cellcolor{gray!50}$E$ & $O$ & \cellcolor{gray!50}$E$ & \\
+ Primary C-section & 1 & \cellcolor{gray!50}?? & 2 & \cellcolor{gray!50}?? & {\bf 3}\\
+ Primary vaginal  & 5 & \cellcolor{gray!50}?? & 16 & \cellcolor{gray!50}?? & {\bf 21}\\
+ {\bf Totals} & \multicolumn{2}{c}{\bf 6} & \multicolumn{2}{c}{\bf 18} & {\bf 24} \\
+ \hline
+\end{tabular}
+
+\vspace{2em}
+
+\begin{columns}
+\column{\textwidth}
+  \metroset{block=fill}
+
+  \begin{alertblock}{Pause \& Think}
+
+Expected frequencies come from the null hypothesis. What is the null hypothesis? {\bf equal proportions across explanatory groups}
+  
+  \end{alertblock}
+
+\end{columns}
+
+## Example: simpler numbers
+
+\begin{tabular}{r l l l l l}
+ \hline
+ & \multicolumn{2}{c}{non-English speaker} & \multicolumn{2}{c}{English speaker} & {\bf Totals}\\
+ \hline
+ & $O$ & \cellcolor{gray!50}$E$ & $O$ & \cellcolor{gray!50}$E$ & \\
+ Primary C-section & 1 & \cellcolor{gray!50}?? & 2 & \cellcolor{gray!50}?? & {\bf 3}\\
+ Primary vaginal  & 5 & \cellcolor{gray!50}?? & 16 & \cellcolor{gray!50}?? & {\bf 21}\\
+ {\bf Totals} & \multicolumn{2}{c}{\bf 6} & \multicolumn{2}{c}{\bf 18} & {\bf 24} \\
+ \hline
+\end{tabular}
+
+\vspace{1em}
+
+$\hat{\text{Pr}}(\text{non-English speaker}) = \frac{1}{4}$
+$\hat{\text{Pr}}(\text{English speaker}) = \frac{3}{4}$
+
+So expected frequencies assuming equal proportions across groups would be
+
+$E_{\text{C-section, non-English}} = \frac{1}{4} \times 3 = \frac{3}{4}$
+$E_{\text{C-section, English}} = \frac{3}{4} \times 3 = 2\frac{1}{4}$
+$E_{\text{VB, non-English}} = \frac{1}{4} \times 21 = 5 \frac{1}{4}$
+$E_{\text{C-section, English}} = \frac{3}{4} \times 21 = 15 \frac{3}{4}$
+
+
+## Example: simpler numbers
+
+\begin{tabular}{r l l l l l}
+ \hline
+ & \multicolumn{2}{c}{non-English speaker} & \multicolumn{2}{c}{English speaker} & {\bf Totals}\\
+ \hline
+ & $O$ & \cellcolor{gray!50}$E$ & $O$ & \cellcolor{gray!50}$E$ & \\
+ Primary C-section & 1 & \cellcolor{gray!50}$\frac{3}{4}$ & 2 & \cellcolor{gray!50}$2\frac{1}{4}$ & {\bf 3}\\
+ Primary vaginal  & 5 & \cellcolor{gray!50}$5 \frac{1}{4}$ & 16 & \cellcolor{gray!50}$15 \frac{3}{4}$ & {\bf 21}\\
+ {\bf Totals} & \multicolumn{2}{c}{\bf 6} & \multicolumn{2}{c}{\bf 18} & {\bf 24} \\
+ \hline
+\end{tabular}
+
+\vspace{1em}
+
+$\hat{\text{Pr}}(\text{non-English speaker}) = \frac{1}{4}$
+$\hat{\text{Pr}}(\text{English speaker}) = \frac{3}{4}$
+
+So expected frequencies assuming equal proportions across groups would be
+
+$E_{\text{C-section, non-English}} = \frac{1}{4} \times 3 = \frac{3}{4}$
+$E_{\text{C-section, English}} = \frac{3}{4} \times 3 = 2\frac{1}{4}$
+$E_{\text{VB, non-English}} = \frac{1}{4} \times 21 = 5 \frac{1}{4}$
+$E_{\text{C-section, English}} = \frac{3}{4} \times 21 = 15 \frac{3}{4}$
+
+
+
+
+## Example: simpler numbers
+
+$\chi^2$ test statistic is
+
+$$\chi^2 = \sum_{i=1}^n \frac{(O_i - E_i) ^ 2}{E_i}$$
+
+
+\begin{tabular}{r l l l l l}
+ \hline
+ & \multicolumn{2}{c}{non-English speaker} & \multicolumn{2}{c}{English speaker} & {\bf Totals}\\
+ \hline
+ & $O$ & \cellcolor{gray!50}$E$ & $O$ & \cellcolor{gray!50}$E$ & \\
+ Primary C-section & 1 & \cellcolor{gray!50}$\frac{3}{4}$ & 2 & \cellcolor{gray!50}$2\frac{1}{4}$ & {\bf 3}\\
+ Primary vaginal  & 5 & \cellcolor{gray!50}$5 \frac{1}{4}$ & 16 & \cellcolor{gray!50}$15 \frac{3}{4}$ & {\bf 21}\\
+ {\bf Totals} & \multicolumn{2}{c}{\bf 6} & \multicolumn{2}{c}{\bf 18} & {\bf 24} \\
+ \hline
+\end{tabular}
+
+\vspace{1em}
+
+$\chi^2 = \frac{0.25^2}{0.75} + \frac{-0.25^2}{5.25} + \frac{-0.25^2}{2.25} + \frac{0.25^2}{15.75}$
+
+$\chi^2 = 0.127$
+
+
+
+
+## Example: simpler numbers
+
+$\chi^2$ test statistic is $\chi^2 = 0.127$
+
+
+\begin{tabular}{r l l l l l}
+ \hline
+ & \multicolumn{2}{c}{non-English speaker} & \multicolumn{2}{c}{English speaker} & {\bf Totals}\\
+ \hline
+ & $O$ & \cellcolor{gray!50}$E$ & $O$ & \cellcolor{gray!50}$E$ & \\
+ Primary C-section & 1 & \cellcolor{gray!50}$\frac{3}{4}$ & 2 & \cellcolor{gray!50}$2\frac{1}{4}$ & {\bf 3}\\
+ Primary vaginal  & 5 & \cellcolor{gray!50}$5 \frac{1}{4}$ & 16 & \cellcolor{gray!50}$15 \frac{3}{4}$ & {\bf 21}\\
+ {\bf Totals} & \multicolumn{2}{c}{\bf 6} & \multicolumn{2}{c}{\bf 18} & {\bf 24} \\
+ \hline
+\end{tabular}
+
+\vspace{1em}
+
+What about degrees of freedom?
+
+For a contingency test, $df = (\text{number of rows} - 1) \times (\text{number of columns} - 1)$
+
+$df = (2 - 1) \times (2 - 1)$
+
+$df = 1$
+
+
+## Example: simpler numbers
+
+**Let's run our null hypothesis test**
+
+$H_0$: there is no difference in the proportions across explanatory groups
+
+$H_A$: there *is* a difference in the proportions across explanatory groups
+
+```{r echo = TRUE}
+chi2_test_stat <- 0.127
+df <- 1
+
+pchisq(chi2_test_stat, df, lower.tail = FALSE)
+```
+
+We fail to reject the null
+
+
+## Example: simpler numbers
+
+**Let's run our null hypothesis test**
+
+$H_0$: there is no difference in the proportions across explanatory groups
+
+$H_A$: there *is* a difference in the proportions across explanatory groups
+
+```{r echo = TRUE}
+dat <- matrix(c(1, 5, 2, 16), nrow = 2)
+dat
+```
+
+```{r eval = FALSE}
+# simpler to use the built-in chi-squared test function
+chisq.test(dat)
+```
+
+
+
+## Example: simpler numbers
+
+
+```{r echo = TRUE, warning=TRUE}
+# simpler to use the built-in chi-squared test function
+chisq.test(dat)
+```
+
+And this tells us we shouldn't be using $\chi^2$ because our sample size is too small!
+
+
+## Example: simpler numbers
+
+**Sure enough we had an expected frequency less than 1!!!**
+
+**Also half our expected frequencies are under 5**
+
+
+\begin{tabular}{r l l l l l}
+ \hline
+ & \multicolumn{2}{c}{non-English speaker} & \multicolumn{2}{c}{English speaker} & {\bf Totals}\\
+ \hline
+ & $O$ & \cellcolor{gray!50}$E$ & $O$ & \cellcolor{gray!50}$E$ & \\
+ Primary C-section & 1 & \cellcolor{gray!50}$\frac{3}{4}$ & 2 & \cellcolor{gray!50}$2\frac{1}{4}$ & {\bf 3}\\
+ Primary vaginal  & 5 & \cellcolor{gray!50}$5 \frac{1}{4}$ & 16 & \cellcolor{gray!50}$15 \frac{3}{4}$ & {\bf 21}\\
+ {\bf Totals} & \multicolumn{2}{c}{\bf 6} & \multicolumn{2}{c}{\bf 18} & {\bf 24} \\
+ \hline
+\end{tabular}
+
+\vspace{1em}
+
+
+## Example: birth outcomes for non-English and English speakers in Hawai\`i
+
+The real data have sufficient sample size to do a $\chi^2$ test
+
+\begin{tabular}{r l l}
+ \hline
+ & non-English speaker & English speaker \\
+ \hline
+ Primary Caesarean delivery & 127 & 934 \\
+ Primary vaginal delivery  & 1022 &  9336 \\
+ \hline
+\end{tabular}
+
+\vspace{2em}
+
+
+## Example: birth outcomes for non-English and English speakers in Hawai\`i
+
+**Let's run our null hypothesis test for real**
+
+$H_0$: there is no difference in the proportions across explanatory groups
+
+$H_A$: there *is* a difference in the proportions across explanatory groups
+
+```{r echo = TRUE}
+dat <- matrix(c(127, 1022, 934, 9336), nrow = 2)
+dat
+```
+
+## Example: birth outcomes for non-English and English speakers in Hawai\`i
+
+
+```{r echo = TRUE}
+chisq.test(dat)
+```
+
+We reject the null
+

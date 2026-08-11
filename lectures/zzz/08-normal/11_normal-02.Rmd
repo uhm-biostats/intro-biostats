@@ -1,0 +1,820 @@
+---
+title: "BIOL 220 Introducing the Normal Distribution"
+output: binb::metropolis
+header-includes:
+  - \usepackage{array}
+  - \usepackage{xcolor}
+  - \usepackage{colortbl}
+  - \usepackage[export]{adjustbox}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, 
+                      message = FALSE, eval = TRUE)
+
+library(cowplot)
+library(ggplot2)
+library(dplyr)
+library(viridis)
+library(glue)
+library(stringr)
+library(tidyr)
+library(googlesheets4)
+library(extraDistr)
+```
+
+
+
+
+## Learning Objectives
+
+1. Describe the properties of a normal distribution
+2. Know that the standard error of the sampling distribution of size $n$ from the normal distribution equals $\sigma/\sqrt{n}$
+3. Find the probability density of a range of sample mean
+4. Use a Z-transform to convert any normal distribution into the standard normal distribution
+6. Explain why normal distributions are common, and explain the Central Limit Theorem
+6. *Use* R *to make calculations about and sample from a normal distribution*
+5. *Interpret histograms and qq-plots to meaningfully evaluate if data are roughly normal*
+7. *Transform non-normal data to become normal*
+8. *Understand problematic, pseudo-scientific "applications" of the normal distribution*
+
+
+## The normal distribution allows many useful methods
+
+```{r fig.align='center', fig.width=7, fig.height=5}
+set.seed(1)
+noni_dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)), 
+                       group = c(rep("10mg noni", 100), 
+                                 rep("placebo", 100)))
+
+
+set.seed(2)
+fish_data <- data.frame(pollution = runif(100, 0, 100))
+fish_data$body <- rnorm(100, 20 - 0.1 * fish_data$pollution, 2)
+fish_data$impact <- cut(fish_data$pollution, c(0, 33, 66, 100), 
+                        labels = c("Low", "Medium", "High"))
+
+
+
+p1 <- ggplot(noni_dat, aes(x = sed, fill = group)) +
+    geom_histogram(aes(y = after_stat(density)), bins = 20) +
+    facet_grid(rows = vars(group)) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    xlab("Change in sed rate [mm/hr]\n(after - before)") +
+    ggtitle("Comparison of Means")
+
+
+
+p2 <- ggplot(fish_data, aes(x = impact, y = body)) +
+    geom_boxplot() +
+    theme_cowplot() + 
+    xlab("Level of human impact") +
+    ylab("Reef fish biomass (g)")
+
+p3 <- ggplot(fish_data, aes(x = pollution, y = body)) +
+    geom_point() +
+    geom_smooth(method = "lm", formula = y ~ x) +
+    theme_cowplot() + 
+    xlab("Pollution (ppm)") +
+    ylab("Reef fish biomass (g)")
+
+
+p23 <- plot_grid(p2, p3, labels = c("Analysis of Variance", 
+                                    "Correlation and Regression"), 
+                 ncol = 1)
+plot_grid(p1, p23, ncol = 2)
+
+
+
+
+```
+
+
+
+## \alert{Normal distribution}
+
+> The \alert{normal distribution} is a continuous probability distribution describing a bell-shaped curve. It is a good approximation to the frequency distribution of many biological variables.
+
+## The \alert{normal distribution} has two parameters, mean and standard deviation
+
+For the population, consider a continuous variable $Y$ with mean $\mu$ and standard deviation $\sigma$
+
+$$f(Y) = \frac{1}{\sqrt{2 \pi \sigma^2}} e ^ {\frac{-(Y - \mu) ^ 2}{2 \sigma ^ 2}}$$
+$f(Y)$ is the probability density associated with a value $Y$
+
+Higher probability when:
+
+1. $Y$ is close to $\mu$ 
+
+2. The spread of the distribution is low ($\sigma$ is small)
+
+## The \alert{normal distribution} has two parameters, mean and standard deviation
+
+```{r, fig.align='center', out.height="80%"}
+
+x <- read.csv("data/bird_morpho.csv")
+
+df1 <- x[x$species %in% c("jawe", "rwbu", "wrsh"), ] |>
+    group_by(full_name) |>
+    summarize(
+        n = n(),
+        mu = mean(nares_to_tip, na.rm = TRUE),
+        sigma = sd(nares_to_tip, na.rm = TRUE)
+    ) |>
+    mutate(label = glue("mean = {mu}, sd = {sigma}", 
+                        mu = round(mu, 1), 
+                        sigma = round(sigma, 2))) 
+
+df2 <- df1 |>
+    crossing(x = seq(-3, 3, 0.01)) |>
+    mutate(x1 = mu + x * sigma, y = dnorm(x1, mu, sigma))
+
+ggplot(x[x$species %in% c("jawe", "rwbu", "wrsh"), ], 
+       aes(fill = full_name)) +
+    facet_grid(rows = vars(full_name), 
+               labeller = labeller(full_name = label_wrap_gen(width = 10))) +
+    geom_histogram(mapping = aes(nares_to_tip, y = ..density..), 
+                   show.legend = FALSE, binwidth = 0.2) +
+    geom_line(data = df2, mapping = aes(x1, y), size = 2, color = "darkgrey") +
+    geom_text(data = df1, mapping = aes(x = 5, y = 1, label = label), hjust = 0,
+              size = 8) +
+    xlab("Beak length (mm)") +
+    ylab("Probability density") +
+    scale_fill_viridis_d() +
+    theme_cowplot() +
+    theme(
+        axis.text = element_text(size = 18),
+        axis.title = element_text(size = 24),
+        strip.text = element_text(size = 20)
+    )
+
+```
+
+
+
+## \alert{Central Limit Theorem}
+
+> According to the \alert{central limit theorem}, the sum or mean of a large number of measurements randomly sampled from a non-normal population is approximately normally distributed.
+
+## Why the \alert{Central Limit Theorem} matters
+
+1. It explains why so many quantities are normally distributed
+2. When $n$ is large, many statistical tests that assume data are normal sampling distributions work OK
+3. It can speed up calculations for large samples from non-normal distributions
+
+## Because of the \alert{Central Limit Theorem}...
+
+**the world is shockingly normal**
+
+Run this code on your computer 
+
+```{r echo = TRUE,  eval = FALSE}
+s <- sample(20, 5, replace = TRUE)
+mean(s)
+```
+
+
+## Because of the \alert{Central Limit Theorem}...
+
+**the world is shockingly normal**
+
+```{r fig.align='center', fig.width=4, fig.height=4}
+foo <- replicate(5000, {
+    s <- sample(20, 5, replace = TRUE)
+    mean(s)
+})
+
+dat <- data.frame(Sample_Mean = foo)
+
+ggplot(dat, aes(x = Sample_Mean)) + 
+    geom_histogram(aes(y =..density..), 
+                   bins = 20) +
+    stat_function(fun = dnorm, 
+                  args = list(mean = mean(dat$Sample_Mean), 
+                              sd = sd(dat$Sample_Mean)))
+
+```
+
+
+## For the rest of lecture...
+
+6. *Use* R *to make calculations about and sample from a normal distribution*
+5. *Interpret histograms and qq-plots to meaningfully evaluate if data are roughly normal*
+7. *Transform non-normal data to become normal*
+8. *Understand problematic, pseudo-scientific "applications" of the normal distribution*
+
+
+## Use R to calculate densities, probabilities, and quantiles from normal distributions {.t}
+
+Given a normal distribution with $\mu = 0$ and $\sigma = 1$, what's the probability **density** of the value 1?
+
+::: columns
+
+:::: column
+
+```{r fig.align='center', fig.width=3, fig.height=3, out.width="80%"}
+x <- seq(-3.5, 3.5, 0.01)
+df1 <- data.frame(x = x, y = dnorm(x))
+
+ggplot(df1, aes(x, y)) +
+    geom_line(color = "black", size = 2) +
+    xlab(expression(italic(Y))) +
+    ylab("Probability density") +
+    theme_cowplot() +
+    geom_segment(aes(x = 1, y = 0, xend = 1, yend = dnorm(1), 
+                     color = "tomato"), 
+                 arrow = arrow(length = unit(0.03, "npc"))) +
+    geom_segment(aes(x = 1, y = dnorm(1), xend = -1.05 * 3.5, yend = dnorm(1), 
+                     color = "tomato"),
+                 arrow = arrow(length = unit(0.03, "npc"))) +
+    theme(legend.position = "none") + 
+    scale_x_continuous(limits = 1.05 * c(-3.5, 3.5), expand = c(0, 0))
+
+```
+
+::::
+
+:::: column
+
+```{r, echo = TRUE}
+dnorm(1.0, mean = 0, sd = 1)
+```
+
+::::
+
+:::
+
+## Use R to calculate densities, probabilities, and quantiles from normal distributions {.t}
+
+Given a normal distribution with $\mu = 0$ and $\sigma = 1$, what's the probability of a value less than 1?
+
+::: columns
+
+:::: column
+
+```{r fig.align='center', fig.width=3, fig.height=3, out.width="80%"}
+
+ggplot(df1, aes(x, y)) +
+    geom_area(stat = "function", fun = dnorm, fill="tomato", xlim = c(-3.5, 1)) +
+    geom_line(color = "black", size = 2) +
+    xlab(expression(italic(Y))) +
+    ylab("Probability density") +
+    theme_cowplot() + 
+    scale_x_continuous(limits = 1.05 * c(-3.5, 3.5), expand = c(0, 0))
+
+```
+
+::::
+
+:::: column
+
+```{r, echo = TRUE}
+pnorm(1.0, mean = 0, sd = 1)
+```
+
+::::
+
+:::
+
+
+## Use R to calculate densities, probabilities, and quantiles from normal distributions {.t}
+
+Given a normal distribution with $\mu = 0$ and $\sigma = 1$, what's the probability of a value greater than 1?
+
+::: columns
+
+:::: column
+
+```{r fig.align='center', fig.width=3, fig.height=3, out.width="80%"}
+
+ggplot(df1, aes(x, y)) +
+    geom_area(stat = "function", fun = dnorm, fill="tomato", xlim = c(1, 3.5)) +
+    geom_line(color = "black", size = 2) +
+    xlab(expression(italic(Y))) +
+    ylab("Probability density") +
+    theme_cowplot() + 
+    scale_x_continuous(limits = 1.05 * c(-3.5, 3.5), expand = c(0, 0))
+
+```
+
+::::
+
+:::: column
+
+\small
+```{r, echo = TRUE}
+pnorm(1.0, mean = 0, sd = 1, 
+      lower.tail = FALSE)
+
+# ...or...
+1 - pnorm(1.0, mean = 0, sd = 1)
+```
+
+::::
+
+:::
+
+
+## Use R to calculate densities, probabilities, and quantiles from normal distributions {.t}
+
+Given a normal distribution with $\mu = 0$ and $\sigma = 1$, what's the 10% quantile?
+
+::: columns
+
+:::: column
+
+```{r fig.align='center', fig.width=3, fig.height=3, out.width="80%"}
+
+q10 <- qnorm(0.1)
+
+ggplot(df1, aes(x, y)) +
+    geom_area(stat = "function", fun = dnorm, fill="gray", 
+              xlim = c(-3.5, q10)) +
+    geom_line(color = "black", size = 2) +
+    geom_segment(aes(x = q10, y = dnorm(q10), 
+                     xend = q10, yend = -0.05 * dnorm(0), 
+                     color = "tomato"), 
+                 arrow = arrow(length = unit(0.03, "npc"))) +
+    xlab(expression(italic(Y))) +
+    ylab("Probability density") +
+    theme_cowplot() + 
+    scale_x_continuous(limits = 1.05 * c(-3.5, 3.5), expand = c(0, 0)) +
+    scale_y_continuous(limits = c(-0.05 * dnorm(0), 1.05 * dnorm(0)), 
+                       expand = c(0, 0)) +
+    theme(legend.position = "none")
+
+```
+
+::::
+
+:::: column
+
+
+```{r, echo = TRUE}
+qnorm(0.1, mean = 0, sd = 1)
+
+```
+
+::::
+
+:::
+
+## Use R to calculate densities, probabilities, and quantiles from normal distributions {.t}
+
+Given a normal distribution with $\mu = 0$ and $\sigma = 1$, what about all the quantiles 10%, 20%, ..., 90%?
+
+::: columns
+
+:::: column
+
+```{r fig.align='center', fig.width=3, fig.height=3, out.width="80%"}
+
+q10 <- qnorm(0.1)
+
+ggplot(df1, aes(x, y)) +
+    geom_area(stat = "function", fun = dnorm, fill=gray(0.25, alpha = 0.25), 
+              xlim = c(-3.5, q10)) +
+    geom_area(stat = "function", fun = dnorm, fill=gray(0.25, alpha = 0.25), 
+              xlim = c(-3.5, qnorm(0.2))) +
+    geom_area(stat = "function", fun = dnorm, fill=gray(0.25, alpha = 0.25), 
+              xlim = c(-3.5, qnorm(0.3))) +
+    geom_area(stat = "function", fun = dnorm, fill=gray(0.25, alpha = 0.25), 
+              xlim = c(-3.5, qnorm(0.4))) +
+    geom_area(stat = "function", fun = dnorm, fill=gray(0.25, alpha = 0.25), 
+              xlim = c(-3.5, qnorm(0.5))) +
+    geom_area(stat = "function", fun = dnorm, fill=gray(0.25, alpha = 0.25), 
+              xlim = c(-3.5, qnorm(0.6))) +
+    geom_area(stat = "function", fun = dnorm, fill=gray(0.25, alpha = 0.25), 
+              xlim = c(-3.5, qnorm(0.7))) +
+    geom_area(stat = "function", fun = dnorm, fill=gray(0.25, alpha = 0.25), 
+              xlim = c(-3.5, qnorm(0.8))) +
+    geom_area(stat = "function", fun = dnorm, fill=gray(0.25, alpha = 0.25), 
+              xlim = c(-3.5, qnorm(0.9))) +
+    geom_area(stat = "function", fun = dnorm, fill=gray(0.25, alpha = 0.25), 
+              xlim = c(-3.5, qnorm(0.999))) +
+    geom_line(color = "black", size = 2) +
+    xlab(expression(italic(Y))) +
+    ylab("Probability density") +
+    theme_cowplot() + 
+    scale_x_continuous(limits = 1.05 * c(-3.5, 3.5), expand = c(0, 0)) +
+    scale_y_continuous(limits = c(-0.05 * dnorm(0), 1.05 * dnorm(0)), 
+                       expand = c(0, 0)) +
+    theme(legend.position = "none")
+
+```
+
+::::
+
+:::: column
+
+
+```{r, echo = TRUE}
+qq <- seq(0.1, 0.9, by = 0.1)
+qq
+
+qnorm(qq, mean = 0, sd = 1)
+```
+
+::::
+
+:::
+
+
+
+## Quantile-quantile plot
+
+A useful visual tool for assessing normality in a sample
+
+## QQ plot examples 
+
+```{r, fig.align="center", out.height="80%"}
+
+set.seed(20210325)
+df1 <- tibble(x = seq(-3, 3, 0.01), y = dnorm(x))
+df2 <- tibble(Y = rnorm(1e3))
+df3 <- tibble(x = seq(0, 6, 0.01), y = dlnorm(x))
+df4 <- tibble(Y = rlnorm(1e3))
+
+gp1 <- ggplot(df1, aes(x, y)) +
+  geom_area(color = "black", fill = "tomato", size = 2) +
+  xlab(expression(italic(Y))) +
+  ylab("Probability density") +
+  ggtitle("Normal distribution") +
+  theme_cowplot() +
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )
+
+gp2 <- ggplot(df2, aes(sample = Y)) +
+  geom_qq(color = "tomato") +
+  geom_qq_line(alpha = 0.5, size = 2) +
+  ggtitle("Normal QQ Plot") +
+  theme_cowplot() +
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )
+
+gp3 <- ggplot(df3, aes(x, y)) +
+  geom_area(color = "black", fill = "tomato", size = 2) +
+  xlab(expression(italic(Y))) +
+  ylab("Probability density") +
+  ggtitle("Right-skewed distribution") +
+  theme_cowplot() +
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )
+
+gp4 <- ggplot(df4, aes(sample = Y)) +
+  geom_qq(color = "tomato") +
+  geom_qq_line(alpha = 0.5, size = 2) +
+  ggtitle("Right-skewed QQ Plot") +
+  theme_cowplot() +
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )
+
+plot_grid(gp1, gp2, gp3, gp4, nrow = 2)
+
+```
+
+## QQ plot examples 
+
+```{r, fig.align="center", out.height="80%"}
+
+set.seed(20210325)
+df1 <- tibble(x = seq(-3, 3, 0.01), y = dnorm(x))
+df2 <- tibble(Y = rnorm(1e3))
+df3 <- tibble(x = -seq(0, 6, 0.01), y = dlnorm(-x))
+df4 <- tibble(Y = -rlnorm(1e3))
+
+gp1 <- ggplot(df1, aes(x, y)) +
+  geom_area(color = "black", fill = "tomato", size = 2) +
+  xlab(expression(italic(Y))) +
+  ylab("Probability density") +
+  ggtitle("Normal distribution") +
+  theme_cowplot() +
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )  
+
+gp2 <- ggplot(df2, aes(sample = Y)) +
+  geom_qq(color = "tomato") +
+  geom_qq_line(alpha = 0.5, size = 2) +
+  ggtitle("Normal QQ Plot") +
+  theme_cowplot() + 
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )
+
+gp3 <- ggplot(df3, aes(x, y)) +
+  geom_area(color = "black", fill = "tomato", size = 2) +
+  xlab(expression(italic(Y))) +
+  ylab("Probability density") +
+  ggtitle("Left-skewed distribution") +
+  theme_cowplot() + 
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )
+
+gp4 <- ggplot(df4, aes(sample = Y)) +
+  geom_qq(color = "tomato") +
+  geom_qq_line(alpha = 0.5, size = 2) +
+  ggtitle("Left-skewed QQ Plot") +
+  theme_cowplot() +
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )
+
+plot_grid(gp1, gp2, gp3, gp4, nrow = 2)
+
+```
+
+## QQ plot examples 
+
+```{r, fig.align="center", out.height="80%"}
+
+set.seed(20210325)
+df1 <- tibble(x = seq(-3, 3, 0.01), y = dnorm(x))
+df2 <- tibble(Y = rnorm(1e3))
+df3 <- tibble(x = seq(-3, 3, 0.01), y = dt(x, 3))
+df4 <- tibble(Y =rt(1e3, 3))
+
+gp1 <- ggplot(df1, aes(x, y)) +
+  geom_area(color = "black", fill = "tomato", size = 2) +
+  xlab(expression(italic(Y))) +
+  ylab("Probability density") +
+  ggtitle("Normal distribution") +
+  theme_cowplot() +
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )
+
+gp2 <- ggplot(df2, aes(sample = Y)) +
+  geom_qq(color = "tomato") +
+  geom_qq_line(alpha = 0.5, size = 2) +
+  ggtitle("Normal QQ Plot") +
+  theme_cowplot() +
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )
+
+gp3 <- ggplot(df3, aes(x, y)) +
+  geom_area(color = "black", fill = "tomato", size = 2) +
+  xlab(expression(italic(Y))) +
+  ylab("Probability density") +
+  ggtitle("Long-tailed distribution") +
+  theme_cowplot() +
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )
+
+gp4 <- ggplot(df4, aes(sample = Y)) +
+  geom_qq(color = "tomato") +
+  geom_qq_line(alpha = 0.5, size = 2) +
+  ggtitle("Long-tailed QQ Plot") +
+  theme_cowplot() +
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )
+
+plot_grid(gp1, gp2, gp3, gp4, nrow = 2)
+
+```
+
+## QQ plot examples 
+
+```{r, fig.align="center", out.height="80%"}
+
+set.seed(20210325)
+df1 <- tibble(x = seq(-3, 3, 0.01), y = dnorm(x))
+df2 <- tibble(Y = rnorm(1e3))
+df3 <- tibble(x = seq(-3, 3, 0.01), y = dmixnorm(x, c(-2, 2), c(1, 1), c(0.5,0.5)))
+df4 <- tibble(Y = rmixnorm(1e3, c(-2, 2), c(1, 1), c(0.5,0.5)))
+
+gp1 <- ggplot(df1, aes(x, y)) +
+  geom_area(color = "black", fill = "tomato", size = 2) +
+  xlab(expression(italic(Y))) +
+  ylab("Probability density") +
+  ggtitle("Normal distribution") +
+  theme_cowplot() +
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )
+
+gp2 <- ggplot(df2, aes(sample = Y)) +
+  geom_qq(color = "tomato") +
+  geom_qq_line(alpha = 0.5, size = 2) +
+  ggtitle("Normal QQ Plot") +
+  theme_cowplot() +
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )
+
+gp3 <- ggplot(df3, aes(x, y)) +
+  geom_area(color = "black", fill = "tomato", size = 2) +
+  xlab(expression(italic(Y))) +
+  ylab("Probability density") +
+  ggtitle("Bimodal distribution") +
+  theme_cowplot() +
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )
+  
+gp4 <- ggplot(df4, aes(sample = Y)) +
+  geom_qq(color = "tomato") +
+  geom_qq_line(alpha = 0.5, size = 2) +
+  ggtitle("Bimodal QQ Plot") +
+  theme_cowplot() +
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )
+
+plot_grid(gp1, gp2, gp3, gp4, nrow = 2)
+
+```
+
+
+
+## Log-transformation is very useful for right-skewed distributions
+
+There are many transformations 
+
+Log-transformation is by the far the most useful in biology
+
+Other situations (left-skew, long tails, bimodality) involve more complex approaches
+
+## Log-transformation is very useful for right-skewed distributions
+
+```{r, fig.align="center", out.height="80%"}
+
+set.seed(20210325)
+df4 <- tibble(Y = rlnorm(1e3))
+
+gp1 <- ggplot(df4, aes(Y)) +
+  geom_histogram(fill = "tomato", size = 2) +
+  xlab(expression(italic(Y))) +
+  ggtitle("Right-skewed sample") +
+  theme_cowplot() +
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )
+
+gp2 <- ggplot(df4, aes(sample = Y)) +
+  geom_qq(color = "tomato") +
+  geom_qq_line(alpha = 0.5, size = 2) +
+  ggtitle("Right-skewed QQ Plot") +
+  theme_cowplot() +
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )
+
+gp3 <- ggplot(df4, aes(log(Y))) +
+  geom_histogram(fill = "tomato", size = 2) +
+  xlab(expression(log(italic(Y)))) +
+  ggtitle("After log-transformation") +
+  theme_cowplot() +
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )
+
+gp4 <- ggplot(df4, aes(sample = log(Y))) +
+  geom_qq(color = "tomato") +
+  geom_qq_line(alpha = 0.5, size = 2) +
+  ggtitle("After log-transformation") +
+  theme_cowplot() +
+  theme(
+    title = element_text(size = 18),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16)
+  )
+
+plot_grid(gp1, gp2, gp3, gp4, nrow = 2)
+
+```
+
+
+## Log-transformation is very useful for right-skewed distributions {.t}
+
+**How do you log-transform your data?**
+
+```{r echo = TRUE}
+# read-in one of our example datasets: mammal masses
+mam <- read.csv("data/mammals.csv")
+
+# add a log-transformed body mass column
+mam$log_body_mass <- log(mam$body_mass_kg)
+```
+
+## Log-transformation is very useful for right-skewed distributions {.t}
+
+**How do you log-transform your data?**
+
+This is how you display a qq-plot
+
+```{r echo = TRUE, eval = FALSE}
+ggplot(mam, aes(sample = log_body_mass)) +
+    geom_qq(color = "tomato") +
+    geom_qq_line(alpha = 0.5, size = 2) +
+    theme_cowplot() +
+    xlab("Theoretical quantiles") +
+    ylab("Observed quantiles")
+```
+
+
+## Log-transformation is very useful for right-skewed distributions {.t}
+
+**How do you log-transform your data?**
+
+```{r fig.align="center", fig.width = 6, fig.height = 4, out.height="70%"}
+histlog <- ggplot(mam, aes(x = log_body_mass)) +
+    geom_histogram(fill = "tomato", bins = 20) +
+    theme_cowplot() +
+    ggtitle("Log-transformed")
+  
+  
+
+histlin <- ggplot(mam, aes(x = body_mass_kg)) +
+    geom_histogram(fill = "tomato", bins = 20) +
+    theme_cowplot()+
+    ggtitle("Raw data")
+
+qqlog <- ggplot(mam, aes(sample = log_body_mass)) +
+    geom_qq(color = "tomato") +
+    geom_qq_line(alpha = 0.5, size = 2) +
+    theme_cowplot() +
+    xlab("Theoretical quantiles") +
+    ylab("Observed quantiles")
+
+qqlin <- ggplot(mam, aes(sample = body_mass_kg)) +
+    geom_qq(color = "tomato") +
+    geom_qq_line(alpha = 0.5, size = 2) +
+    theme_cowplot() +
+    xlab("Theoretical quantiles") +
+    ylab("Observed quantiles")
+
+plot_grid(histlin, histlog, qqlin, qqlog, nrow = 2)
+```
+
+## Can't talk about the normal distribution without...
+
+::: columns
+
+:::: column
+
+![](img/bell_curve_book.png)
+
+::::
+
+:::: column
+
+The "bell curve" and the pseudo-science of "race science"
+
+- Claims there's an "average man" in terms of intangible qualities like "intelligence" **FALSE**
+- Claims "intelligence" is largely genetic **FALSE**
+- Claims different "races" have different *genetic* propensities for "intelligence" **FALSE**
+- Used to justify racism
+- Why do some instructors curve grades?
+
+::::
+
+:::
+

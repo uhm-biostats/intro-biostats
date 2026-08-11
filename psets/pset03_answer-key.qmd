@@ -1,0 +1,264 @@
+---
+title: "BIOL 220 Problem Set 03: Sample estimates and confidence intervals"
+subtitle: "Answer Key"
+format:
+  pdf:
+    toc: false
+    number-sections: false
+    colorlinks: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval = TRUE, message = FALSE, warning = FALSE)
+
+library(cowplot)
+library(dplyr)
+library(DT)
+library(ggplot2)
+library(infer)
+library(readr)
+library(tibble)
+
+```
+
+
+
+## How much caffeine is in your coffee?
+
+The table below (not shown in answer key) contains data on the amount of caffeine in a 16 oz. cup of coffee obtained from various vendors. For context, doses of caffeine over 25 mg are enough to increase anxiety in some people, and doses over 300 to 360 mg are enough to significantly increase heart rate in most people. A can of Red Bull contains 80mg of caffeine.
+
+
+
+
+## Use the data table of coffee caffeine concentration to answers Questions 1--8
+
+
+
+
+
+```{r echo = FALSE}
+caf <- read.csv("data/caffeine.csv")
+```
+
+
+
+1. What is the mean amount of caffeine in the sample of 16 oz. coffees? Round your answer to an appropriate digit. [1 point]
+
+:::: {.callout-note appearance="simple"}
+## Answer
+
+```{r echo = TRUE}
+ybar <- mean(caf$caffeine_mg_16oz)
+ybar
+```
+
+::::
+
+2. What is the 95% confidence interval for the mean? Use the 2 SE rule and round your answer to an appropriate digit. Report your answer like "lower - upper". For example, if the confidence interval were -1.1 to 2.1, then I would report "-1.1, - 2.1". [1 point]
+
+:::: {.callout-note appearance="simple"}
+## Answer
+
+```{r echo = TRUE}
+se <- sd(caf$caffeine_mg_16oz) / sqrt(nrow(caf))
+
+ci95 <- c(ybar - 2 * se, ybar + 2 * se)
+ci95
+```
+
+
+::::
+
+3. Is the amount of caffeine in a cup of coffee relatively consistent from one vendor to another? To help answer that, calculate the standard deviation of caffeine level and round your answer to an appropriate digit. [1 point]
+
+:::: {.callout-note appearance="simple"}
+## Answer
+
+```{r echo = TRUE}
+sd(caf$caffeine_mg_16oz)
+```
+
+With a standard deviation of `r round(sd(caf$caffeine_mg_16oz), 2)`, the amount of caffeine is not relatively consistent
+::::
+
+4. The table below (not shown in answer key) has data on six 16 oz. cups of Breakfast Blend coffee sampled on six different days from a Starbucks location. Calculate the the 95% confidence interval for the mean using the 2 SE rule for these data. Report your answer in the same format as Question 2. [1 point]
+
+:::: {.callout-note appearance="simple"}
+## Answer
+
+```{r echo = TRUE}
+
+# file path will be different for you
+bucks <- read.csv("data/caffeineStarbucks.csv")
+
+se <- sd(bucks$caffeine_mg_16oz) / sqrt(nrow(bucks))
+
+ci95 <- mean(bucks$caffeine_mg_16oz) + 2 * c(-se, se)
+ci95
+```
+
+::::
+
+
+5. Compare these results to the data taken on the broader sample of vendors in the first file. Describe the difference in 1-2 sentences. [2 point]
+
+:::: {.callout-note appearance="simple"}
+## Answer
+
+The range of the 95% CI for Starbucks is substantially bigger (spanning roughly 200 mg per 16 oz) compared to the 95% CI from multiple brands (which spans roughly 40 mg per 16 oz). Two factors could contribute to this difference in the widths of the CIs: there are fewer data points for Starbucks, there could also be a genuinely huge discrepancy in how much caffine is in the Starbucks coffee.
+
+::::
+
+6. Calculate the approximate 99% confidence interval for the mean caffeine level in the first table by using 2.5 SE's rather than 2 SE. Again, round your answer to an appropriate digit and report your answer in the same format as Question 2 and 4. [1 point]
+
+:::: {.callout-note appearance="simple"}
+## Answer
+
+
+```{r echo = TRUE}
+se <- sd(caf$caffeine_mg_16oz) / sqrt(nrow(caf))
+
+ci99 <- c(ybar - 2.5 * se, ybar + 2.5 * se)
+ci99
+```
+
+
+::::
+
+7. Compare the 99% confidence interval calculated in Question 6 to the 95% confidence interval you calculate in question 2. Which confidence interval is wider (i.e., spans a broader range) and why? [1 point]
+
+:::: {.callout-note appearance="simple"}
+## Answer
+
+The 99% CI is wider because it covers more of the sampling distribution
+
+
+::::
+
+8. Based on the two data sets above (Multiple brands and Starbucks), which of the figures below depicts the mean caffeine concentration with error bars equal to $\pm$ 1 standard error of the mean? [1 point]
+
+```{r, fig.align = "center", fig.width=7, fig.height=5}
+
+df <- bind_rows(
+  select(read_csv("data/caffeine.csv"), caffeine_mg_16oz) %>%
+    mutate(`Data set` = "Multiple brands"),
+  select(read_csv("data/caffeineStarbucks.csv"), caffeine_mg_16oz) %>% 
+    mutate(`Data set` = "Starbucks")
+) %>%
+  group_by(`Data set`) %>%
+  summarize(
+    mu = mean(caffeine_mg_16oz),
+    sd = sd(caffeine_mg_16oz),
+    n = n()
+  ) %>%
+  mutate(se = sd / sqrt(n))
+
+gp1 <- ggplot(df, aes(`Data set`, mu)) +
+  geom_errorbar(aes(ymin = mu - se, ymax = mu + se), width = 0.1) +
+  geom_point(size = 2) +
+  scale_y_continuous(limits = c(150, 510)) +
+  ylab("Caffeine\n(mg per 16 oz.)") +
+  theme_cowplot()
+
+gp2 <- ggplot(df, aes(`Data set`, mu)) +
+  geom_errorbar(aes(ymin = mu - 2 * se, ymax = mu + 2 * se), width = 0.1) +
+  geom_point(size = 2) +
+  scale_y_continuous(limits = c(150, 510)) +
+  ylab("Caffeine\n(mg per 16 oz.)") +
+  theme_cowplot()
+
+gp3 <- ggplot(df, aes(`Data set`, mu)) +
+  geom_errorbar(aes(ymin = mu - 2.5 * se, ymax = mu + 2.5 * se), width = 0.1) +
+  geom_point(size = 2) +
+  scale_y_continuous(limits = c(150, 510)) +
+  ylab("Caffeine\n(mg per 16 oz.)") +
+  theme_cowplot()
+
+gp4 <- ggplot(df, aes(`Data set`, mu)) +
+  geom_errorbar(aes(ymin = mu - sd, ymax = mu + sd), width = 0.1) +
+  geom_point(size = 2) +
+  scale_y_continuous(limits = c(150, 510)) +
+  ylab("Caffeine\n(mg per 16 oz.)") +
+  theme_cowplot()
+
+plot_grid(gp4, gp3, gp1, gp2, labels = "AUTO", nrow = 2)
+
+```
+
+:::: {.callout-note appearance="simple"}
+## Answer
+
+C.
+
+
+
+::::
+
+## Understanding confidence intervals
+
+```{r}
+
+set.seed(20210203)
+population <- tibble(x = scale(rnorm(1e6))[, 1])
+sample_size <- 16
+n_reps <- 100
+
+df <- population %>%
+  rep_slice_sample(sample_size, reps = n_reps) %>%
+  bind_rows(., .) %>%
+  summarize(
+    ybar = mean(x),
+    n = n(),
+    s = sd(x)
+  ) %>%
+  group_by(replicate) %>%
+  mutate(se = s / sqrt(n), lower = ybar - 2 * se, upper = ybar + 2 * se) %>%
+  arrange(ybar) %>%
+  ungroup() %>%
+  mutate(overlap = (lower < 0 & upper > 0), y = row_number())
+
+```
+
+The figure below shows sample means (points) and associated confidence intervals of the mean (horizontal lines) from `r n_reps` different samples of the same population. In each case, the sample size is exactly $n = `r sample_size`$. Assume that all samples were conducted using an identical procedure.
+
+`r length(which(df$overlap))` of `r n_reps` have confidence intervals that overlap the true population mean (vertical black line). These are shown with **black** points and lines. `r length(which(!df$overlap))` of `r n_reps` have confidence intervals that do **not** overlap the true population mean (vertical black line). These are shown with <strong><span style="color:red">red</span></strong> points and lines. 
+
+```{r, fig.align = "center", fig.width=3, fig.height=6}
+
+ggplot(df, aes(ybar, y, color = overlap)) +
+  geom_vline(xintercept = 0) +
+  geom_errorbarh(aes(xmin = lower, xmax = upper), height = 0,
+                 show.legend = FALSE) +
+  scale_color_manual(values = c("red", "black")) +
+  geom_point(show.legend = FALSE) +
+  theme_cowplot() +
+  theme(
+    axis.title = element_blank(),
+    axis.text = element_blank(),
+    axis.line.y = element_blank(),
+    axis.ticks = element_blank()
+  )
+```
+
+::: {.callout-tip}
+## Use the figure above to answer Question 9
+  
+
+9. Which of the following statements most likely explains what you observe in this figure? [1 point]
+
+* These are 95% confidence intervals from 100 random samples
+* These are 95% confidence intervals from 100 nonrandom samples
+* These are 95% confidence intervals but some confidence intervals do not overlap the population mean because the sample size is too small
+* These are 95% confidence intervals but but some confidence intervals do not overlap the population mean because the samples are biased
+
+
+:::: {.callout-note appearance="simple"}
+## Answer
+
+
+* These are 95% confidence intervals from 100 nonrandom samples
+
+
+::::
+
+:::

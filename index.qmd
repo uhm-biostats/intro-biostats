@@ -1,0 +1,13 @@
+---
+title: "Welina mai!"
+---
+
+This is the course website for BIOL 220 at the University of Hawaiʻi at Mānoa.
+
+Use the sidebar to navigate modules. Each module contains three components, each with its own icon in the sidebar:
+
+- <i class="bi bi-easel"></i> **Lecture** -- lecture slides
+- <i class="bi bi-terminal"></i> **Lab** -- hands-on practice with R
+- <i class="bi bi-pencil-square"></i> **Problem Set** -- graded practice problems
+
+

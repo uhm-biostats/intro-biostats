@@ -1,0 +1,126 @@
+---
+title: "BIOL 220 Problem Set 05: Null Hypothesis Significance Testing"
+subtitle: "Answer Key"
+format:
+  pdf:
+    toc: false
+    number-sections: false
+    colorlinks: true
+    filters:
+      - callout-akey.lua
+header-includes:
+    - \usepackage{mdframed}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval = TRUE, message = FALSE, 
+                      warning = FALSE)
+
+library(cowplot)
+library(dplyr)
+library(ggplot2)
+library(DT)
+```
+
+
+## Identifying $H_0$ and $H_A$ {.unnumbered}
+
+::: {.callout-tip}
+## Questions 1--3 will get you thinking about what distinguishes null and alternative hypotheses 
+
+1. Give an appropriate null hypothesis for this alternative hypothesis [1 point]:
+
+> $H_\textrm{A}$: The mean leaf size of plants from tropical latitudes is different than the mean leaf size of plants from temperate latitudes.
+
+
+
+
+
+
+
+:::: {.callout-akey}
+
+**Possible answer**
+
+$H_0$: The mean leaf size of plants form tropical latitudes is equal to the mean leaf size of plants from temperate latitudes
+
+The probability is the area under the curve, which is greatest between 8 and 10 in this example.
+
+::::
+
+
+2. Give an appropriate alternative hypothesis for this null hypothesis [1 point]:
+
+> $H_0$: There is no difference in the mean blood concentrations of C-reactive protein (used to diagnose Crohn's disease, units: mg/dL) in patients given a diet high in broccoli sprouts compared to the control group
+
+
+:::: {.callout-akey}
+**Possible answer**
+
+$H_\textrm{A}$: The mean blood concentrations of C-reactive protein (used to diagnose Crohn's disease, units: mg/dL) in patients given a diet high in broccoli sprouts is different to the mean blood concentrations of C-reactive protein to the control group
+
+::::
+
+
+
+3. Determine whether each hypothesis below is more appropriate as a null hypothesis or an alternative hypothesis: [1 point]
+
+- Hypothesis: sea water temperature changes the proportion of corals that experience bleaching.
+- Hypothesis: the ratio of body mass to brain mass across mammals equals 1.
+- Hypothesis: the average number of animal species within tropical latitudes is the same as the average number of animal species outside of the tropics
+- Hypothesis: the effect of a new experimental drug called "feel better syrup" has no effect on duration of common cold symptoms
+
+:::: {.callout-akey}
+**Answer**
+
+- Hypothesis: sea water temperature changes the proportion of corals that experience bleaching. $\mathbf{H_A}$
+- Hypothesis: the ratio of body mass to brain mass across mammals equals 1. $\mathbf{H_0}$
+- Hypothesis: the average number of animal species within tropical latitudes is the same as the average number of animal species outside of the tropics $\mathbf{H_A}$
+- Hypothesis: the effect of a new experimental drug called "feel better syrup" has no effect on duration of common cold symptoms $\mathbf{H_0}$
+
+::::
+
+:::
+
+
+## P-values, sample size, and whether the null is really true {.unnumbered}
+
+::: {.callout-tip}
+## Pay close attention to the details in questions 4--5!
+
+4. Consider a clinical trial of a new drug to treat Alzheimer's. Half the participants are given the drug; half are given a placebo control. Treatments are assigned at random. Assuming that the drug actually has no effect, which of the following statements is true? [1 point]
+
+    a. A clinical trial with a larger sample is **more** likely than a smaller trial to get a result with $p < 0.05$
+    b. A clinical trial with a larger sample is **less** likely than a smaller trial to get a result with $p < 0.05$
+    c. A clinical trial with a larger sample is **equally** likely than a smaller trial to get a result with $p < 0.05$
+    d. None of the above are true
+
+:::: {.callout-akey}
+
+**Answer**
+
+c. A clinical trial with a larger sample is **equally** likely than a smaller trial to get a result with $p < 0.05$
+
+This may seem counter-intuitive but the reason is that when there truely is no effect (i.e. when $H_0$ really is true), then the chance of getting $p < 0.05$ is the same across sample sizes
+
+::::
+    
+
+5. Consider a clinical trial of a new drug to treat Alzheimer's. Half the participants are given the drug; half are given a placebo control. Treatments are assigned at random. Assuming that the drug *actually does reduce the chance of developing Alzheimer's*, which of the following statements is true? [1 point]
+
+    a. A clinical trial with a larger sample is **more** likely than a smaller trial to get a result with $p < 0.05$
+    b. A clinical trial with a larger sample is **less** likely than a smaller trial to get a result with $p < 0.05$
+    c. A clinical trial with a larger sample is **equally** likely than a smaller trial to get a result with $p < 0.05$
+    d. None of the above are true
+
+
+:::: {.callout-akey}
+
+**Answer**
+
+a. A clinical trial with a larger sample is **more** likely than a smaller trial to get a result with $p < 0.05$
+
+::::
+
+
+:::

@@ -1,0 +1,13 @@
+cowplot
+ggplot2
+tibble
+dplyr
+tidyr
+RColorBrewer
+wordcloud
+NLP
+tm
+viridisLite
+viridis
+tidydice
+gridExtra

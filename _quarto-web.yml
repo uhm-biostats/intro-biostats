@@ -1,0 +1,38 @@
+project:
+  type: website
+  output-dir: docs
+  render: 
+    - index.qmd
+    - setup.qmd
+    - lectures/01-intro.qmd
+    - labs/lab01.qmd
+    - psets/pset01.qmd
+  post-render: quarto render --profile slides
+
+execute:
+  freeze: auto
+
+website:
+  title: "Introductory Biostatistics"
+  page-navigation: true
+  sidebar:
+    style: "docked"
+    search: true
+    contents:
+      - file: index.qmd
+      - file: setup.qmd
+      - section: "Intro"
+        contents:
+          - icon: easel
+            file: lectures/01-intro.qmd
+          - icon: terminal
+            file: labs/lab01.qmd
+          - icon: pencil-square
+            file: psets/pset01.qmd
+
+format:
+  html:
+    theme: 
+      - cosmo
+      # - mods.scss
+    toc: true

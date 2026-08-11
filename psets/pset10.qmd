@@ -1,0 +1,126 @@
+# Regression 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval = TRUE, message = FALSE, 
+                      warning = FALSE)
+
+library(cowplot)
+library(dplyr)
+library(ggplot2)
+library(DT)
+library(tibble)
+library(brms)
+library(tidyr)
+library(magrittr)
+```
+
+
+## Benefits of biodiversity {.unnumbered}
+
+```{r, fig.align = "center", out.width="50%", fig.cap="Hoʻomaluhia Botanical Garden, an urban green space on Oʻahu. Photo credit: Daniel Ramirez / Flickr"}
+knitr::include_graphics("img/hoomaluhia.jpeg")
+```
+
+Just like in the problem set on correlation, we will again look at the data from [Fuller *et al.* (2007)](https://doi.org/10.1098/rsbl.2007.0149) who measured the diversity of plant, bird, and butterfly species in 15 urban green spaces of varying size. They also asked 312 green-space users about their emotional "attachment" to green spaces to see if more biodiverse green space lead to greater emotional attachment from users.
+
+
+```{r}
+
+fuller_etal_2017 <- tibble(
+    attachment = c(4.4, 4.5, 4.7, 4.5, 4.3, 3.8, 4.4, 4.6, 4.1,
+                   4.2, 4.6, 4.2, 4.3, 4.4, 4.2),
+    area_ha = c(23.8, 16.0, 6.9, 2.3, 5.7, 1.2, 1.4, 15.0, 3.1, 
+                3.8, 7.6, 12.9, 4.0, 5.6, 4.9),
+    butterfly = c(6, 14, 8, 10, 6, 5, 5, 7, 9, 5, 10, 9, 12, 11, 7),
+    bird = c(12, 18, 8, 17, 7, 4, 8, 22, 7, 4, 11, 11, 13, 16, 7),
+    ln_plant = c(5.1, 5.5, 6.4, 4.7, 5.3, 4.6, 4.5, 5.5, 5.2, 
+                 4.6, 4.5, 5.0, 5.0, 5.6, 5.4)
+)
+
+cor_area_ha <- cor(fuller_etal_2017$attachment, fuller_etal_2017$area_ha)
+cor_butterfly <- cor(fuller_etal_2017$attachment, fuller_etal_2017$butterfly)
+cor_bird <- cor(fuller_etal_2017$attachment, fuller_etal_2017$bird)
+cor_ln_plant <- cor(fuller_etal_2017$attachment, fuller_etal_2017$ln_plant)
+
+df <- nrow(fuller_etal_2017) - 2
+SE_r <- sqrt((1 - cor_area_ha ^ 2) / df)
+test_stat <- cor_area_ha / SE_r
+P_value <- 2 * pt(test_stat, df = df, lower.tail = FALSE)
+
+fuller_etal_2017 %>%
+    rename(
+        Attachment = attachment,
+        `Area (ha)` = area_ha,
+        `Number of butterfly species` = butterfly,
+        `Number of bird species` = bird,
+        `ln(Number of plant species)` = ln_plant,
+    ) %>%
+    knitr::kable()
+
+```
+
+
+
+::: {.callout-tip}
+## Questions 1--5 refer to the prompt and data above
+
+To get these data into *R* you can copy-paste and run this code:
+
+```{r echo = TRUE, eval = FALSE}
+fuller_etal_2017 <- data.frame(
+    attachment = c(4.4, 4.5, 4.7, 4.5, 4.3, 3.8, 4.4, 4.6, 4.1,
+                   4.2, 4.6, 4.2, 4.3, 4.4, 4.2),
+    area_ha = c(23.8, 16.0, 6.9, 2.3, 5.7, 1.2, 1.4, 15.0, 3.1, 
+                3.8, 7.6, 12.9, 4.0, 5.6, 4.9),
+    butterfly = c(6, 14, 8, 10, 6, 5, 5, 7, 9, 5, 10, 9, 12, 11, 7),
+    bird = c(12, 18, 8, 17, 7, 4, 8, 22, 7, 4, 11, 11, 13, 16, 7),
+    ln_plant = c(5.1, 5.5, 6.4, 4.7, 5.3, 4.6, 4.5, 5.5, 5.2, 
+                 4.6, 4.5, 5.0, 5.0, 5.6, 5.4)
+)
+```
+
+1. If our question is "does greater bird diversity increase attachment?", which graph below best visualizes the data in a way consistent with this question? [1 point]
+
+```{r fig.align='center'}
+gp1 <- ggplot(fuller_etal_2017, aes(attachment, bird)) +
+  geom_smooth(method = "lm") +
+  geom_point() +
+  xlab("Attachment") +
+  ylab("Number of bird species") +
+  theme_cowplot()
+
+gp2 <- ggplot(fuller_etal_2017, aes(bird, attachment)) +
+  geom_smooth(method = "lm") +
+  geom_point() +
+  ylab("Attachment") +
+  xlab("Number of bird species") +
+  theme_cowplot()
+
+plot_grid(gp1, gp2, nrow = 1, labels = "AUTO")
+```
+
+2. If our question is "does greater bird diversity increase attachment?" what is the best null hypothesis in a linear regression framework? [1 point]
+
+    a. H_0: The slope of **(change in bird species richness)** versus **(change in attachment)** is 0
+    b. H_0: The slope of **(change in attachment)** versus **(change in bird species richness)** is 0
+    c. H_0: The slope of **(change in attachment)** versus **(change in bird species richness)** is not 0
+    d. H_0: The slope of **(change in bird species richness)** versus **(change in attachment)** is less than 0
+
+3. Calculate the estimated slope for each of the following relationships:
+
+    a. Attachment as predicted by Number of butterfly species [1 point]
+    b. Attachment as predicted by Number of bird species [1 point]
+    c. Attachment as predicted by Area [1 point]
+
+4. For the linear model predicting Attachment from Number of bird species, report the results for a $t$-test null hypothesis test. Specifically, report the $t$-statistic, degrees of freedom, and $P$-value. [1 point]
+
+5. Use the `confint` function to calculate the 95% confidence interval for the slope of Attachment as predicted by Number of bird species. [1 point]
+
+6. Use `ggplot` code to show the data for Attachment as predicted by Number of bird species, the regression line for this relationship, and the 95% confidence band. Copy and paste your code into the google form to answer this question. [1 point]
+
+7. Based on your findings from questions 2--6, do you reject the null hypothesis? What, if any, caveats should you state when interpreting the relationship between Attachment and Number of bird species? [2 points]
+
+
+:::
+
+

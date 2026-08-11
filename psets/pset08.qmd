@@ -1,0 +1,201 @@
+# Analyzing means with t-tests
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval = TRUE, message = FALSE, 
+                      warning = FALSE)
+
+library(cowplot)
+library(dplyr)
+library(ggplot2)
+library(DT)
+library(tibble)
+library(brms)
+library(tidyr)
+```
+
+
+## Phenology {.unnumber}
+
+According to Wikipedia, "Phenology is the study of periodic events in biological life cycles and how these are influenced by seasonal and interannual variations in climate, as well as habitat factors". Suppose that you want to test a hypothesis about the timing of a winter-flowering plant. You survey a random sample of 100 plants from a population every day of the year and record the number of plants producing their first flower on that date. The figure below shows the number of plants that first flower on a given Julian day (January 1 has Julian day of 0; December 31 has a Julian day of 365). 
+
+```{r, fig.align='center'}
+
+set.seed(20210331)
+df <- tibble(x = round((rvon_mises(1e2, -pi, 10) + pi) * (365 / (2 * pi))))
+
+ggplot(df, aes(x)) +
+  geom_histogram(breaks = seq(0, 365, 5)) + 
+  xlab("Julian day") +
+  theme_cowplot() +
+  theme(
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14),
+  )
+
+```
+
+::: {.callout-tip}
+## Question 31 refers to the prompt and figure above.
+
+1. Would a one-sample $t$-test be an appropriate method to test a hypothesis about the mean time to first flower in this population? Answer the question assuming you cannot make any changes to the data, such as binning or transformation. [1]
+
+    a. Yes, the data meet all the assumptions of the one-sample $t$-test
+    b. No, because the data are discrete counts per day rather than continuous
+    c. No, because it's not possible to state a null hypothesis
+    d. No, because the data are not normally distributed
+
+:::
+
+## Banana peels and *Lotus* leaves {.unnumber}
+
+
+How slippery are banana peels? "Slipperiness" is measured by the coefficient of friction. A small value for the coefficient indicates less friction (more slippery) than a larger value. For reference, another slippery biological material, the water-repellent *Lotus* leaf has a coefficient of 0.05. Below are 41 measurements of the coefficient of friction of banana skins on linoleum, with the slippery side down (Mabuchi *et al.* 2012).
+
+```{r, echo = TRUE, eval = FALSE}
+
+# Banana coefficient of friction (cof)
+# You can copy-and-paste into R
+banana_cof <- c(0.029, 0.034, 0.036, 0.037, 0.039, 0.041, 0.041, 
+                0.042, 0.043, 0.043, 0.045, 0.047, 0.047, 0.048, 
+                0.048, 0.048, 0.053, 0.054, 0.054, 0.054, 0.055, 
+                0.055, 0.056, 0.056, 0.057, 0.059, 0.06, 0.062, 
+                0.062, 0.063, 0.064, 0.065, 0.069, 0.069, 0.07, 
+                0.071, 0.075, 0.078, 0.080, 0.113, 0.125)
+```
+
+```{r, echo = FALSE, eval = FALSE}
+# Prepping stuff for rubric
+
+banana_cof <- c(0.029, 0.034, 0.036, 0.037, 0.039, 0.041, 0.041, 0.042, 0.043, 0.043, 0.045, 0.047, 0.047, 0.048, 0.048, 0.048, 0.053, 0.054, 0.054, 0.054, 0.055, 0.055, 0.056, 0.056, 0.057, 0.059, 0.06, 0.062, 0.062, 0.063, 0.064, 0.065, 0.069, 0.069, 0.07, 0.071, 0.075, 0.078, 0.08, 0.113, 0.125)
+
+# Calculate sample mean
+Ybar <- mean(banana_cof)
+
+# Calculate sample standard error of the mean
+SE_Ybar <- sd(banana_cof) / sqrt(length(banana_cof))
+
+# Standardized differences
+conf_level <- 0.95
+std_diff <- qt((1 - conf_level) / 2, 40, lower.tail = FALSE)
+
+# Confidence intervals
+Ybar - std_diff * SE_Ybar
+Ybar + std_diff * SE_Ybar
+
+# Degrees of freedom
+length(banana_cof) - 1
+
+# Test statistic
+test_stat <- (Ybar - 0.05) / SE_Ybar
+
+# P-value
+2 * pt(test_stat, 40, lower.tail = FALSE)
+
+```
+
+
+
+::: {.callout-tip}
+## Questions 2--8 refer to the prompt and data above
+
+
+
+2. Suppose that you want to test whether the banana peel is more slippery than a *Lotus* leaf using a one-sample $t$-test. What is an appropriate null hypothesis? [1]
+
+    a. $\mu = 0.05$
+    b. $\mu = 0.025$
+    c. $\mu = 1$
+    d. $\mu = 0$
+
+3. For a one-sample $t$-test, how many degrees of freedom would you use for this data set? [1]
+
+4. Calculate the 95% confidence intervals of the mean of the coefficient of friction for the banana peel data. Report your answer rounded to the nearest 0.001 and separated by a "-", like this: 0.123-0.456. [1]
+
+5. For a one-sample $t$-test, calculate the test statistic rounded to the nearest 0.001. [1]
+
+6. For a one-sample $t$-test, what is the $P$-value? [1]
+
+<!-- Answers based on these: -->
+<!-- t.test(df$cof, mu = 0.05) # correct -->
+<!-- t.test(df$cof, mu = 0.02) # copied from book -->
+<!-- t.test(df$cof, mu = 0) # naive -->
+
+
+
+7. Based on your confidence intervals and $P$-value, are banana peels significantly more slippery than *Lotus* leaves? [1]
+
+
+8. A better test of whether banana peels are more slippery than *Lotus* leaves would be to have replicated measures of the coefficient of friction of multiple different *Lotus* leaves.
+
+    Imagine this is such a dataset on *Lotus* leaves:
+    
+    ```r
+    lotus_cof <- c(0.052, 0.062, 0.056, 0.039, 0.043, 0.046, 
+                   0.046, 0.062, 0.077, 0.051, 0.048, 0.064, 
+                   0.058, 0.059, 0.051, 0.023, 0.051, 0.032, 
+                   0.047, 0.052, 0.066, 0.053, 0.043, 0.053, 
+                   0.045, 0.057, 0.051, 0.041, 0.047, 0.041)
+    ```
+    
+    Use a two-sample t-test to test the null hypothesis that the means of the two vectors are equal. To answer this question, paste the output of `t.test` into the google form
+
+:::
+
+
+## Distinguishing distributions {.unnumber}
+
+The figure plots 3 continuous probability distributions: $\text{Normal}(\mu = 0, \sigma = 2)$, $t_2$, and the $Z$ distribution). 
+
+<!-- # distinguish between t, Z, and other normal dist (sigma = 2 or whatever) -->
+
+```{r, fig.align='center'}
+
+# A ~ Gaussian(0, 2)
+# B ~ Z
+# C ~ t
+df1 <- crossing(x = seq(-4, 4, 0.01), nesting(
+  Distribution = c("A", "B", "C"), 
+  df = c(Inf, Inf, 2))) %>%
+  mutate(y = dt(x, df)) %>%
+  mutate(x = x * (1 + (Distribution == "A"))) %>%
+  mutate(y = y * (1 - 0.5 * (Distribution == "A")))
+  
+gp1 <- ggplot(filter(df1, Distribution == "A"), aes(x, y)) +
+  geom_line(size = 2) +
+  scale_x_continuous(breaks = seq(-8, 8, 4)) +
+  scale_y_continuous(breaks = seq(0, 0.2, 0.05)) +
+  ylab("Probability density") +
+  theme_cowplot() +
+  theme(
+    axis.text = element_text(size = 12),
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(size = 14),
+    panel.grid.major = element_line(color = "grey")
+  )
+
+gp2 <- gp1 %+% filter(df1, Distribution == "B") +
+  scale_x_continuous(breaks = seq(-4, 4, 2)) +
+  scale_y_continuous(breaks = seq(0, 0.4, 0.1)) +
+  ylim(0, 0.4)
+
+gp3 <- gp1 %+% filter(df1, Distribution == "C") +
+  scale_x_continuous(breaks = seq(-4, 4, 2)) +
+  scale_y_continuous(breaks = seq(0, 0.4, 0.1)) +
+  ylim(0, 0.4)
+
+plot_grid(gp1, gp2, gp3, labels = "AUTO")
+
+```
+
+
+::: {.callout-tip}
+## Questions 9--10 refer to the figure above.
+  
+
+
+9. Which figure shows the $t_2$ distribution? [1]
+
+10. Which figure shows the $Z$ distribution? [1]
+
+:::
+

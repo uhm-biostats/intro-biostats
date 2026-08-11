@@ -1,0 +1,232 @@
+---
+title: "BIOL 220 Problem Set 04: Probability"
+subtitle: "Answer Key"
+format:
+  pdf:
+    toc: false
+    number-sections: false
+    colorlinks: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval = TRUE, message = FALSE, 
+                      warning = FALSE)
+
+library(cowplot)
+library(dplyr)
+library(ggplot2)
+library(DT)
+```
+
+
+
+## Mōlī on O‘ahu {.unnumbered}
+
+![A mōlī seen from Kauaʻi, Photo credit: DickDaniels (http://carolinabirds.org/)](img/Laysan_Albatross_RWD2.jpg){width=75%}
+
+The mōlī, aka Laysan albatross *(Phoebastria immutabilis)*, have a breading population on Oʻahu that is of considerable conservation importance and has been extensively studied (e.g. [VanderWerf and Young 2016](https://doi.org/10.1650/CONDOR-16-49.1). Mōlī remain at sea for a year or more after fledging and then return to their birthplace to breed on land. 
+
+The figure below shows the probability distribution for the age at first breeding in the Oʻahu population. Note that this figure is hypothetical but is based on the actual VanderWerf and Young study. 
+
+```{r, albatross, fig.align='center', fig.width=3.5, fig.height=3.5}
+mean_age <- 9
+sd_age <- 1
+df2 <- data.frame(x = seq(5, 13, 0.01))
+df2$y <- dnorm(df2$x, mean_age, sd_age)
+
+ggplot(df2, aes(x, y)) +
+    geom_area(fill = "steelblue", color = "black") +
+    xlab("Age at first breeding (years)") +
+    ylab("Probability density") +
+    geom_vline(xintercept = 9, linetype = "dashed") +
+    annotate("label", x = 9, y = 1.1 * dnorm(0), label = "Mean: 9 years")
+
+```
+
+::: {.callout-tip}
+## Use the above figure to answer question 1
+
+1. Visually estimate which of the following outcomes has the highest probability in a random sample of one individual in the population. [1 point]
+
+    a. It breeds first exactly at age 9
+    b. It breeds first between ages 9 and 10
+    c. It breeds first between ages 8 and 10
+    d. It breeds first between ages 10 and 13
+
+
+::: {.callout-note appearance="simple"}
+## Answer
+
+**c. It breeds first between ages 8 and 10**
+
+The probability is the area under the curve, which is greatest between 8 and 10 in this example.
+:::
+
+:::
+
+Mōlī pairs lay one egg per year, and the egg may not hatch. If it does hatch, the chick may not survive to fledge. Thus the total lifetime reproductive success (number of fledglings) per female is variable, depending on hatching and fledging success, and also the survival of the female and age of first reproduction (see Question 1.). The below figure shows a hypothetical distribution of total lifetime fledging success per female (i.e. total number of chicks fledged over a lifetime). *Hypothetical*, but again based on real published research.
+
+```{r, fig.align='center', fig.width=6, fig.height=4}
+x <- 0:10
+df_fledge <- data.frame(x = x, y = dlnorm(x + 1, 1.1, 0.7))
+df_fledge$y <- round(df_fledge$y / sum(df_fledge$y), 2)
+
+ggplot(df_fledge, aes(x, y, label = y)) +
+  geom_col(fill = "tomato") +
+  geom_text(vjust = -1) +
+  scale_x_continuous(breaks = 0:10, labels = c(0:9, "≥10")) +
+  scale_y_continuous(limits = c(0, 0.3)) +
+  xlab("Total number of chicks fledged") +
+  ylab("Probability") +
+  theme_cowplot()
+
+
+```
+
+::: {.callout-tip}
+## Use the above figure to answer question 2--3
+
+2. Suppose you find a female mōlī who has currently successfully fledged a chick. What is the probability that in her lifetime she will fledge a total of 7 or more chicks?  Round your answer to the nearest thousandth [1 point]
+
+
+::: {.callout-note appearance="simple"}
+## Answer
+
+**(0.03 + 0.02 + 0.01 + 0.01) / (1 - 0.17) = 0.08 probability**
+
+The probability is the sum of the probabilities of >= 7 chicks fledge, but we have to condition on the fact that we are observing a female who has already successfully fledged at least 1 chick.
+:::
+
+
+3. Suppose that chick who just fledged is also a female. She will not return for several years to reproduce for the first time, if she even survives to reproductive age. 
+
+    a. What is the probability she will have 0 successful fledgings in her lifetime? [1 point]
+    b. What is the probability she will have 7 or more successful fledgings in her lifetime? [1 point]
+
+::: {.callout-note appearance="simple"}
+## Answer for 3a
+
+**0.17 probability**
+
+We do not need to condition on prior fledgling success, so the probability simply comes from reading the graph.
+:::
+
+::: {.callout-note appearance="simple"}
+## Answer for 3b
+
+**0.03 + 0.02 + 0.01 + 0.01 = 0.07 probability**
+
+We do not need to condition on prior fledgling success, so the probability simply comes from reading the graph and adding probabilities.
+:::
+
+
+
+:::
+
+
+Survival of mōlī chicks is determined by a number of factors; an important is infection with infection with avian pox virus. Avian pox virus also influences whether fledglings will return to reproduce after their adolescent years at sea. 
+
+![A mōlī chick with avian pox virus](img/moli_pox.png)
+
+VanderWerf and Young (2016) studied the effect of avian pox virus on chick survival and recruitment back into the breeding colony (i.e. returning to Oʻahu to breed). They found that chick survival probability was 0.79 when not infected with avian pox virus, versus 0.68 probability when severely infected. Recruitment probability was measured by estimating the proportion of fledged birds that returned to the breeding colony by age 9. The recruitment probability, thus defined, for birds not infected was 0.58, versus 0.39 when severely infected.
+
+
+
+::: {.callout-tip}
+## Use the above information about survival and recruitment to answer questions 4--5.
+
+4. Understanding the events of "survive" and "recruit"
+
+    a. Select one answer: are the events of "survive" and "recruit" mutually exclusive or not? [1 point]
+
+        - yes they are mutually exclusive
+        - no they are not mutually exclusive
+        
+    b. The events "survive" and "recruit" and *not* indipendent (ask yourself: can a bird recruit into a breeding colony if it does not survive past being a chick?). Are the reported recruitment probabilities $Pr(\text{recruit} \mid \text{survive})$ or $Pr(\text{recruit})$? [1 point]
+    
+        - $Pr(\text{recruit} \mid \text{survive})$
+        - $Pr(\text{recruit})$
+
+
+::: {.callout-note appearance="simple"}
+## Answers
+
+4a. The events "survive" and "recruit" are not mutually exclusive. A bird can survive and recruit *or* not recruit. Recruitment is very much *dependent* on survival, and $Pr(\text{yes recruit} | \text{no survive}) = 0$, but that does not make them mututally exclusive
+
+4b. The reported probabilities are $Pr(\text{recruit} \mid \text{survive})$. That is because the only way for the researchers to observe recruitment is if the bird survived in the first place. 
+
+:::
+
+5. Calculate the following probabilities, round your answer to 2 decimal paces.
+
+    a. What is the probability of a severely infected chick to grow up and recruit back to the colony? Assume once infected, this bird stays infected. [1 point]
+    b. What is the probability of an uninfected chick to grow up and recruit back to the colony? Assume the chick will not become infected later in life. [1 point]
+
+::: {.callout-note appearance="simple"}
+## Answer for 5a
+
+`0.68 * 0.39 = 0.27` probability
+
+The full equation would be $Pr(\text{survive} \mid \text{infected}) \times Pr(\text{recruit} \mid \text{infected and survive})$. The probability of 0.39 of recruitment is already conditional on surviving.
+:::
+
+::: {.callout-note appearance="simple"}
+## Answer for 5b
+
+`0.79 * 0.58 = 0.46` probability
+
+The full equation would be $Pr(\text{survive} \mid \text{not infected}) \times Pr(\text{recruit} \mid \text{not infected and survive})$. The probability of 0.58 of recruitment is already conditional on surviving.
+:::
+
+:::
+
+[Young et al. (2009)]() studied the success of hatching and fledging of mōlī on Oʻahu. Their data for 2004 to 2009 is reproduced in the table below
+
+
+
+::: {.callout-tip}
+## Use the data table on hatching and fledging success to answer questions 6--7
+
+
+
+6. From the data, what is the estimated probability of successful hatching? Round your answer to 2 decimal points [1 point]
+
+
+
+::: {.callout-note appearance="simple"}
+## Answer
+
+```{r echo = TRUE}
+moli <- data.frame(year = c(2004, 2005, 2006, 2007, 2008, 2009), 
+                   eggs_laid = c(30, 48, 54, 58, 62, 61), 
+                   chicks_hatched = c(20, 29, 38, 32, 48, 32), 
+                   chicks_fledged = c(18, 16, 28, 32, 38, 25))
+
+probs_hatch_all_yr <- moli$chicks_hatched / moli$eggs_laid
+prob_hatch <- mean(probs_hatch_all_yr)
+
+round(prob_hatch, 2)
+```
+
+:::
+
+
+7. From the data, what is the estimated probability of fledging *given* successful hatching? Round your answer to 2 decimal places [1 point]
+
+
+::: {.callout-note appearance="simple"}
+## Answer
+
+```{r echo = TRUE}
+probs_fledge_all_yr <- moli$chicks_fledged / moli$chicks_hatched
+prob_fledge <- mean(probs_fledge_all_yr)
+
+round(prob_fledge, 2)
+```
+
+:::
+
+:::
+
+
+

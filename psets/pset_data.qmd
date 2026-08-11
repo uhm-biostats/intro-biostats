@@ -1,0 +1,156 @@
+# Describing data
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval = TRUE, message = FALSE, 
+                      warning = FALSE)
+
+library(cowplot)
+library(ggplot2)
+library(DT)
+```
+
+
+::: {.callout-tip}
+## Multiple choice questions
+
+1. Which of the following accurately describes the numerator for the equation to calculate the variance? [1 point]
+
+    a. The square root of the standard deviation
+    b. The sum of the average deviations between the data values and the mean
+    c. The sum of the squared deviations between the data values and the mean
+    d. The average of all the data values
+
+2. Using the data set shown below, what are the correct mean and median values for this data set [1 point]?
+
+    > Data set: `3, 4, 5, 5, 8, 9, 11, 11`
+
+    a. Mean = 6.5, median = 7
+    b. Mean = 7.5, median = 6
+    c. Mean = 6, median = 7.5
+    d. Mean = 7, median = 6.5
+
+<!-- <div class="panel panel-success"> -->
+<!--   <div class="panel-heading">Explanation</div> -->
+<!--   <div class="panel-body"> -->
+
+<!--   The answer is **D. Mean = 7, median = 6.5** -->
+
+<!--   Mean: $3 + 4 + 5 + 5 + 8 + 9 + 11 + 11 = 56$; $56/8 = 7$ -->
+
+<!--   Median: The middle values are 5 and 8. Their average is 6.5 -->
+
+<!--   In *R* -->
+
+<!-- ```{r, echo = TRUE, eval = TRUE} -->
+<!-- x <- c(3, 4, 5, 5, 8, 9, 11, 11) -->
+<!-- mean(x) -->
+<!-- median(x) -->
+<!-- ``` -->
+
+<!--   </div> -->
+<!-- </div> -->
+
+3. The standard deviation has the same units as the data values, whereas the variance does not. [1 point]
+
+    - [ ] TRUE
+    - [ ] FALSE
+
+:::
+
+## Gliding snake undulation rate {.unnumbered}
+
+We saw the flying snake undulation data in lecture, they come from our WS textbook. The data are reproduced below:
+
+`0.9, 1.2, 1.2, 1.3, 1.4, 1.4, 1.6, 2.0` Hz
+
+These data are expressed in Hz which has units of 1/s (cycles per second). Frequency measurements are often expressed as angular velocity which is measured in rad/s (radians per second). Convert from Hz to angular velocity by multiplying by $2 \pi$, then use the *transformed* data to answer the following questions
+
+::: {.callout-tip}
+## Use the transformed data to calculate the sample mean, standard deviation, and variance.
+
+For your answers be sure:
+
+- report values rounded to one significant digit greater than as reported in the data
+- provide the **correct units**, using the ^ symbol for raising to a power. So if your answers were 2 square meters, you would write "2 m^2"
+
+4. What is the transformed sample mean? [1 point]
+
+5. What is the transformed sample variance? [1 point]
+
+6. What is the transformed sample standard deviation? [1 point]
+
+:::
+
+
+## Sea urchin reproduction {.unnumbered}
+
+```{r, fig.align = "center", out.width="50%", fig.cap="The sea urchin *Echinometra mathaei* (Photo credit: Dr. Dwayne Meadows, NOAA/NMFS/OPR)"}
+knitr::include_graphics("img/Reef4081_-_Flickr_-_NOAA_Photo_Library.jpg")
+```
+
+Reproduction in sea urchins involves the release of sperm and eggs in the open ocean. Fertilization begins when a sperm bumps into an egg and the sperm protein *bindin* attaches to the recognition sites on the egg surface. Gene sequences of *bindin* and egg-surface proteins vary greatly between closely related urchin species, thus reducing the chance of hybridization between species. In the burrowing sea urchin, *Echinometra mathaei*, the protein sequence for *bindin* varies even between populations within the same species. Do these differences affect fertilization? To test this, [Palumbi (1999)](https://doi.org/10.1073/pnas.96.22.12632) carried out trials in which a mixture of sperm from AA and BB genotype males were added to dishes containing eggs of either the AA or the BB genotype. The results below indicate the proportion of successfully fertilized eggs (of both AA and BB genotypes) that were fertilized by AA genotype sperm. Note: we do not need to look at fertilization by BB sperm because by definition, the fraction will be 1 - *fraction fertilized by AA sperm*.
+
+```{r, fig.align="center", fig.width=3, fig.height=4}
+
+bindin <- data.frame(Genotype = rep(c("AA eggs", "BB eggs"), c(12, 7)),
+                     frac_fert = c(0.58, 0.59, 0.69, 0.72, 0.78, 0.78, 0.81, 
+                                   0.85, 0.85, 0.92, 0.93, 0.95, 0.15, 0.22, 
+                                   0.30, 0.37, 0.38, 0.50, 0.95))
+
+ggplot(bindin, aes(Genotype, frac_fert)) +
+    geom_point(position = position_jitter(width = 0.1, height = NULL, seed = 1),
+               size = 2, alpha = 0.5) +
+    scale_y_continuous(limits = c(0, 1), n.breaks = 6) +
+    xlab("Egg genotype") +
+    ylab("Fraction of fertilizations by AA sperm") +
+    theme_cowplot() +
+    theme(
+        axis.text = element_text(size = 12),
+        axis.title = element_text(size = 14),
+        panel.grid.minor.y = element_line(color = "grey"),
+        panel.grid.major.y = element_line(color = "grey")
+    )
+
+```
+
+::: {.callout-tip}
+## Use the figure above to answer Questions 7--8.
+
+7. Examine the graph and visually determine the approximate value of the median for each egg genotype. Round your answer to two decimal places. Your visual estimates should be within 0.05 of the true values. [1 point]
+
+8. Inspect the plot. Based on how the data in each egg genotype group are distributed across the y-axis, answer the follow:
+
+    a. Which method would be best to compare the spread of the fertilization data for each egg genotype group? Be sure to justify your answer [1 point]
+    b. Use the raw data (shown below) to calculate the spread for each egg genotype group using the method you select in (8a.) [2 points]
+
+```{r, eval = FALSE}
+names(bindin)[2] <- "Fraction of fertilizations by AA sperm"
+
+datatable(bindin,
+          width = 200, 
+          rownames = FALSE,
+          extensions = "Buttons",
+          selection = "none",
+          options = list(
+              dom = 'Brtip',
+              # buttons = c('copy', 'csv'), 
+              buttons = list(list(extend = "copy", title = NULL), 
+                             list(extend = "csv", 
+                                  title = NULL
+                             )
+              ),
+              pageLength = nrow(bindin), 
+              paging = FALSE
+          )
+)
+```
+
+You can copy the below code and run it in R to make two vectors: one with the data on  fertilization proportions for eggs of AA genotype, the other for eggs of BB genotype:
+```{r, eval = TRUE, echo = TRUE}
+eggsAA <- c(0.58, 0.59, 0.69, 0.72, 0.78, 0.78, 0.81, 
+            0.85, 0.85, 0.92, 0.93, 0.95)
+
+eggsBB <- c(0.15, 0.22, 0.3, 0.37, 0.38, 0.5, 0.95)
+```
+
+:::

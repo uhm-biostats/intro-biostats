@@ -1,0 +1,24 @@
+project:
+  output-dir: docs
+  render:
+    - "lectures/*-slides.qmd"
+
+
+
+
+format:
+  revealjs:
+    theme:
+      - default
+      - slides.scss
+    slide-number: true
+    preview-links: auto
+    auto-stretch: false
+    embed-resources: false
+    controls: true
+    html-math-method:
+      method: mathjax
+      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
+
+execute:
+  freeze: auto

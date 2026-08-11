@@ -1,0 +1,497 @@
+---
+title: "BIOL 220 Probability"
+output: binb::metropolis
+header-includes:
+  - \usepackage{array}
+  - \usepackage{xcolor}
+  - \usepackage[export]{adjustbox}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, 
+                      eval = TRUE)
+
+library(cowplot)
+library(ggplot2)
+library(dplyr)
+library(viridis)
+```
+
+
+
+## Learning Objectives
+
+1. Determine if events are \alert{mutually exclusive}
+2. Determine if events are \alert{indipendent}
+
+
+
+
+## Define \alert{probability}
+
+\it The \alert{probability} of an event is the proportion of times that event would occur if we repeated a random trial over and over again under the same conditions. Probability always ranges between 0 and 1
+
+
+
+## Estimating \alert{probability}
+
+> The \alert{probability} of an event is the proportion of times that event would occur...
+
+What's the \alert{probability} I go to the beach and see a honu?
+
+\centering
+```{r}
+x <- data.frame(December = c(11, 4), January = c(7, 2))
+rownames(x) <- c("Visits to beach", "Seen a honu")
+
+knitr::kable(x)
+```
+
+
+## Estimating \alert{probability}
+
+What's the \alert{probability} I go to the beach and see a honu?
+
+\small
+
+```{r echo = TRUE}
+# probability is (number of events) / (number of trials)
+dec_prob <- 4 / 11
+dec_prob
+
+jan_prob <- 2 / 7
+jan_prob
+
+# combine info using mean
+mean(dec_prob, jan_prob)
+```
+
+
+
+## Rules of probability {.t}
+
+1. Probability is always between 0 and 1
+2. The sum of all the probabilities of all the possible outcomes always equals 1
+
+
+## Rules of probability {.t}
+
+1. Probability is always between 0 and 1
+2. The sum of all the probabilities of all the possible outcomes always equals 1
+3. We can *add* the probabilities of \alert{mutually exclusive} outcomes
+
+<!-- \centering -->
+<!-- \includegraphics[width = 5cm]{05_prob-02_files/figure-beamer/normArea-1.pdf} -->
+
+the \textcolor{orange}{orange} and \textcolor{red}{red} regions are \alert{mutually exclusive}
+
+
+## Rules of probability {.t}
+
+1. Probability is always between 0 and 1
+2. The sum of all the probabilities of all the possible outcomes always equals 1
+3. We can *add* the probabilities of \alert{mutually exclusive} events
+4. We can *simply multiply* the probabilities of \alert{independent} events
+
+```{r}
+# dice_p <- grid.arrange(d3, d5, ncol = 2)
+# ggsave("../../img/dice_3-5.pdf", dice_p, width = 4, height = 2, units = "in")
+```
+
+\begin{center}
+\includegraphics[width = 4cm]{../../img/dice_3-5.pdf}
+\end{center}
+
+the event of the second die roll is \alert{indipendent} of the first die roll, so the probability of a 3 for the first and a 5 for the second is $\frac{1}{6} \times \frac{1}{6} = \frac{1}{36}$
+
+
+## Rules of probability {.t}
+
+Adding and multiplying probabilities have special vocab:
+
+
+**Adding is an "OR" situation:**
+
+> The mean is less than -2 OR greater than -1.7
+
+$$Pr(\bar{y} < - 2) + Pr(\bar{y} > -1.7) = 0.05$$
+
+## Rules of probability {.t}
+
+Adding and multiplying probabilities have special vocab:
+
+**Multiplying is an "AND" situation:**
+
+> The first die is 3 AND the second is 5
+
+$$Pr(\text{1}^{st} \text{ die} = 3) \times Pr(\text{2}^{nd} \text{ die} = 5) = \frac{1}{36}$$
+
+
+
+
+## Rules of probability {.t}
+
+Adding and multiplying probabilities have special vocab:
+
+
+**Adding is an "OR" situation:**
+
+> The mean is less than -2 OR greater than -1.7
+
+$$Pr(\bar{y} < - 2) + Pr(\bar{y} > -1.7) = 0.05$$
+
+> The first die is 3 OR the second is 5
+
+$$Pr(\text{1}^{st} \text{ die} = 3) + Pr(\text{2}^{nd} \text{ die} = 5) = \frac{1}{3}$$
+
+
+
+## Rules of probability {.t}
+
+1. Probability is always between 0 and 1
+2. The sum of all the probabilities of all the possible outcomes always equals 1
+3. We can *add* the probabilities of \alert{mutually exclusive} events
+4. We can *simply multiply* the probabilities of \alert{independent} events
+5. We can *add* the probabilities of \alert{independent} events
+
+
+
+## Rules of probability {.t}
+
+1. Probability is always between 0 and 1
+2. The sum of all the probabilities of all the possible outcomes always equals 1
+3. We can *add* the probabilities of \alert{mutually exclusive} events
+4. We can *simply multiply* the probabilities of \alert{independent} events
+5. We can *add* the probabilities of \alert{independent} events
+5. What about multiplying \alert{non-independent} probabilities???
+
+## Non-independent events
+
+You go catch a fish and...
+
+::: columns
+
+:::: column
+
+\centering
+\LARGE 
+*A*
+
+::::
+
+:::: column
+
+\centering
+\LARGE 
+*B*
+
+::::
+
+:::
+
+::: columns
+
+:::: column
+\vspace{2em}
+
+**Length is greater than 50 cm**
+
+::::
+
+:::: column
+\vspace{2em}
+
+**It's an uhu**
+
+![](../../img/uhu.png)
+
+::::
+
+:::
+
+
+
+
+## Non-independent events
+
+
+```{r fig.align='center', fig.width=4, fig.height=3}
+library(sf)
+library(ggplot2)
+
+sfcirc <- function(x, y, r) {
+    st_point(c(x, y)) |> 
+        st_sfc() |>
+        st_sf(geometry = _) |> 
+        st_buffer(dist = r)
+}
+
+A <- sfcirc(-1, 0, 2)
+B <- sfcirc(1, 0, 2)
+
+AandB <- st_intersection(A, B)
+AorB <- st_union(A, B)
+Aonly <- st_difference(A, B)
+Bonly <- st_difference(B, A)
+
+Acol <- hsv(0.6, 1, 0.8)
+Afill <- hsv(0.6, 0.5)
+Bcol <- hsv(1, 0.7, 0.7)
+Bfill <- hsv(1, 0.4, 0.9)
+ABcol <- hsv(0.8, 1, 0.5)
+ABfill <- hsv(0.8, 0.7, 0.7)
+
+prob_venn <- ggplot() +
+    annotate("rect", xmin = -4, xmax = 4, ymin = -3, ymax = 3, 
+             fill = "gray85", color = "black") +
+    annotate("text", x = 0, y = -2.5, 
+             label = expression("not (A OR B) = ("*l <= 50*"cm & not uhu)"), 
+             size = 5) + 
+    geom_sf(data = B, fill = Bfill, color = Bcol, linewidth = 1) +
+    geom_sf(data = A, fill = Afill, color = Acol, linewidth = 1) +
+    geom_sf(data = AandB, fill = ABfill, color = ABcol, linewidth = 1) + 
+    annotate("text", x = 2, y = 1, label = "B", color = Bcol, size = 6) + 
+    annotate("text", x = 2, y = 0.5, label = "uhu", color = Bcol, size = 3) + 
+    annotate("text", x = 2, y = 0, label = "0.3", color = Bcol, size = 6) + 
+    annotate("text", x = 0, y = 0.75, label = "A&B", color = ABcol, size = 6) +
+    annotate("text", x = 0, y = 0, label = "0.1", color = ABcol, size = 6) +
+    # geom_sf(data = AorB, fill = gray(1, alpha = 0.25)) +
+    # geom_sf(data = A, fill = Afill, color = Acol, linewidth = 1) +
+    annotate("text", x = -2, y = 1, label = "A", color = Acol, size = 6) +
+    annotate("text", x = -2, y = 0.5, label = "l > 50 cm", color = Acol, 
+             size = 4) +
+    annotate("text", x = -2, y = 0, label = "0.2", color = Acol, size = 6) +
+    xlim(c(-4, 4)) + ylim(c(-3, 3)) +
+    theme_nothing()
+    
+prob_venn
+
+```
+
+## Non-independent events
+
+::: columns
+
+:::: {.column width=0.65}
+
+```{r fig.align='center', fig.width=4, fig.height=3}
+
+prob_venn
+
+```
+
+::::
+
+:::: {.column width=0.35}
+
+**Calculating probabilities**
+
+$Pr(A) = 0.2$
+
+$Pr(B) = 0.3$
+
+$Pr(A~\&~B) = 0.1$
+
+$Pr(A~OR~B) = \text{??}$
+
+
+::::
+
+:::
+
+
+## Non-independent events
+
+::: columns
+
+:::: {.column width=0.5}
+
+
+```{r fig.align='center', fig.width=4, fig.height=3}
+
+prob_venn + geom_sf(data = AorB, fill = "black") +
+    annotate("text", x = 0, y = 0, label = "A OR B", color = "white", 
+             size = 6) +
+    annotate("rect", xmin = -3.9, xmax = 3.9, ymin = -2.9, ymax = -2.1, 
+             fill = "gray85", color = "gray85") 
+
+```
+
+
+```{r fig.align='center', fig.width=4, fig.height=3}
+prA <- ggplot() +
+    geom_sf(data = A, fill = Afill, color = Acol, linewidth = 1) +
+    geom_sf(data = AandB, fill = ABfill, color = ABcol, linewidth = 1) +
+    annotate("text", x = 0, y = 0.75, label = "A&B", color = ABcol, size = 6) +
+    annotate("text", x = -2, y = 1, label = "A", color = Acol, size = 6) + 
+    theme_nothing() 
+
+
+
+prB <- ggplot() +
+    geom_sf(data = B, fill = Bfill, color = Bcol, linewidth = 1) +
+    # geom_sf(data = A, fill = Afill, color = Acol, linewidth = 1) +
+    geom_sf(data = AandB, fill = ABfill, color = ABcol, linewidth = 1) +
+    annotate("text", x = 2, y = 1, label = "B", color = Bcol, size = 6) +
+    annotate("text", x = 0, y = 0.75, label = "A&B", color = ABcol, size = 6) +
+    theme_nothing() 
+
+
+plot_grid(prA, prB, nrow = 1)
+
+```
+
+::::
+
+:::: {.column width=0.5}
+
+**Calculating probabilities**
+
+$Pr(A~OR~B) \neq Pr(A) + Pr(B)$
+
+\vspace{1em}
+
+Why? Double counts $Pr(A~\&~B)$ 
+
+\vspace{1em}
+
+$Pr(A~OR~B) = Pr(A) + Pr(B) - Pr(A~\&~B)$
+
+$\Rightarrow Pr(A~OR~B) = 0.2 + 0.3 - 0.1 = 0.4$
+
+
+::::
+
+:::
+
+
+
+## Non-independent events
+
+::: columns
+
+:::: {.column width=0.25}
+
+
+
+
+```{r fig.align='center', fig.width=2, fig.height=2}
+prA
+
+```
+
+::::
+
+:::: {.column width=0.75}
+
+**Calculating probabilities**
+
+$Pr(B \mid A)$
+
+\vspace{1em}
+
+"The probability of observing $B$ given that we already know $A$ happened"
+
+\vspace{1em}
+
+$Pr(B \mid A) = \frac{Pr(A~\&~B)}{Pr(A)}$
+
+\vspace{1em}
+
+The \alert{event} is $A~\&~B$ and all the possible \alert{outcomes} are $A~\&~B$ or $A~NOT~B$. So we need to divide the probability of $A~\&~B$ by the probability of $A~\&~B$ or $A~NOT~B$. 
+
+\vspace{1em}
+
+And $Pr(A) = Pr(A~\&~B) + Pr(A~NOT~B)$ so
+
+\vspace{1em}
+
+$Pr(B \mid A) = \frac{Pr(A~\&~B)}{Pr(A)}$
+
+
+::::
+
+:::
+
+
+## Non-independent events
+
+::: columns
+
+:::: {.column width=0.5}
+
+```{r fig.align='center', fig.width=4, fig.height=3}
+
+prob_venn
+
+```
+
+::::
+
+:::: {.column width=0.5}
+
+**Calculating probabilities**
+
+
+
+
+::::
+
+:::
+
+
+## Non-independent events
+
+**Calculating probabilities**
+
+Note that we can re-arrange this equation
+
+\vspace{1em}
+
+$Pr(B \mid A) = \frac{Pr(A~\&~B)}{Pr(A)}$
+
+$Pr(B \mid A) Pr(A) = Pr(A~\&~B)$
+
+\vspace{1em}
+
+By extension, this equation is also true
+
+$Pr(A \mid B) Pr(B) = Pr(A~\&~B)$
+
+\vspace{1em}
+
+Therefore
+
+$Pr(A \mid B) Pr(B) = Pr(B \mid A) Pr(A)$
+
+
+
+
+## Non-independent events
+
+
+$Pr(A \mid B) Pr(B) = Pr(B \mid A) Pr(A)$
+
+\vspace{1em}
+
+And re-arranging
+
+$$Pr(A \mid B)  = \frac{Pr(B \mid A) Pr(A)}{Pr(B)}$$
+
+**This is Bayes' Theorem** and it is super useful
+
+
+## Rules of probability {.t}
+
+1. Probability is always between 0 and 1
+2. The sum of all the probabilities of all the possible outcomes always equals 1
+3. We can *add* the probabilities of \alert{mutually exclusive} events
+5. We can *add* the probabilities of \alert{independent} events
+4. We can *simply multiply* the probabilities of \alert{independent} events
+
+For non-independent events (but also works for independent events):
+
+6. $Pr(A~OR~B) = Pr(A) + Pr(B) - Pr(A~\&~B)$
+7. $Pr(A~\&~B) = Pr(A | B) Pr(B)$
+8. Bayes' theorem: $Pr(A | B) = \frac{Pr(B | A) Pr(A)}{Pr(B)}$
+

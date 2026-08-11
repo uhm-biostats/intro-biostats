@@ -1,0 +1,643 @@
+---
+title: "The t-test"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE,
+                      message = FALSE, eval = TRUE)
+
+library(cowplot)
+library(ggplot2)
+library(dplyr)
+library(viridis)
+library(glue)
+library(stringr)
+library(tidyr)
+```
+
+## La hua ʻōlelo o ka pule
+
+::: {style="text-align: center;"}
+[lapu]{.alert}
+:::
+
+## Learning Objectives
+
+1. Analyze a single numerical variable using the [one-sample $t$-test]{.alert}
+2. Quantify uncertainty in the sample mean using confidence intervals
+3. Compare the means of *two* numerical variables using the [two-sample $t$-test]{.alert}
+4. Quantify uncertainty in the difference between means using confidence intervals
+
+## Which way do Cook pines lean?
+
+Cook pine (*Araucaria columnaris*) is endemic to New Caledonia (Southern hemisphere), but common in many parts of the world, including Hawaiʻi
+
+![From Johns *et al.* (2017): "Typical cultivated stand of *Araucaria columnaris* at the University of California, Irvine campus"](/img/johns-etal-2017-fig1.jpeg){width="40%"}
+
+## Which way do Cook pines lean?
+
+Johns *et al.* (2017) measured axial lean of Cook pines planted all over the world. Their biological hypothesis was that Cook pines lean toward the equator.
+
+Axial lean:
+
+* Positive value $\rightarrow$ tree leans toward equator
+
+* Negative value $\rightarrow$ tree leans away from equator
+
+## Which way do Cook pines lean?
+
+Johns *et al.* (2017) measured axial lean of Cook pines planted all over the world. Their biological hypothesis was that Cook pines lean toward the equator.
+
+Axial lean:
+
+* Positive value $\rightarrow$ tree leans toward equator
+
+* Negative value $\rightarrow$ tree leans away from equator
+
+Consider small random sample ($n = 5$)
+
+> -0.04, 0.00, 0.06, 0.12, 0.20
+
+```{r}
+df <- data.frame(y = c(-0.04, 0.00, 0.06, 0.12, 0.20))
+
+ybar <- mean(df$y)
+s <- sd(df$y)
+s2 <- var(df$y)
+```
+
+## Which way do Cook pines lean?
+
+> `-0.04, 0.00, 0.06, 0.12, 0.20`
+
+| $\overline{Y}$     | $s$             | $s^2$            |
+|:------------------:|:---------------:|:----------------:|
+| `r round(ybar, 3)` | `r round(s, 3)` | `r round(s2, 3)` |
+
+::: {.pause-think}
+- What is a reasonable null hypothesis?
+:::
+
+## Which way do Cook pines lean?
+
+> `-0.04, 0.00, 0.06, 0.12, 0.20`
+
+| $\overline{Y}$     | $s$             | $s^2$            |
+|:------------------:|:---------------:|:----------------:|
+| `r round(ybar, 3)` | `r round(s, 3)` | `r round(s2, 3)` |
+
+::: {.pause-think}
+$H_0$: The mean axial lean is 0 ($\mu = 0$)
+
+$H_A$: The mean axial lean is not 0 ($\mu \ne 0$)
+:::
+
+## The sampling distribution of the difference between sample and population mean
+
+We want to know the sampling distribution for the difference between sample mean $\overline{Y}$ and the population mean $\mu$
+
+$Z$-standardization gives us a standard normal sampling distribution (mean = 0, sd = 1):
+
+$$Z = \frac{\overline{Y} - \mu}{\sigma_{\overline{Y}}}$$
+
+BUT, we don't know the population standard error of the mean $\sigma_{\overline{Y}}$, we have to estimate from the sample $\textrm{SE}_{\overline{Y}}$.
+
+## Student's $t$ distribution
+
+> The difference between the sample mean and the true mean ($\overline{Y} - \mu$), divided by the estimated standard error ($\textrm{SE}_{\overline{Y}}$), has a Student's $t$-distribution with $n - 1$ degrees of freedom.
+
+## Student's $t$ distribution
+
+The $t$ distribution accounts for the fact that we have to estimate both $\mu$ and $\sigma$ from the sample
+
+$$t = \frac{\overline{Y} - \mu}{\textrm{SE}_{\overline{Y}}}$$
+
+$t$ is like $Z$ except there is uncertainty about the sample standard error
+
+## Student's $t$ distribution
+
+The $t$ distribution accounts for the fact that we have to estimate both $\mu$ and $\sigma$ from the sample
+
+$$t = \frac{\overline{Y} - \mu}{\textrm{SE}_{\overline{Y}}}$$
+
+$t$ is like $Z$ except there is uncertainty about the sample standard error
+
+::: {.pause-think}
+How would you expect the uncertainty of the estimated standard error to affect the shape of the $t$ distribution relative to the $Z$ distribution?
+:::
+
+## Student's $t$ distribution
+
+```{r, fig.align='center', out.height="75%"}
+df1 <- crossing(x = seq(-4, 4, 0.01), nesting(
+  Distribution = c("t", "Z"),
+  df = c(4, Inf))) %>%
+  mutate(y = dt(x, df))
+
+ggplot(df1, aes(x, y, color = Distribution)) +
+  geom_line(size = 2) +
+  scale_color_discrete(labels = c(parse(text = c("italic(t)[4]")), parse(text = c("Z")))) +
+  xlab(expression(italic(t)~or~italic(Z))) +
+  ylab("Probability density") +
+  theme_cowplot() +
+  theme(
+    axis.text = element_text(size = 18),
+    axis.title = element_text(size = 20),
+    legend.text = element_text(size = 18)
+  )
+```
+
+## Student's $t$ distribution
+
+The $t$ distribution is like the standard normal ($Z$) but has longer tails that account for the fact that we estimate $\sigma$ from the sample
+
+This matters because $P$-values are calculated by integrating the tails of the distribution. Change in the shape of the tails affect your inference!
+
+## [One-sample $t$-test]{.alert}
+
+> The [one-sample $t$-test]{.alert} compares the mean of a random sample for a normal population with the population mean proposed in a null hypothesis
+
+## Null hypothesis testing
+
+1. State null and alternative hypotheses
+2. Calculate test statistic
+2. Identify null distribution
+3. Calculate $P$-value
+4. Decide:
+
+    - Reject null
+    - Fail to reject null
+
+## 1. Null and alternative hypotheses
+
+$H_0$: The true (population) mean equals $\mu_0$
+
+$H_A$: The true (population) mean does not equal $\mu_0$
+
+Often, $\mu_0 = 0$, like in our example:
+
+$H_0$: The mean axial lean is 0 ($\mu = 0$)
+
+But $\mu_0$ could be something else depending on what you're testing
+
+## 2. The $t$ test statistic
+
+$$t = \frac{\overline{Y} - \mu_0}{\text{SE}_{\overline{Y}}}$$
+
+## Which way do Cook pines lean?
+
+> `-0.04, 0.00, 0.06, 0.12, 0.20`
+
+| $\overline{Y}$     | $s$             | $s^2$            |
+|:------------------:|:---------------:|:----------------:|
+| `r round(ybar, 3)` | `r round(s, 3)` | `r round(s2, 3)` |
+
+::: {.pause-think}
+Calculate $\text{SE}_{\overline{Y}}$ and the $t$ test statistic.
+:::
+
+## Which way do Cook pines lean?
+
+> `-0.04, 0.00, 0.06, 0.12, 0.20`
+
+| $\overline{Y}$     | $s$             | $s^2$            |
+|:------------------:|:---------------:|:----------------:|
+| `r round(ybar, 3)` | `r round(s, 3)` | `r round(s2, 3)` |
+
+::: {.pause-think}
+$$\text{SE}_{\overline{Y}} = \frac{s}{\sqrt{n}} = \frac{`r round(s, 3)`}{\sqrt{5}} = `r round(s/sqrt(5), 3)`$$
+
+$$t = \frac{\overline{Y} - \mu_0}{\text{SE}_{\overline{Y}}} = \frac{`r round(ybar, 3)` - 0}{`r round(s/sqrt(5), 3)`} = `r round(ybar/ (s/sqrt(5)), 3)`$$
+:::
+
+## 3. The $t$ distribution is the sampling distribution for $t$
+
+Remember: the $t$-distribution comes from the standard normal, but with added uncertainty about the standard deviation.
+
+We *estimate* the standard deviation, and account for its uncertainty, with a [$\chi^2$ distribution]{.alert}.
+
+Thus our $t$-distribution has degrees of freedom: $df = n - 1$
+
+For our study, $5 - 1 = 4$ degrees of freedom
+
+## 3. The $t$ distribution is the sampling distribution for $t$
+
+The $t_4$ distribution looks like this:
+
+```{r, fig.align="center", out.width="50%"}
+test_stat <- ybar / (s / sqrt(5))
+
+df <- tibble(t = seq(-4, 4, 0.01), y = dt(t, 4))
+
+alpha <- 0.05
+critical_value <- qt(
+  p = alpha / 2,
+  df = 4, # n = 5, df = n - 1
+  lower.tail = FALSE
+)
+
+ggplot(df, aes(t, y)) +
+  geom_line(size = 3) +
+  geom_vline(xintercept = test_stat, size = 2) +
+  xlab(expression(italic(t)[4])) +
+  ylab("Probability density") +
+  theme_cowplot() +
+  theme(
+    axis.text = element_text(size = 30),
+    axis.title = element_text(size = 36)
+  )
+```
+
+## 4. $P$-values
+
+[One-sample $t$-test]{.alert} is usually two-sided because we would be equally surprised by a positive or negative difference from $\mu_0$
+
+The $t$ distribution is symmetrical around 0, so we can find the area under of the curve greater/less than and our test statistic and use that same value, times -1, on the other side
+
+```{r, fig.align="center", out.width="50%"}
+ggplot(df, aes(t, y)) +
+  geom_area(data = filter(df, t > test_stat), fill = "tomato") +
+  geom_area(data = filter(df, t < -test_stat), fill = "tomato") +
+  geom_vline(xintercept = c(test_stat, -test_stat), color = "grey", size = 2) +
+  geom_line(size = 3) +
+  xlab(expression(italic(t)[4])) +
+  ylab("Probability density") +
+  theme_cowplot() +
+  theme(
+    axis.text = element_text(size = 30),
+    axis.title = element_text(size = 36)
+  )
+```
+
+## 4. $P$-values
+
+For a two-tailed test (most common)
+
+```{r, echo = TRUE, eval = TRUE}
+P_value <- 2 * pt(
+  q = 1.592,
+  df = 4,
+  lower.tail = FALSE
+)
+
+P_value
+```
+
+## 4. $P$-values
+
+For a one-tailed test (less common)
+
+```{r, echo = TRUE, eval = FALSE}
+P_value <- pt(
+  q = 1.592,
+  df = 4,
+  lower.tail = FALSE # test if mu > mu_0
+  # lower.tail = TRUE # test if mu < mu_0
+)
+```
+
+## 4. $P$-values: Even easier with the function `t.test`
+
+```{r echo = TRUE}
+y <- c(-0.04, 0.00, 0.06, 0.12, 0.20)
+t.test(y)
+```
+
+## 5. Decide
+
+Since $P = `r round(P_value, 3)`$ is greater than $\alpha = 0.05$, we fail to reject the null hypothesis.
+
+We don't have enough evidence to conclude that Cook pines lean towards the equator from this sample
+
+## Confidence intervals for the mean
+
+Recall that previously we used the $2~\mathrm{SE}$ approximation
+
+The $t$ intervals are more precise assuming the population is truly normally distributed
+
+## 95% confidence intervals for the mean
+
+Recall definition of confidence intervals: 95% of the time, 95% confidence intervals will include the true population mean
+
+## 95% confidence intervals for the mean
+
+$$-t_{0.05(2),\mathit{df}} < \frac{\overline{Y} - \mu}{\text{SE}_{\overline{Y}}} < t_{0.05(2),\mathit{df}}$$
+
+```{r, fig.align="center", out.width="75%"}
+ggplot(df, aes(t, y)) +
+  geom_area(data = filter(df, t < critical_value, t > -critical_value), fill = "tomato") +
+  geom_vline(xintercept = c(critical_value, -critical_value), color = "grey") +
+  geom_line(size = 3) +
+  geom_label(
+    data = tibble(t = c(-critical_value, critical_value), y = rep(0.3, 2),
+                  label = c("-italic(t)[list(0.05(2),4)]", "italic(t)[list(0.05(2),4)]")),
+    mapping = aes(label = label), parse = TRUE, size = 10
+  ) +
+  xlab(expression(italic(t)[4])) +
+  ylab("Probability density") +
+  theme_cowplot() +
+  theme(
+    axis.text = element_text(size = 30),
+    axis.title = element_text(size = 36)
+  )
+```
+
+## 95% confidence intervals for the mean
+
+$$\overline{Y}-t_{0.05(2),\mathit{df}} \text{SE}_{\overline{Y}}< \mu < \overline{Y}+t_{0.05(2),\mathit{df}} \text{SE}_{\overline{Y}}$$
+
+For $n = 5$, we have 4 degrees of freedom, so we calculate $t_{0.05(2),4}$
+
+::: {.pause-think}
+Which function do we need for calculating the confidence interval? `dt`, `pt`, `qt`, or `rt`?
+:::
+
+## 95% confidence intervals for the mean
+
+$$\overline{Y}-t_{0.05(2),\mathit{df}} \text{SE}_{\overline{Y}}< \mu < \overline{Y}+t_{0.05(2),\mathit{df}} \text{SE}_{\overline{Y}}$$
+
+For $n = 5$, we have 4 degrees of freedom, so we calculate $t_{0.05(2),4}$
+
+```{r echo = TRUE}
+critical_value <- qt(0.025, 4, lower.tail = FALSE)
+critical_value
+```
+
+$$t_{0.05(2),4} = `r round(critical_value, 3)`$$
+
+## 95% confidence intervals for the mean
+
+$$\overline{Y}-t_{0.05(2),\mathit{df}} \text{SE}_{\overline{Y}}< \mu < \overline{Y}+t_{0.05(2),\mathit{df}} \text{SE}_{\overline{Y}}$$
+
+$$\text{SE}_{\overline{Y}} = `r round(s/sqrt(5), 3)`$$
+$$t_{0.05(2),4} = `r round(critical_value, 3)`$$
+
+Lower 95% CI: $`r round(ybar, 3)` - `r round(critical_value, 3)` \times `r round(s/sqrt(5), 3)` = `r round(ybar - critical_value * s/sqrt(5), 3)`$
+
+Upper 95% CI: $`r round(ybar, 3)` + `r round(critical_value, 3)` \times `r round(s/sqrt(5), 3)` = `r round(ybar + critical_value * s/sqrt(5), 3)`$
+
+## Confidence intervals for the mean
+
+Check it out, given to us by `t.test`:
+
+```{r}
+t.test(y)
+```
+
+## Great! What if I want to compare **two** variables?
+
+## Great! What if I want to compare **two** variables?
+
+Two-sample t-test to the rescue
+
+## There are two ways to compare two means
+
+* [Paired $t$-test]{.alert} provides a control for extraneous
+variation and therefore have more power and precision.
+
+* [Two-sample $t$-tests]{.alert} are often easier because you do not have to resample the same unit as in a paired comparison.
+
+> In the *paired* design, both treatments are applied to every sampled unit. In the *two-sample* design, each treatment group is composed of an independent, random sample of units
+
+## [Paired $t$-test]{.alert}
+
+We used a [paired $t$-test]{.alert} to compare stomatal traits on the upper and lower surface of the same leaves. The sampled units are the species, the treatments are the leaf surface
+
+Because each member of a pair shares much in common, researchers can ignore extra variation (e.g. difference in stomatal traits among species) and just focus on effect of treatment
+
+Examples of paired comparisons:
+
+* Before and after treatment
+* Clones one with a treatment and one without
+
+## [Paired $t$-test]{.alert}
+
+> Paired measurements are converted to a single measurement by taking the difference between them
+
+In other words, a [paired $t$-test]{.alert} is a one-sample $t$-test
+
+* The null hypothesis of difference in means is denoted $\mu_{d0}$
+* Degrees of freedom is number of pairs $- 1$
+
+## Assumptions of [Paired $t$-test]{.alert}
+
+* Pairs are randomly sampled from a population
+* The differences are normally distributed
+
+Does NOT assume that individual values are normally distributed
+
+## Confidence intervals for the difference in means
+
+Identical to confidence intervals for mean of a single sample
+
+We just replace $\overline{Y}$ with $\overline{d}$, $\text{SE}_{\overline{Y}}$ with $\text{SE}_{\overline{d}}$, and $\mu$ with $\mu_d$
+
+## 95% confidence intervals for difference in means
+
+$$\overline{d}-t_{0.05(2),\mathit{df}} \text{SE}_{\overline{d}}< \mu_d < \overline{d}+t_{0.05(2),\mathit{df}} \text{SE}_{\overline{d}}$$
+
+## There are two ways to compare two means
+
+* [Paired $t$-test]{.alert} provides a control for extraneous
+variation and therefore have more power and precision.
+
+* [Two-sample $t$-tests]{.alert} are often easier because you do not have to resample the same unit as in a paired comparison.
+
+> In the *paired* design, both treatments are applied to every sampled unit. In the *two-sample* design, each treatment group is composed of an independent, random sample of units
+
+## [Two-sample $t$-test]{.alert}
+
+"Compare the means of two  of a numerical variable between two independent groups" when there is no natural pairing of samples
+
+The sample sizes do not have to be the same in each group.
+
+## Assumptions of [Two-sample $t$-test]{.alert}
+
+* "Each of the two samples is a random sample from its population"
+* "The numerical variable is normally distributed in each population"
+* "The standard deviation (and variance) of the numerical variable is the same in both populations" (we will eventually relax this assumption)
+
+## Cost of resistance to Aphids in lettuce
+
+* Some lettuce genotypes are *Susceptible* and others are
+*Resistant* to aphids.
+* Why isn't all lettuce resistant to aphids?
+* Let us test the hypothesis that resistant lettuce has
+lower fitness in the absence of aphids.
+* Fitness = number of seeds per plant
+
+| Genotype | $\overline{Y}_i$ | $s_i$ | $n_i$ |
+|:--------:|:----------------:|:------|:-----:|
+| Susceptible | 720 | 223.6 | 15 |
+| Resistant | 582 | 277.3 | 16 |
+
+# Parameter estimation and confidence intervals
+
+## Standard error of the difference in means
+
+| Genotype | $\overline{Y}_i$ | $s_i$ | $n_i$ |
+|:--------:|:----------------:|:------|:-----:|
+| Susceptible | 720 | 223.6 | 15 |
+| Resistant | 582 | 277.3 | 16 |
+
+The pooled sample variance is $s_p^2 = \frac{\mathit{df}_1 s_1^2 + \mathit{df}_2 s_2^2}{\mathit{df}_1 +\mathit{df}_2}$
+
+$s^2_1$ is the sample variance of sample 1
+
+$s^2_2$ is the sample variance of sample 2
+
+$\mathit{df}_1 = n_1 - 1$; $\mathit{df}_2 = n_2 - 1$;
+
+total degrees of freedom for $t$ distribution: $\mathit{df} = \mathit{df}_1 +\mathit{df}_2$
+
+$$s_p^2 = \frac{14 \times 223.6 ^2 + 15 \times 277.3^2}{14 + 15} = `r sprintf("%5f", (14 * 223.6 ^ 2 + 15 * 277.3 ^ 2)/29)`$$
+
+## Standard error of the difference in means
+
+| Genotype | $\overline{Y}_i$ | $s_i$ | $n_i$ |
+|:--------:|:----------------:|:------|:-----:|
+| Susceptible | 720 | 223.6 | 15 |
+| Resistant | 582 | 277.3 | 16 |
+
+The standard error of the difference in means is $\mathrm{SE}_{\overline{Y}_1 - \overline{Y}_2} = \sqrt{s_p^2 (\frac{1}{n_1} + \frac{1}{n_2})}$
+
+$$\mathrm{SE}_{\overline{Y}_1 - \overline{Y}_2} = \sqrt{63909.889310 (\frac{1}{15} + \frac{1}{16})} = `r sqrt(63909.889310 * (1/15 + 1/16))`$$
+
+## 95% confidence intervals for difference in means
+
+$$(\overline{Y}_1 - \overline{Y}_2)-t_{0.05(2),\mathit{df}} \text{SE}_{\overline{Y}_1 - \overline{Y}_2} < (\mu_1 - \mu_2) < (\overline{Y}_1 - \overline{Y}_2)+t_{0.05(2),\mathit{df}} \text{SE}_{\overline{Y}_1 - \overline{Y}_2}$$
+
+$\mathit{df} = 29$
+
+$t_{0.05(2),\mathit{29}} = `r qt(0.975, 29)`$
+
+Lower CI:
+
+$$(720 - 582) - `r qt(0.975, 29)` \times `r sqrt(63909.889310 * (1/15 + 1/16))` = `r (720 - 582) - qt(0.975, 29) * sqrt(63909.889310 * (1/15 + 1/16))`$$
+
+Upper CI:
+
+$$(720 - 582) + `r qt(0.975, 29)` \times `r sqrt(63909.889310 * (1/15 + 1/16))` = `r (720 - 582) + qt(0.975, 29) * sqrt(63909.889310 * (1/15 + 1/16))`$$
+
+## 95% confidence intervals for difference in means
+
+We estimated the susceptible genotypes produce an average of 720 - 582 = 138 more seeds, but our 95% CI is -48 to 324.
+
+0 difference in fitness between genotypes is within the plausible range of values given our data.
+
+# Hypothesis testing
+
+## 1. Null and alternative hypotheses
+
+$H_0$: $\mu_1 = \mu_2$
+
+$H_A$: $\mu_1 \ne \mu_2$
+
+In our case, the mean fitness of resistant and susceptible lettuce genotypes is the same.
+
+## 2. The $t$ test statistic
+
+$$t = \frac{\overline{Y}_1 - \overline{Y}_2}{\text{SE}_{\overline{Y}_1 - \overline{Y}_2}}$$
+
+| Genotype | $\overline{Y}_i$ | $s_i$ | $n_i$ |
+|:--------:|:----------------:|:------|:-----:|
+| Susceptible | 720 | 223.6 | 15 |
+| Resistant | 582 | 277.3 | 16 |
+
+$$t = \frac{720 - 582}{`r sqrt(63909.889310 * (1/15 + 1/16))`} = `r (720 - 582) / (sqrt(63909.889310 * (1/15 + 1/16)))`$$
+
+## 3. The $t$ distribution is the sampling distribution for $t$
+
+Degrees of freedom: $\mathit{df}_1 = n_1 - 1$; $\mathit{df}_2 = n_2 - 1$;
+
+total degrees of freedom for $t$ distribution: $\mathit{df} = \mathit{df}_1 +\mathit{df}_2$
+
+For our study, $(15 - 1) + (16 - 1) = 29$ degrees of freedom
+
+The $t_{29}$ distribution looks like this:
+
+```{r, fig.align="center", out.width="50%"}
+test_stat <- (720 - 582) / (sqrt(63909.889310 * (1/15 + 1/16)))
+
+df <- tibble(t = seq(-4, 4, 0.01), y = dt(t, 29))
+
+alpha <- 0.05
+critical_value <- qt(
+  p = alpha / 2,
+  df = 29,
+  lower.tail = FALSE
+)
+
+ggplot(df, aes(t, y)) +
+  geom_line(size = 3) +
+  geom_vline(xintercept = test_stat, size = 2) +
+  xlab(expression(italic(t)[29])) +
+  ylab("Probability density") +
+  theme_cowplot() +
+  theme(
+    axis.text = element_text(size = 30),
+    axis.title = element_text(size = 36)
+  )
+```
+
+## 4. $P$-values
+
+```{r, fig.align="center", out.width="50%"}
+ggplot(df, aes(t, y)) +
+  geom_area(data = filter(df, t > test_stat), fill = "tomato") +
+  geom_area(data = filter(df, t < -test_stat), fill = "tomato") +
+  geom_vline(xintercept = c(test_stat, -test_stat), color = "grey", size = 2) +
+  geom_line(size = 3) +
+  xlab(expression(italic(t)[29])) +
+  ylab("Probability density") +
+  theme_cowplot() +
+  theme(
+    axis.text = element_text(size = 30),
+    axis.title = element_text(size = 36)
+  )
+```
+
+## 4. $P$-values
+
+For a two-tailed test (most common)
+
+```{r, echo = TRUE, eval = TRUE}
+P_value <- 2 * pt(
+  q = 1.518867,
+  df = 29,
+  lower.tail = FALSE
+)
+
+P_value
+```
+
+## 5. Decide
+
+Since $P = `r round(P_value, 3)`$ is greater than $\alpha = 0.05$, we fail to reject the null hypothesis.
+
+We don't have enough evidence to conclude that susceptible genotypes of lettuc have greater fitness than resistant genotypes in the absence of aphids.
+
+## Difference between [Two-sample $t$-test]{.alert} and [Welch's $t$-test]{.alert}
+
+[Welch's $t$-test]{.alert} does NOT assume "the standard deviation (and variance) of the numerical variable is the same in both populations"
+
+## Difference between [Two-sample $t$-test]{.alert} and [Welch's $t$-test]{.alert}
+
+[Welch's $t$-test]{.alert} is the default in *R*
+
+```{r echo = FALSE}
+sus <- rnorm(15, 720, 223.6)
+sus <- (sus - mean(sus)) / sd(sus)
+sus <- sus * 223.6 + 720
+
+res <- rnorm(16, 582, 277.3)
+res <- (res - mean(res)) / sd(res)
+res <- res * 277.3 + 582
+
+dat <- data.frame(genotype = rep(c("Susceptible", "Resistant"), c(15, 16)),
+                  n_seeds = c(sus, res))
+```
+
+```{r echo = TRUE}
+t.test(dat$n_seeds ~ dat$genotype)
+```

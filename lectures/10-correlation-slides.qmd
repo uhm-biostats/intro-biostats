@@ -1,0 +1,444 @@
+---
+title: "Correlation"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE,
+                      message = FALSE, eval = TRUE)
+
+library(cowplot)
+library(ggplot2)
+library(dplyr)
+library(viridis)
+library(glue)
+library(stringr)
+library(tidyr)
+library(purrr)
+library(magrittr)
+```
+
+## Are older insect lineages more species rich in Hawaiʻi?
+
+::: columns
+::: {.column width="50%"}
+*Hylaeus* bees
+
+- 700,000 years
+- 60-ish species
+
+![from: Magnacca and Danforth (2006) Cladistics 22](/img/hylid_phylo.png){width="80%"}
+:::
+
+::: {.column width="50%"}
+Native *Drosophila*
+
+- 25 million years
+- possibly 1000 species
+
+![from: Church and Extavour (2022) Molecular Biology and Evolution, 39](/img/drosoph_phylo.png){width="60%"}
+:::
+:::
+
+## Are older insect lineages more species rich in Hawaiʻi?
+
+Looks like it...a question for [correlation]{.alert}
+
+```{r fig.align='center', fig.width=4, fig.height=3}
+hi_insect <- read.csv("../data/hembry_etal.csv")
+hi_insect$clade_richness <- round(hi_insect$clade_richness)
+
+ggplot(hi_insect, aes(x = clade_age, y = clade_richness)) +
+    geom_point() +
+    theme_cowplot() +
+    xlab("Clade age (my)") +
+    ylab("Number of species")
+```
+
+## Learning Objectives
+
+1. Understand the meaning of a correlation
+2. Be able to quantify correlations, uncertainty in them, and test the null hypothesis of zero correlation
+3. Identify racist and colonial roots of naming conventions, and what to do about it
+3. Recognize the assumptions of correlation tests, and what to do when assumptions are violated
+4. Interpret correlation results with care
+
+## The meaning of a correlation
+
+*When one variable goes up, the other goes up*
+
+...or...
+
+*When one variable goes up, the other goes down*
+
+## The meaning of a correlation
+
+More fancy sounding:
+
+*How well can we predict one variable from another?*
+
+## How do we quantify correlation?
+
+To the "whiteboard"
+
+## How do we quantify correlation?
+
+Sample correlation coefficient
+
+$$
+r = \frac{\sum_i (X_i - \overline{X}) (Y_i - \overline{Y})}{\sqrt{\sum_i (X_i - \overline{X}) ^ 2 \sum_i (Y_i - \overline{Y}) ^ 2}}
+$$
+
+is an estimate of population correlation coefficient
+
+$$
+\rho = \frac{\sum_i (X_i - \mu_X) (Y_i - \mu_Y)}{\sqrt{\sum_i (X_i - \mu_X) ^ 2 \sum_i (Y_i - \mu_Y) ^ 2}}
+$$
+
+## How do we quantify correlation?
+
+The correlation coefficient is bound between -1 and 1
+
+- -1 is perfect negative correlation
+- 0 is total lack of correlation
+- 1 is perfect positive correlation
+
+## Examples of population $\rho$ versus estimated sample $r$
+
+```{r, fig.align='center', out.width="80%"}
+set.seed(20210420)
+df <- c(-0.9, 0, 0.5, 0.9) %>%
+  map_dfr(~ {
+    ret <- MASS::mvrnorm(25, rep(0, 2), matrix(c(1, .x, .x, 1), ncol = 2)) %>%
+  as_tibble(.name_repair = NULL) %>%
+  rename(X = V1, Y = V2) %>%
+  mutate(rho = .x)
+    ret$r <- cor(ret$X, ret$Y)
+    ret
+  }) %>%
+  mutate(label = str_c("list(rho==", rho, ",~italic(r)==", round(r, 2), ")"))
+
+ggplot(df, aes(X, Y, label = label)) +
+  facet_wrap(label ~ ., nrow = 2, labeller = label_parsed) +
+  geom_point(color = "tomato", size = 4) +
+  xlab(expression(italic(X))) +
+  ylab(expression(italic(Y))) +
+  theme_cowplot() +
+  theme(
+    axis.text = element_text(size = 18),
+    axis.title = element_text(size = 24),
+    strip.text = element_text(size = 24)
+  )
+```
+
+## Quantifying uncertanty of correlation estimates
+
+Looking at the equation for estimated correlation:
+
+$$
+r = \frac{\sum_i (X_i - \overline{X}) (Y_i - \overline{Y})}{\sqrt{\sum_i (X_i - \overline{X}) ^ 2 \sum_i (Y_i - \overline{Y}) ^ 2}}
+$$
+
+We see a big summation in the numerator. [Pause and Think:]{.alert} what distribution do we expect for summations?
+
+## Quantifying uncertanty of correlation estimates
+
+Looking at the equation for estimated correlation:
+
+$$
+r = \frac{\sum_i (X_i - \overline{X}) (Y_i - \overline{Y})}{\sqrt{\sum_i (X_i - \overline{X}) ^ 2 \sum_i (Y_i - \overline{Y}) ^ 2}}
+$$
+
+We see a big summation in the numerator. [Pause and Think:]{.alert} what distribution do we expect for summations?
+
+::: {style="text-align: center;"}
+A Normal Distribution!
+:::
+
+## Quantifying uncertanty of correlation estimates
+
+Because we are again *estimating* the standard deviation of the sampling distribution of $r$, we have to use a *t* distribution
+
+## Null hypothesis testing with correlations
+
+1. State null and alternative hypotheses
+2. Calculate test statistic
+2. Identify null distribution
+3. Calculate $P$-value
+4. Decide:
+
+    - Reject null
+    - Fail to reject null
+
+## 1. State null and alternative hypotheses
+
+$H_0$ the true population correlation is $\rho = 0$ (most common null)
+
+$H_A$ the true population correlation is not 0
+
+## 2. Calculate test statistic
+
+$$
+r = \frac{\sum_i (X_i - \overline{X}) (Y_i - \overline{Y})}{\sqrt{\sum_i (X_i - \overline{X}) ^ 2 \sum_i (Y_i - \overline{Y}) ^ 2}}
+$$
+Or in *R*:
+
+```{r echo = TRUE}
+head(hi_insect, n = 3)
+
+cor(hi_insect$clade_age, hi_insect$clade_richness)
+```
+
+## 3. Identify null distribution
+
+We figured out it's a *t*.
+
+degrees of freedom = $n - 1 - (\text{number of parameters estimated})$
+
+so $df = n - 1 - 1$
+
+We could use `pt`, but instead...
+
+## 4. Calculate $P$-value
+
+```{r echo = TRUE}
+cor.test(hi_insect$clade_age, hi_insect$clade_richness)
+```
+
+## 5. Decide
+
+Because $P = 0.0251$ is less than $\alpha = 0.05$ we reject the null
+
+## Quantifying uncertanty of correlation estimates
+
+We also get the 95% confidence interval from `cor.test`
+
+```{r}
+cor.test(hi_insect$clade_age, hi_insect$clade_richness)
+```
+
+Again, this comes from the fact that we can assume correlation estimates have a *t* distribution
+
+## Did you notice Pearson's name?
+
+```{r}
+cor.test(hi_insect$clade_age, hi_insect$clade_richness)
+```
+
+## Did you notice Pearson's name?
+
+Who do we choose to memorialize?
+
+::: columns
+::: {.column width="50%"}
+![](/img/fisher_fall.png)
+:::
+
+::: {.column width="50%"}
+`Pearson's product-moment correlation`
+
+- Doesn't need Pearson's name to make sense
+- Others have proposed the same metric
+- Names on concepts are intellectual monuments to those people
+- Again, who do we want to memorialize?
+:::
+:::
+
+## What do to?
+
+Not a perfect list, but some ideas:
+
+- De-memorialize colonizers and racists
+
+## What do to?
+
+Not a perfect list, but some ideas:
+
+- De-memorialize colonizers and racists
+- Acknowledge and promote the fact that people from diverse backgrounds and lots of cultures have built and use statistics
+
+::: {style="text-align: center;"}
+![](/img/anil_kumar_gain.png){width="30%"}
+
+*Anil Kumar Gain, Indian statistician*
+:::
+
+## What do to?
+
+Not a perfect list, but some ideas:
+
+- De-memorialize colonizers and racists
+- Acknowledge and promote the fact that people from diverse backgrounds and lots of cultures have built and use statistics
+- Acknowledge and promote the predictive processes developed in other knowledge systems, e.g., Hawaiian practice of kilo
+- Negate *supremacy* of western practices
+- Question your questions:
+    - Is it your question to ask?
+    - What assumptions about the world are you making before you even ask the question?
+    - Where do those assumptions come from?
+
+## Assumptions of correlation tests
+
+1. Random sample
+2. $X$ is normal with equal variance for all values of $Y$
+3. $Y$ is normal with equal variance for all values of $X$
+
+## What to do when assumptions are violated
+
+- transform (e.g. log transformation)
+- rank correlation
+
+## What to do when assumptions are violated: rank correlation
+
+The rank-based test for correlation works by:
+
+1. Ranking all $X$ values
+2. Ranking all $Y$ values
+3. Calculating $r^2$ for the ranks
+4. Testing $r^2$ against $H_0$ of no association from the Spearman distribution
+
+## What to do when assumptions are violated: rank correlation
+
+```{r echo = TRUE, warning=FALSE}
+cor.test(hi_insect$clade_age, hi_insect$clade_richness,
+         method = "spearman")
+```
+
+## Suprise suprise: Spearman was an asshole too
+
+Obsessed with finding "race"-based differences in "intellegence"
+
+*Deconstructing intellectual memorials will take a lot of community pressure on those who gatekeep statistics*
+
+## Interpret correlation results with care
+
+Correlation measures *linear* association, you can have perfect *non*-linear association with low correlation
+
+```{r}
+set.seed(20210420)
+df <- tibble(
+  X = runif(25, -2, 3),
+  Y = -1 + X + 2 * X ^ 2
+)
+```
+
+In this figure, $r = `r round(cor(df$X, df$Y), 2)`$
+
+```{r, fig.align='center', out.height="50%"}
+ggplot(df, aes(X, Y)) +
+  geom_point(color = "tomato", size = 4) +
+  xlab(expression(italic(X))) +
+  ylab(expression(italic(Y))) +
+  theme_cowplot() +
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    axis.title = element_text(size = 24)
+  )
+```
+
+## Interpret correlation results with care
+
+Four data sets with identical summary statistics
+
+ data set | $\bar{X}$ | $\bar{Y}$ | $s_X$ | $s_Y$ | $r_{x,y}$
+----------|-----------|-----------|-------|-------|-----------
+ A        | 9         | 7.5       | 3.32  | 2.03  | 0.82
+ B        | 9         | 7.5       | 3.32  | 2.03  | 0.82
+ C        | 9         | 7.5       | 3.32  | 2.03  | 0.82
+ D        | 9         | 7.5       | 3.32  | 2.03  | 0.82
+
+## Interpret correlation results with care
+
+```{r fig.align='center'}
+anscombe_tidy <- anscombe %>%
+  mutate(observation = seq_len(n())) %>%
+  pivot_longer(-observation) %>%
+  separate(name, c("variable", "set"), 1, convert = TRUE) %>%
+  mutate(set = LETTERS[seq_len(4)][set]) %>%
+  pivot_wider(names_from = "variable", values_from = "value")
+
+ggplot(anscombe_tidy, aes(x, y, color = set)) +
+  facet_wrap(vars(set)) +
+  geom_smooth(method = "lm", show.legend = FALSE, fullrange = TRUE,
+              size = 2, lineend = "round") +
+  geom_point(size = 5, alpha = 0.5, show.legend = FALSE) +
+  scale_x_continuous(limits = c(0, 20)) +
+  scale_y_continuous(limits = c(0, 20)) +
+  coord_equal() +
+  theme_cowplot() +
+  theme(
+    axis.text = element_text(size = 18),
+    axis.title = element_text(size = 20),
+    strip.text = element_text(size = 20)
+  )
+```
+
+## Interpret correlation results with care
+
+::: {style="text-align: center;"}
+[Correlation is not causation]{.alert}
+:::
+
+## *Correlation is not causation*: the case of lucky socks
+
+Seems like when I wear my lucky socks, good things happen
+
+```{r fig.align='center', fig.width=8, fig.height=3, out.height="75%"}
+set.seed(123)
+x <- MASS::mvrnorm(50, c(0, 0), matrix(c(1, 0.8, 0.8, 1), nrow = 2))
+x[x >= 0] <- 1
+x[x < 1] <- 0
+
+lucky <- cbind(1:nrow(x), x)
+lucky <- rbind(lucky[, 1:2], lucky[, c(1, 3)])
+lucky <- as.data.frame(lucky)
+names(lucky) <- c("day", "event")
+lucky$type <- rep(c("I wore\nmy lucky socks", "Something\ngood happened"),
+                  each = nrow(x))
+
+lucky <- lucky[lucky$event > 0, ]
+
+ggplot(lucky, aes(x = day, y = event, color = type)) +
+    geom_vline(aes(xintercept = day, color = type), linewidth = 1) +
+    facet_grid(rows = vars(type)) +
+    theme_cowplot() +
+    theme(legend.position = "none",
+          axis.text = element_blank(),
+          axis.ticks.length = unit(0, "in"),
+          axis.line = element_blank()) +
+    xlab("time") +
+    ylab("")
+```
+
+*We don't have a plausible mechanism where socks can affect the world*
+
+*And I have done no experiment to assess causation*
+
+## But *correlation is expected when there* **is** *causation*: the case of climate change
+
+More $\text{CO}_2$, more hot
+
+![](/img/cenozoic_co2.png){width="50%" fig-align="center"}
+
+We **do** have a plausible mechanism (absorbtion and re-radiation of heat by greenhouse gasses) which is based on experimentally-derived knowledge
+
+We can also build *models* based on this plausible mechanism and show that they accurately predict past and present climate
+
+## Are older insect lineages more species rich in Hawaiʻi?
+
+[Pause & Think]{.alert}
+
+```{r fig.align='center', fig.width=4, fig.height=3}
+ggplot(hi_insect, aes(x = clade_age, y = clade_richness)) +
+    geom_point() +
+    theme_cowplot() +
+    xlab("Clade age (my)") +
+    ylab("Number of species")
+```
+
+## Are older insect lineages more species rich in Hawaiʻi?
+
+- Could be, need more data
+- Correlation could be driven by a few outliers
+- Do we have a plausible causal mechanism?
+    - Yes (more time for speciation)...and...
+    - No (more time for extinction)

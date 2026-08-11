@@ -1,0 +1,773 @@
+---
+title: "Null Hypothesis Testing"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE,
+                      eval = TRUE)
+library(cowplot)
+library(ggplot2)
+library(tibble)
+library(dplyr)
+library(viridis)
+```
+
+## Ka hua ʻōlelo o ka lā
+
+::: {style="text-align: center;"}
+[kilo]{.alert}
+:::
+
+## Kilo
+
+::: {style="text-align: center;"}
+**Jerry Konanui on Kalo, Biodiversity, Ancient Wisdom, and Modern Science**
+
+<https://www.youtube.com/watch?v=bE7K3NXFU1I&ab_channel=HawaiiSEED>
+:::
+
+## Learning Objectives
+
+This lecture:
+
+1. Identify an appropriate [scientific hypothesis]{.alert} that addresses a biological question
+3. Identify an appropriate [Null Hypothesis]{.alert} that tests a scientific hypothesis
+4. Identify an [Alternative Hypothesis]{.alert}
+
+Next lecture:
+
+4. Understand the practice of [Null Hypothesis Significance Testing]{.alert} (NHST)
+5. Explain the meaning of a [$P$-value]{.alert}
+7. Explain the concepts of [false positives]{.alert} and [false negatives]{.alert} and why they happen
+
+## Biology is motivated by questions about nature
+
+Why are leaves mostly green?
+
+How do birds fly?
+
+What causes AIDS?
+
+What management intervention will allow an endangered species to recover?
+
+## Scientific hypotheses posit testable explanations
+
+Why are leaves green? *Green pigments evolved to maximize photosynthetic rates.*
+
+How do birds fly? *They rotate their wings to generate lift and minimize drag.*
+
+What causes AIDS? *An RNA virus closely related to the chimpanzee immunodeficiency virus.*
+
+What management intervention will allow an endangered species to recover? *Habitat is limiting, so habitat restoration is needed.*
+
+## We test hypotheses by making predictions
+
+If $X$, then $Y$
+
+*If* green pigments maximize photosynthesis, *then* substituting other pigments will reduce photosynthetic rate.
+
+*If* the habitat restoration was successful, *then* the endangered species will reach its historic baseline in 10 years based on its observed growth rate in captivity.
+
+# Scientific versus statistical hypotheses
+
+## Scientific versus statistical hypotheses
+
+Scientific and statistical hypotheses are related, but for statistical hypotheses to be useful, they must be more precise
+
+## Example: does noni help with management of inflamatory disease?
+
+::: columns
+::: {.column width="50%"}
+```{r, fig.width=3, fig.height=4}
+set.seed(1)
+dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)),
+                  group = c(rep("10mg noni", 100),
+                            rep("placebo", 100)))
+
+gnoni <- ggplot(dat, aes(x = sed, fill = group)) +
+    geom_histogram(aes(y = after_stat(density)), bins = 20) +
+    facet_grid(rows = vars(group)) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    xlab("Change in sed rate [mm/hr]\n(after - before)")
+
+gnoni
+```
+:::
+
+::: {.column width="50%"}
+![](/img/noni.jpg)
+:::
+:::
+
+## Example: does noni help with management of inflamatory disease?
+
+![](/img/Liliuokalani_overthrow.jpg)
+
+## Who governs data and products of research in Hawaiʻi?
+
+**United Nations Declaration on the Rights of Indigenous Peoples**
+
+Article 18: Indigenous peoples have the right to participate in decision-making in matters which would affect their rights, through representatives chosen by themselves in accordance with their own procedures, as well as to maintain and develop their own indigenous decision-making institutions.
+
+## Who gets to ask which questions, how and why?
+
+::: columns
+::: {.column width="50%"}
+![](/img/keolu_fox.png)
+
+Prof. Keolu Fox
+:::
+
+::: {.column width="50%"}
+**Extra Credit!**
+
+What a 45-ish minute lecture by kumu Keolu Fox and write a response
+:::
+:::
+
+## Example: does noni help with management of inflamatory disease?
+
+::: columns
+::: {.column width="50%"}
+```{r, fig.width=3, fig.height=4}
+gnoni
+```
+:::
+
+::: {.column width="50%"}
+*Scientific hypothesis*: noni extract reduces inflammation
+
+*Statistical hypothesis*: ???
+
+- the scientific hypothesis seems supported
+- but could the result just be [sampling error]{.alert}?
+:::
+:::
+
+## Example: does noni help with management of inflamatory disease?
+
+::: columns
+::: {.column width="50%"}
+```{r, fig.width=3, fig.height=4}
+gnoni
+```
+:::
+
+::: {.column width="50%"}
+::: {.pause-think}
+- What is the explanatory variable? Is it numerical or categorical?
+- What is the response variable? Is it numerical or categorical?
+:::
+:::
+:::
+
+## Example: does noni help with management of inflamatory disease?
+
+::: columns
+::: {.column width="50%"}
+```{r, fig.width=3, fig.height=4}
+gnoni
+```
+:::
+
+::: {.column width="50%"}
+*Scientific hypothesis*: noni extract reduces inflammation
+
+*Statistical hypothesis*: ???
+
+- the scientific hypothesis seems supported
+- but could the result just be [sampling error]{.alert}?
+
+*We need a more precises [statistical hypothesis]{.alert} to test whether noni is effective at reducing inflammation*
+:::
+:::
+
+## Identify a [Null Hypothesis]{.alert}
+
+> A [null hypothesis]{.alert} is a specific statement about a population parameter made for the purposes of argument. A good [null hypothesis]{.alert} is a statement that would be interesting to reject
+
+## A null hypothesis must be specific
+
+The proportion of a times a fair coin lands on heads is $\mathbf{p = 0.5}$
+
+There is **no difference** in the proportion of red M&Ms in bags sold in Safeway versus those sold at Costco
+
+Patients in the treatment group have the **same probability** of contracting a disease as patients in the control group
+
+## A null hypothesis should be "interesting" to reject
+
+This is somewhat subjective, but there are lots of trivial null hypotheses that aren't worth studying:
+
+For example: There are 0 trees in Hawaiʻi
+
+This is specific, but trivially easy and uninteresting to reject
+
+## A null hypothesis should be "interesting" to reject
+
+This is somewhat subjective, but there are lots of trivial null hypotheses that aren't worth studying:
+
+For example: The growth rate of native trees in Hawaiʻi are the same as their con-generic relatives from continents
+
+This is specific, *and* interesting to reject
+
+## Identify an [Alternative Hypothesis]{.alert}
+
+> The [alternative hypothesis]{.alert} includes all other feasible values for the population parameter besides the value stated in the null hypothesis
+
+## An alternative hypothesis is not specific
+
+The proportion of a times a fair coin lands on heads is not $p = 0.5$
+
+There is a difference in the proportion of red M&Ms in bags sold in Safeway versus those sold at Costco
+
+Patients in the treatment group have a different probability of contracting a disease as patients in the control group
+
+## Identifying [null]{.alert} and [alternative]{.alert} hypothesis
+
+**Example: noni**
+
+::: columns
+::: {.column width="50%"}
+```{r, fig.width=3, fig.height=4}
+gnoni
+```
+:::
+
+::: {.column width="50%"}
+::: {.pause-think}
+- What is the [null hypothesis]{.alert}?
+- What is the [alternative hypothesis]{.alert}?
+:::
+:::
+:::
+
+## Naming conventions
+
+$H_0$: pronounced "H-naught" or "H-zero" is the convention for the [null hypothesis]{.alert}
+
+$H_\mathrm{A}$:is the convention for the [alternative hypothesis]{.alert}
+
+So...
+
+$H_0$: Mean difference (after - before) in sedimentation rate for the group receiving noni and the placebo group will be **identical**
+
+$H_\mathrm{A}$: Mean difference (after - before) in sedimentation rate for the group receiving noni and the placebo group will be **different**
+
+## Naming conventions
+
+$H_0$: Mean difference (after - before) in sedimentation rate for the group receiving noni and the placebo group will be **identical**
+
+$H_\mathrm{A}$: Mean difference (after - before) in sedimentation rate for the group receiving noni and the placebo group will be **different**
+
+# Break!
+
+## Learning Objectives
+
+Last lecture:
+
+1. Identify an appropriate [scientific hypothesis]{.alert} that addresses a biological question
+3. Identify an appropriate [Null Hypothesis]{.alert} that tests a scientific hypothesis
+4. Identify an [Alternative Hypothesis]{.alert}
+
+This lecture:
+
+4. Understand the practice of [Null Hypothesis Significance Testing]{.alert} (NHST)
+5. Explain the meaning of a [$P$-value]{.alert}
+7. Explain the concepts of [false positives]{.alert} and [false negatives]{.alert} and why they happen
+
+## Identify a [Null Hypothesis]{.alert}
+
+> A [null hypothesis]{.alert} is a specific statement about a population parameter made for the purposes of argument. A good [null hypothesis]{.alert} is a statement that would be interesting to reject
+
+## A null hypothesis must be specific and should be "interesting" to reject
+
+**For example:**
+
+There are 0 trees in Hawaiʻi
+
+This is specific, but trivially easy and uninteresting to reject
+
+## A null hypothesis must be specific and should be "interesting" to reject
+
+**For example:**
+
+The growth rate of native trees in Hawaiʻi are the same as their con-generic relatives from continents
+
+This is specific, *and* interesting to reject
+
+## Identify an [Alternative Hypothesis]{.alert}
+
+> The [alternative hypothesis]{.alert} includes all other feasible values for the population parameter besides the value stated in the null hypothesis
+
+## An alternative hypothesis is not specific
+
+**For example**:
+
+The growth rate of native trees in Hawaiʻi are *different* than their con-generic relatives from continents
+
+## Naming conventions
+
+$H_0$: pronounced "H-naught" or "H-zero" is the convention for the [null hypothesis]{.alert}
+
+$H_\mathrm{A}$:is the convention for the [alternative hypothesis]{.alert}
+
+## Identifying [null]{.alert} and [alternative]{.alert} hypothesis
+
+**Example: noni**
+
+::: columns
+::: {.column width="50%"}
+```{r, fig.width=3, fig.height=4}
+set.seed(1)
+dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)),
+                  group = c(rep("10mg noni", 100),
+                            rep("placebo", 100)))
+noni_dat <- dat
+
+ggplot(dat, aes(x = sed, fill = group)) +
+    geom_histogram(aes(y = after_stat(density)), bins = 20) +
+    facet_grid(rows = vars(group)) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    xlab("Change in sed rate [mm/hr]\n(after - before)")
+```
+:::
+
+::: {.column width="50%"}
+::: {.pause-think}
+- What is the [null hypothesis]{.alert}?
+- What is the [alternative hypothesis]{.alert}?
+:::
+
+- $H_0$: The mean of *change in sedimentation rate* is the same across the two groups
+- $H_A$: The mean is not the same
+:::
+:::
+
+## [Null Hypothesis Significance Testing]{.alert}
+
+What is [Null Hypothesis Significance Testing]{.alert}?
+
+## [Null Hypothesis Significance Testing]{.alert}
+
+What is [Null Hypothesis Significance Testing]{.alert}?  It asks the question:
+
+> What would be the probability of observing the sample estimate, or a more extreme estimate, if the [null hypothesis]{.alert} were true?
+
+> If that probability is small, we say "we reject the null hypothesis"
+
+> If that probability is not small, we say "we fail to reject the null hypothesis"
+
+## [Null Hypothesis Significance Testing]{.alert}
+
+What is [Null Hypothesis Significance Testing]{.alert}?  It asks the question:
+
+> What would be the probability of observing the sample estimate, or a more extreme estimate, if the [null hypothesis]{.alert} were true?
+
+The sample estimate of interest depends on the scientific and null hypotheses
+
+## [Null Hypothesis Significance Testing]{.alert}
+
+The sample estimate of interest depends on the scientific and null hypotheses
+
+::: columns
+::: {.column width="50%"}
+```{r, fig.width=3, fig.height=4}
+p <- ggplot(dat, aes(x = sed, fill = group, alpha = 0.5)) +
+    geom_histogram(aes(y = after_stat(density)), bins = 20) +
+    facet_grid(rows = vars(group)) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    xlab("Change in sed rate [mm/hr]\n(after - before)")
+
+est <- group_by(dat, group) |>
+    summarize(ybar = mean(sed))
+ann <- data.frame(x = est$ybar, y = 0.5, group = est$group,
+                  lab = c("bar(Y)['yes noni']",
+                          "bar(Y)['no noni']"))
+
+p + geom_vline(est, mapping = aes(xintercept = ybar, color = group), size = 1.5) +
+    geom_label(data = ann,
+               mapping = aes(x = x, y = y, label = lab),
+               parse = TRUE, hjust = "left", nudge_x = 0.1,
+               size = 5) +
+    geom_segment(data = data.frame(group = "placebo"),
+                 mapping = aes(x = ann$x[1], xend = ann$x[2],
+                               y = 0.6, yend = 0.6),
+                 arrow = arrow(length = unit(0.1, "npc"), ends = "both"),
+                 size = 1.5) +
+    geom_label(data = data.frame(group = "placebo"),
+               x = -2, y = 0.45, label = expression(bar(Y)["diff"]),
+               fill = "white", size = 5) +
+    coord_cartesian(xlim = c(-4.5, 2.75), ylim = c(0, 0.55), clip = "off")
+```
+:::
+
+::: {.column width="50%"}
+- $H_0$: The mean of *change in sedimentation rate* is the same across the two groups
+- $H_A$: The mean is not the same
+- **The estimate of interest:**
+
+$\bar{Y}_\text{diff} = \bar{Y}_\text{yes noni} - \bar{Y}_\text{no noni}$
+:::
+:::
+
+## [Null Hypothesis Significance Testing]{.alert}
+
+> What would be the probability of observing the sample estimate, or a more extreme estimate, if the [null hypothesis]{.alert} were true?
+
+When doing [Null Hypothesis Significance Testing]{.alert}, the specific sample estimate we use is called a [test statistic]{.alert}
+
+Here we decided the [test statistic]{.alert} is $\bar{Y}_\text{diff}$
+
+## [Null Hypothesis Significance Testing]{.alert}
+
+> What would be the probability of observing the sample estimate, or a more extreme estimate, if the [null hypothesis]{.alert} were true?
+
+How do we get the probability distribution of the [test statistic]{.alert}?
+
+## [Null Hypothesis Significance Testing]{.alert}
+
+> In many many **many** hypothetical repeated studies, where the [null hypothesis]{.alert} is TRUE, what would be the distribution of [test statistics]{.alert}?
+
+From that [sampling distribution]{.alert} of test statistics, we can calculate the probability of observing the test statistic, or a more extreme value
+
+## Simulating a sampling distribution of the test statistic under the null hypothesis
+
+::: {style="text-align: center;"}
+"The Null Distribution"
+:::
+
+## Simulating the null distribution
+
+```{r null-dist, cache=TRUE, echo=TRUE}
+# repeatedly shuffle the groups to make a null distribution
+all_null <- replicate(1000, {
+    noni_null <- noni_dat
+    noni_null$group <- sample(noni_null$group)
+
+    ybars_null <- group_by(noni_null, group)
+    ybars_null <- summarize(ybars_null, ybar = mean(sed))
+    test_stat_null <- diff(ybars_null$ybar)
+    test_stat_null
+})
+```
+
+## Simulating the null distribution
+
+```{r echo = TRUE, fig.align='center', fig.width=3, fig.height=2}
+null_dist <- data.frame(test_stat_null = all_null)
+
+ggplot(null_dist, aes(x = test_stat_null)) +
+    geom_histogram(aes(y = after_stat(density)))
+```
+
+## Simulating the null distribution
+
+```{r echo = TRUE, fig.align='center', fig.width=3, fig.height=2}
+# add the observed test statistic
+ybars <- group_by(noni_dat, group)
+ybars <- summarize(ybars, ybar = mean(sed))
+test_stat <- diff(ybars$ybar)
+```
+
+## Simulating the null distribution
+
+```{r echo = TRUE, fig.align='center', fig.width=3, fig.height=2}
+ggplot(null_dist, aes(x = test_stat_null)) +
+    geom_histogram(aes(y = after_stat(density))) +
+    geom_vline(xintercept = test_stat,
+               color = "red", size = 1)
+```
+
+## Simulating the null distribution
+
+> In many many **many** hypothetical repeated studies, where the [null hypothesis]{.alert} is TRUE, what would be the distribution of [test statistics]{.alert}?
+
+From that [sampling distribution]{.alert} of test statistics, we can calculate the probability of observing the test statistic, or a more extreme value
+
+That probability is:
+
+```{r echo = TRUE}
+mean(null_dist$test_stat_null > test_stat |
+         null_dist$test_stat_null < -test_stat)
+```
+
+This probability has a special name: the [p-value]{.alert}
+
+## [Null Hypothesis Significance Testing]{.alert}
+
+Null Hypothesis Significance Testing asks the question:
+
+> What would be the probability (the [p-value]{.alert}) of observing the test statistic, or a more extreme value, if the [null hypothesis]{.alert} were true?
+
+> If the [p-value]{.alert} is small, we say "we reject the null hypothesis"
+
+> If the [p-value]{.alert} is not small, we say "we fail to reject the null hypothesis"
+
+::: {style="text-align: center;"}
+How small is small enough?
+:::
+
+## [Null Hypothesis Significance Testing]{.alert}
+
+::: {style="text-align: center;"}
+How small of a [p-value]{.alert} is small enough?
+:::
+
+Answer: depends on the desired [significance level]{.alert}
+
+- we write the significance level as $\alpha$
+- in biology, $\alpha$ is often 0.05
+- remember 95% Confidence Intervals? Same thing as $\alpha = 0.05$
+
+## Can we reject the null?
+
+::: columns
+::: {.column width="50%"}
+```{r, fig.width=3, fig.height=4}
+p <- ggplot(dat, aes(x = sed, fill = group, alpha = 0.5)) +
+    geom_histogram(aes(y = after_stat(density)), bins = 20) +
+    facet_grid(rows = vars(group)) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    xlab("Change in sed rate [mm/hr]\n(after - before)")
+
+est <- group_by(dat, group) |>
+    summarize(ybar = mean(sed))
+ann <- data.frame(x = est$ybar, y = 0.5, group = est$group,
+                  lab = c("bar(Y)['yes noni']",
+                          "bar(Y)['no noni']"))
+
+p + geom_vline(est, mapping = aes(xintercept = ybar, color = group), size = 1.5) +
+    geom_label(data = ann,
+               mapping = aes(x = x, y = y, label = lab),
+               parse = TRUE, hjust = "left", nudge_x = 0.1,
+               size = 5) +
+    geom_segment(data = data.frame(group = "placebo"),
+                 mapping = aes(x = ann$x[1], xend = ann$x[2],
+                               y = 0.6, yend = 0.6),
+                 arrow = arrow(length = unit(0.1, "npc"), ends = "both"),
+                 size = 1.5) +
+    geom_label(data = data.frame(group = "placebo"),
+               x = -2, y = 0.45, label = expression(bar(Y)["diff"]),
+               fill = "white", size = 5) +
+    coord_cartesian(xlim = c(-4.5, 2.75), ylim = c(0, 0.55), clip = "off")
+```
+:::
+
+::: {.column width="50%"}
+- $H_0$: The mean of *change in sedimentation rate* is the same across the two groups
+- Test statistic: $\bar{Y}_\text{diff} = \bar{Y}_\text{yes noni} - \bar{Y}_\text{no noni}$
+- Test statistic: $\bar{Y}_\text{diff} =$ `r round(test_stat, 2)`
+- P-value: 0
+
+Yes!  At significance level $\alpha = 0.05$, we reject the null that noni has no impact on sedimentation rate
+:::
+:::
+
+## [Null Hypothesis Significance Testing]{.alert}: the steps
+
+1. State $H_0$ and $H_A$
+2. Calculate the test statistic
+3. Generate the null distribution
+5. Calculate the p-value
+6. Decide:
+    - Reject $H_0$ if the p-value is less than or equal to $\alpha$ ($p \le \alpha$)
+    - Fail to reject $H_0$ if p-value is greater than $\alpha$ ($p > \alpha$)
+
+## [Null Hypothesis Significance Testing]{.alert}: frequent questions
+
+Here is a more typical null distribution and test statistic:
+
+```{r fig.width=3, fig.height=2, fig.align='center'}
+ybar <- 0
+se <- 1
+
+p <- ggplot(data.frame(x = ybar + 3.75 * c(-se, se)), aes(x)) +
+    theme_cowplot() +
+    xlab(expression("Test stat if"~H[0]~"is true")) +
+    ylab("density") +
+    stat_function(fun = dnorm,
+                  args = list(mean = ybar, sd = se),
+                  xlim = ybar + 2.2 * c(-se, se),
+                  geom = "area", fill = "blue", alpha = 0.5) +
+    stat_function(fun = dnorm,
+                  args = list(mean = ybar, sd = se),
+                  xlim = ybar + c(-3.75 * se, -2.2 *se),
+                  geom = "area", fill = "orange") +
+    stat_function(fun = dnorm,
+                  args = list(mean = ybar, sd = se),
+                  xlim = ybar + c(2.2 * se, 3.75 *se),
+                  geom = "area", fill = "orange") +
+    stat_function(fun = dnorm, args = list(mean = ybar, sd = se)) +
+    geom_vline(xintercept = ybar + 2.2 * se, size = 1) +
+    annotate("label", 4, 0.45, label = "Observed test stat = 2.2", hjust = "right")
+
+p
+```
+
+## [Null Hypothesis Significance Testing]{.alert}: frequent questions
+
+::: columns
+::: {.column width="50%"}
+```{r fig.width=3, fig.height=2, fig.align='center'}
+p
+```
+
+The [p-value]{.alert} is the sum of the probabilities in the two [orange]{style="color: orange;"} regions
+:::
+
+::: {.column width="50%"}
+**Question:** If the test statistic = -2.2, why is the p-value the sum of both [orange]{style="color: orange;"} regions"
+
+- Because $H_0$ is no difference, and $H_A$ is *any* difference, not distinguishing between positive or negative differences
+- This type of alternative hypothesis is called a "two tailed" test
+:::
+:::
+
+## [Null Hypothesis Significance Testing]{.alert}: frequent questions
+
+::: columns
+::: {.column width="50%"}
+```{r fig.width=3, fig.height=2, fig.align='center'}
+p
+```
+
+The [p-value]{.alert} is the sum of the probabilities in the two [orange]{style="color: orange;"} regions
+:::
+
+::: {.column width="50%"}
+**Question:** Why is the p-value the probability of "the test statistic or a more extreme value"?
+:::
+:::
+
+## [Null Hypothesis Significance Testing]{.alert}: frequent questions
+
+::: columns
+::: {.column width="50%"}
+```{r fig.width=3, fig.height=2, fig.align='center'}
+p
+```
+
+The [p-value]{.alert} is the sum of the probabilities in the two [orange]{style="color: orange;"} regions
+:::
+
+::: {.column width="50%"}
+**Question:** Why is the p-value the probability of "the test statistic or a more extreme value"?
+
+- Because if the null distribution is [continuous]{.alert}, the probability of the exact test statistic will be 0!
+:::
+:::
+
+## [Null Hypothesis Significance Testing]{.alert}: frequent questions
+
+::: columns
+::: {.column width="50%"}
+```{r fig.width=3, fig.height=2, fig.align='center'}
+p
+```
+
+The [p-value]{.alert} is the sum of the probabilities in the two [orange]{style="color: orange;"} regions
+:::
+
+::: {.column width="50%"}
+**Question:** If we reject $H_0$ at significance level $\alpha = 0.05$? Does that mean our alternative hypothesis is true?
+:::
+:::
+
+## [Null Hypothesis Significance Testing]{.alert}: frequent questions
+
+::: columns
+::: {.column width="50%"}
+```{r fig.width=3, fig.height=2, fig.align='center'}
+p
+```
+
+The [p-value]{.alert} is the sum of the probabilities in the two [orange]{style="color: orange;"} regions
+:::
+
+::: {.column width="50%"}
+**Question:** If we reject $H_0$ at significance level $\alpha = 0.05$? Does that mean our alternative hypothesis is true?
+
+- NO! Just that we reject the null at $\alpha = 0.05$
+- Also we might have **incorrectly** rejected the null!
+:::
+:::
+
+## Errors in hypothesis testing
+
+There are two types of errors in hypothesis testing
+
+1. Rejecting the null hypothesis when it's true ([false positive]{.alert})
+
+2. Not rejecting the null hypothesis when it's false ([false negative]{.alert})
+
+## [False positive]{.alert}
+
+False positive: Rejecting a true null
+
+* This happens with probability $\alpha$
+* Pr[False Positive] is independent of sample size
+* Called a "Type I error"
+
+You can decrease your false positive rate by decreasing $\alpha$
+
+## [False negative]{.alert}
+
+False negative: Failing to reject a false null
+
+* Pr[False Negative] depends on sample size, effect size, and precision
+* Also called a "Type II error"
+
+Pr[False Negative] = 1 - statistical power
+
+You can decrease your false negative rate by increasing $\alpha$
+
+You can increase statistical power by increasing your sample size and measurement precision
+
+## Errors
+
+ Decision         | $H_0$ True  | $H_0$ False
+------------------|----------|----------
+ Reject $H_0$        | Type I   | no error
+ Do not reject $H_0$ | no error | Type II
+
+ lower $\alpha$ reduces Type I error rate, but raises Type II error rate
+
+ both are errors! many methods today choose $\alpha$ to minimize all error, but this is complex.
+
+## Effects of sample size
+
+If $H_0$ is true, sample size has no effect
+
+If $H_0$ is false, statistical power increases with sample size
+
+```{r, fig.align="center", out.width="70%"}
+library(pwr)
+power <- pwr.t.test(n = 2:512, d = 0.5, sig.level = 0.05, power = NULL,
+                    type = "two.sample", alternative = "two.sided")
+
+df <- tibble(n = rep(2:512, 2), power = c(rep(0.05, 511), power$power),
+             group = rep(c("H0 True", "H0 False"), each = 511)) |>
+    mutate(group = factor(group,
+                          levels = c("H0 True", "H0 False"),
+                          labels = c(expression(H[0]~True), expression(H[0]~False)))
+           )
+
+ggplot(df, aes(n, power, color = group)) +
+    facet_grid(. ~ group, labeller = label_parsed) +
+    geom_line(show.legend = FALSE, size = 4) +
+    scale_x_log10(breaks = c(8, 64, 512)) +
+    scale_y_continuous(limits = c(0, 1)) +
+    xlab("Sample size") +
+    ylab(expression(
+        paste("Probability of rejecting ", italic(H)[0], " (", alpha == 0.05, ")"))) +
+    theme_cowplot() +
+    theme(
+        axis.text = element_text(size = 18),
+        axis.title = element_text(size = 24),
+        strip.text = element_text(size = 24)
+    )
+```

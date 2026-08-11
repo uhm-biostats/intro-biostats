@@ -1,0 +1,343 @@
+---
+title: "BIOL 220 Null Hypothesis Testing"
+output: binb::metropolis
+header-includes:
+  - \usepackage{array}
+  - \usepackage{xcolor}
+  - \usepackage[export]{adjustbox}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, 
+                      eval = TRUE)
+library(cowplot)
+library(ggplot2)
+library(dplyr)
+library(viridis)
+```
+
+## Ka hua \`ōlelo o ka lā
+
+\centering \Large
+\alert{kilo}
+
+## Kilo
+
+\centering 
+
+**Jerry Konanui on Kalo, Biodiversity, Ancient Wisdom, and Modern Science**
+
+https://www.youtube.com/watch?v=bE7K3NXFU1I&ab_channel=HawaiiSEED
+
+
+
+## Learning Objectives
+
+This lecture:
+
+1. Identify an appropriate \alert{scientific hypothesis} that addresses a biological question
+3. Identify an appropriate \alert{Null Hypothesis} that tests a scientific hypothesis
+4. Identify an \alert{Alternative Hypothesis}
+
+Next lecture: 
+
+4. Understand the practice of \alert{Null Hypothesis Significance Testing} (NHST)
+5. Explain the meaning of a \alert{$P$-value}
+7. Explain the concepts of \alert{false positives} and \alert{false negatives} and why they happen
+
+
+## Biology is motivated by questions about nature
+
+Why are leaves mostly green?
+
+How do birds fly?
+
+What causes AIDS?
+
+What management intervention will allow an endangered species to recover?
+
+
+## Scientific hypotheses posit testable explanations
+
+Why are leaves green? *Green pigments evolved to maximize photosynthetic rates.*
+
+How do birds fly? *They rotate their wings to generate lift and minimize drag.*
+
+What causes AIDS? *An RNA virus closely related to the chimpanzee immunodeficiency virus.*
+
+What management intervention will allow an endangered species to recover? *Habitat is limiting, so habitat restoration is needed.*
+
+## We test hypotheses by making predictions
+
+If $X$, then $Y$
+
+*If* green pigments maximize photosynthesis, *then* substituting other pigments will reduce photosynthetic rate.
+
+*If* the habitat restoration was successful, *then* the endangered species will reach its historic baseline in 10 years based on its observed growth rate in captivity.
+
+
+# Scientific versus statistical hypotheses
+
+## Scientific versus statistical hypotheses
+
+Scientific and statistical hypotheses are related, but for statistical hypotheses to be useful, they must be more precise
+
+## Example: does noni help with management of inflamatory disease?
+
+::: columns
+
+:::: column
+
+```{r, fig.width=3, fig.height=4}
+set.seed(1)
+dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)), 
+                  group = c(rep("10mg noni", 100), 
+                            rep("placebo", 100)))
+
+gnoni <- ggplot(dat, aes(x = sed, fill = group)) +
+    geom_histogram(aes(y = after_stat(density)), bins = 20) +
+    facet_grid(rows = vars(group)) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    xlab("Change in sed rate [mm/hr]\n(after - before)")
+
+gnoni
+```
+
+::::
+
+:::: column
+
+![](img/noni.jpg)
+
+::::
+
+:::
+
+
+## Example: does noni help with management of inflamatory disease?
+
+![](img/Liliuokalani_overthrow.jpg)
+
+## Who governs data and products of research in Hawai`i?
+
+**United Nations Declaration on the Rights of Indigenous Peoples**
+
+Article 18: Indigenous peoples have the right to participate in decision-making in matters which would affect their rights, through representatives chosen by themselves in accordance with their own procedures, as well as to maintain and develop their own indigenous decision-making institutions.
+
+
+## Who gets to ask which questions, how and why?
+
+
+::: columns
+
+:::: column
+
+![](img/keolu_fox.png)
+
+Prof. Keolu Fox
+
+::::
+
+:::: column
+
+**Extra Credit!**
+
+What a 45-ish minute lecture by kumu Keolu Fox and write a response
+
+::::
+
+:::
+
+
+
+
+## Example: does noni help with management of inflamatory disease?
+
+::: columns
+
+:::: column
+
+```{r, fig.width=3, fig.height=4}
+gnoni
+```
+
+::::
+
+:::: column
+
+*Scientific hypothesis*: noni extract reduces inflammation
+
+*Statistical hypothesis*: ???
+
+- the scientific hypothesis seems supported
+- but could the result just be \alert{sampling error}?
+
+::::
+
+:::
+
+
+## Example: does noni help with management of inflamatory disease?
+
+::: columns
+
+:::: column
+
+```{r, fig.width=3, fig.height=4}
+gnoni
+
+```
+
+::::
+
+:::: column
+
+\metroset{block=fill}
+
+\begin{alertblock}{Pause \& Think}
+
+\begin{itemize}
+\item{What is the explanatory variable? Is it numerical or categorical?}
+\item{What is the response variable? Is it numerical or categorical?}
+\end{itemize}
+
+\end{alertblock}
+
+::::
+
+:::
+
+
+
+
+
+
+## Example: does noni help with management of inflamatory disease?
+
+::: columns
+
+:::: column
+
+```{r, fig.width=3, fig.height=4}
+gnoni
+
+```
+
+::::
+
+:::: column
+
+*Scientific hypothesis*: noni extract reduces inflammation
+
+*Statistical hypothesis*: ???
+
+- the scientific hypothesis seems supported
+- but could the result just be \alert{sampling error}?
+
+
+\it We need a more precises \alert{statistical hypothesis} to test whether noni is effective at reducing inflammation
+
+::::
+
+:::
+
+
+
+## Identify a \alert{Null Hypothesis}
+
+
+> A \alert{null hypothesis} is a specific statement about a population parameter made for the purposes of argument. A good \alert{null hypothesis} is a statement that would be interesting to reject
+
+## A null hypothesis must be specific
+
+The proportion of a times a fair coin lands on heads is $\mathbf{p = 0.5}$
+
+There is **no difference** in the proportion of red M&Ms in bags sold in Safeway versus those sold at Costco
+
+Patients in the treatment group have the **same probability** of contracting a disease as patients in the control group
+
+## A null hypothesis should be "interesting" to reject {.t}
+
+This is somewhat subjective, but there are lots of trivial null hypotheses that aren't worth studying:
+
+For example: There are 0 trees in Hawaiʻi
+
+This is specific, but trivially easy and uninteresting to reject
+
+## A null hypothesis should be "interesting" to reject {.t}
+
+This is somewhat subjective, but there are lots of trivial null hypotheses that aren't worth studying:
+
+For example: The growth rate of native trees in Hawaiʻi are the same as their con-generic relatives from continents
+
+This is specific, *and* interesting to reject
+
+
+## Identify an \alert{Alternative Hypothesis}
+
+> The \alert{alternative hypothesis} includes all other feasible values for the population parameter besides the value stated in the null hypothesis
+
+## An alternative hypothesis is not specific
+
+The proportion of a times a fair coin lands on heads is not $p = 0.5$
+
+There is a difference in the proportion of red M&Ms in bags sold in Safeway versus those sold at Costco
+
+Patients in the treatment group have a different probability of contracting a disease as patients in the control group
+
+
+
+
+## Identifying \alert{null} and \alert{alternative} hypothesis
+
+**Example: noni**
+
+::: columns
+
+:::: column
+
+```{r, fig.width=3, fig.height=4}
+gnoni
+
+```
+
+::::
+
+:::: column
+
+\metroset{block=fill}
+
+\begin{alertblock}{Pause \& Think}
+
+\begin{itemize}
+\item{What is the \alert{null hypothesis}?}
+\item{What is the \alert{alternative hypothesis}?}
+\end{itemize}
+
+\end{alertblock}
+
+::::
+
+:::
+
+## Naming conventions
+
+$H_0$: pronounced "H-naught" or "H-zero" is the convention for the \alert{null hypothesis}
+
+$H_\mathrm{A}$:is the convention for the \alert{alternative hypothesis}
+
+So...
+
+$H_0$: Mean difference (after - before) in sedimentation rate for the group receiving noni and the placebo group will be **identical** 
+
+$H_\mathrm{A}$: Mean difference (after - before) in sedimentation rate for the group receiving noni and the placebo group will be **different** 
+
+
+## Naming conventions
+
+
+$H_0$: Mean difference (after - before) in sedimentation rate for the group receiving noni and the placebo group will be **identical** 
+
+$H_\mathrm{A}$: Mean difference (after - before) in sedimentation rate for the group receiving noni and the placebo group will be **different** 
+

@@ -1,0 +1,294 @@
+---
+title: "BIOL 220 Problem Set 06: Binomial Test"
+subtitle: "Answer Key"
+format:
+  pdf:
+    toc: false
+    number-sections: false
+    colorlinks: true
+    filters:
+      - callout-akey.lua
+header-includes:
+    - \usepackage{mdframed}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval = TRUE, message = FALSE, 
+                      warning = FALSE)
+
+library(cowplot)
+library(dplyr)
+library(ggplot2)
+library(DT)
+```
+
+
+# Satellite forest mapping {.unnumbered}
+
+```{r, fig.align = "center", out.width="100%", fig.cap="Example of using remote sensing to identify likely areas of Rapid ʻŌhiʻa Death (modified from Vaughn et. al (2018)"}
+knitr::include_graphics("img/rod.png")
+```
+
+Rapid ʻŌhiʻa Death (ROD) is a devastating pathogen affecting native ʻōhiʻa forests in Hawaiʻi. Much work has been done to try to document its spread. [Vaughn et al. (2018)](https://www.mdpi.com/2072-4292/10/4/502) used remote sensing images from 2017 to detect areas of potential ROD. Remote sensing uses fancy cameras attached to low-flying airplanes to capture many different wavelengths of light. The wavelengths are then analyzed to classify areas as likely ROD or not. The image above is from the Kohala Mountains on the Island of Hawaiʻi and shows 28.67% ROD in forested areas. Suppose Vaughn et al. were able to re-survey this same area now in 2025 and calculate the percentage of ROD as 34.78%. 
+
+::: {.callout-tip}
+## Questions 1--2 refer to the prompt above.
+
+1. True or false: given the percentage data **alone**, would a binomial test be an appropriate method to test the hypothesis that ROD area has increased over time? [1 point]
+
+    - TRUE
+    - FALSE
+
+:::: {.callout-akey}
+
+**Answer**
+
+FALSE
+
+A binomial test requires actual count data, not just percentages
+
+::::
+
+2. Instead, imagine you did a "boots on the ground" survey in 2024 of individual trees in the Kohala Mountains and recorded whether each tree was infected with ROD or not. Imagine you find that out of 1000 trees you surveyed, 348 are infected. In this situation, would a binomial test be an appropriate method to test the hypothesis that ROD prevalence has increased compared to the 28.67% value from 2017 (true or false)? [1 point]
+
+    - TRUE
+    - FALSE
+
+:::: {.callout-akey}
+
+**Answer**
+
+TRUE
+
+
+::::
+
+:::
+  
+## Hybrid viability {.unnumbered}
+
+```{r, fig.align = "center", out.width="50%", fig.cap="A representative of the diverse Hawaiian Drosophila: D. picticornis"}
+knitr::include_graphics("img/Drosophila_picticornis.jpg")
+```
+
+Hawaiian *Drosophila* (yes that famous genus of fruit fly) are super diverse and super awesome. They speciate like crazy due, in part, to reproductive isolation. When studying reproductive isolation between species, scientists will often allow different species to mate then count the viability of hybrid offspring. Suppose that you are measuring the viability of hybrid eggs laid by a fruit fly. This fruit fly will lay eggs over a period of one week, but the fly needs to be transferred to a fresh vial of food (yeast) every day. After you transfer the fly to a new vial, you count the number of eggs laid and record the number of viable eggs. Here are your data:
+
+ Day | Eggs laid | Viable offspring
+:---:|:---------:|:----------------:
+ 1   | 6         | 3
+ 2   | 6         | 3
+ 3   | 8         | 4
+ 4   | 13        | 6
+ 5   | 9         | 4
+ 6   | 8         | 5
+ 7   | 9         | 6
+
+
+::: {.callout-tip}
+## Questions 3--6 refer to the prompt and table above
+
+
+3. If you wish to perform a binomial test on total offspring viability for this fly, what would the *number of trials* be in these data? [1 point]
+
+    - 1
+    - 2
+    - 7
+    - 31
+    - 59
+
+:::: {.callout-akey}
+
+**Answer**
+
+```{r}
+#| echo: true
+
+6 + 6 + 8 + 13 + 9 + 8 + 9
+```
+
+::::
+
+
+4. If you wish to perform a binomial test on total offspring viability for this fly, what would the value for the test statistic be in these data? [1 point]
+
+    - 1
+    - 2
+    - 7
+    - 31
+    - 59
+
+:::: {.callout-akey}
+
+**Answer**
+
+Total number sucesses is
+
+```{r}
+#| echo: true
+
+3 + 3 + 4 + 6 + 4 + 5 + 6
+```
+
+::::
+
+
+5. Matings *within* the same species of *Drosophila* usually yield eggs that are 90% viable. If you wish to test whether matings *between* species are less viable than matings *within* species, a form of reproductive isolation, what would an appropriate null hypothesis be? [1 point]
+
+    - $H_0: p = 0$
+    - $H_0: p = 0.5$
+    - $H_0: p = 0.9$
+    - $H_0: p = 1$
+
+:::: {.callout-akey}
+
+**Answer**
+
+$H_0: p = 0.9$
+
+::::
+
+6. You estimate that the proportion of viable hybrid offspring from this fly is $\hat{p} = `r round(31/59, 2)`$ and the 95% confidence interval for $\hat{p}$ is 0.40--0.65. Based on these results, would you conclude that hybrid offspring from this fly are less viable than offspring from typical crosses within species? [1 point]
+
+    a. No, because $P-value > 0.05$
+    b. Yes, because $P-value < 0.05$
+    c. No, because $p = 0.9$, the typical proportion of viable offspring for within species crosses, is well outside the 95% confidence intervals 
+    d. Yes, because $p = 0.9$, the typical proportion of viable offspring for within species crosses, is well outside the 95% confidence intervals 
+
+:::: {.callout-akey}
+
+**Answer**
+
+d. Yes, because $p = 0.9$, the typical proportion of viable offspring for within species crosses, is well outside the 95% confidence intervals 
+
+::::
+
+
+:::
+
+
+## Binomial distribution {.unnumbered}
+
+::: {.callout-tip}
+## In questions 7--10 you'll work directly with the binomial distribution
+
+7. Which of the following figures correctly shows the sampling distribution for $n = 20$ trials with $p = 0.20$? [1 point]
+
+```{r, fig.align="center", out.width="75%"}
+
+df1 <- tibble(x = 0:20, y = dbinom(x, 20, 0.2))
+df2 <- tibble(x = 0:10, y = dbinom(x, 10, 0.2))
+df3 <- tibble(x = 0:20, y = dbinom(x, 20, 0.5))
+df4 <- tibble(x = 0:10, y = dbinom(x, 10, 0.5))
+
+gp1 <- ggplot(df1, aes(x, y)) +
+  geom_col(fill = "tomato") +
+  xlab("Number of successes") +
+  ylab("Probability") +
+  theme_cowplot()
+
+gp2 <- gp1 %+% df2 + scale_x_continuous(breaks = seq(0, 10, 2))
+gp3 <- gp1 %+% df3
+gp4 <- gp1 %+% df4 + scale_x_continuous(breaks = seq(0, 10, 2))
+
+plot_grid(gp3, gp2, gp1, gp4, nrow = 2, labels = "AUTO")
+
+```
+
+
+:::: {.callout-akey}
+
+**Answer**
+
+C
+
+::::
+
+
+8. Use R code to calculate the probability of observing exactly 10 success from the binomial distribution for $n = 20$ trials with $p = 0.20$ [1 point] Report both your R code and the answer. For example if the question was "Use R code to calculate the sum of 1 plus 1" you would report:
+
+    ```r
+    1 + 1
+    
+    # 2
+    ```
+
+:::: {.callout-akey}
+
+**Answer**
+
+```{r}
+#| echo: true
+
+dbinom(10, size = 20, prob = 0.2)
+
+```
+
+::::
+
+
+9. Use R code to find the probability of 10 or more success from the binomial distribution for $n = 20$ trials with $p = 0.20$ [1 point] Report your answer in the same format as for question (8.)
+
+:::: {.callout-akey}
+
+**Answer**
+
+```{r}
+#| echo: true
+
+pbinom(9, size = 20, prob = 0.2, lower.tail = FALSE)
+
+```
+
+Note that you need to do `pbinom(9, ....)` rather than `pbinom(10, ....)` because `pbinom` calculates probability in a "greater than" way rather than a "greater than or equal to" way
+::::
+
+
+10. Imagine I flipped a coin 20 times and got 6 heads versus 14 tails. Use R code to test the null hypothesis that this is a fair coin using the binomial test (hint: $p = 0.5$ is the correct value of $p$ for the null hypothesis of a fair coin). [1 point] Again report your answer in the format of questions (8.--9.)
+
+:::: {.callout-akey}
+
+**Answer**
+
+Two options (both correct): 
+
+Using `binom.test`
+
+```{r}
+#| echo: true
+
+binom.test(x = 6, n = 20, p = 0.5) 
+
+# note: same p-value if you do `x = 14` because the binomial with p = 0.5
+# is symmetric and H_A is two-tailed
+binom.test(x = 14, n = 20, p = 0.5)
+
+```
+
+::::
+
+:::: {.callout-akey}
+
+Or you could directly use `pbinom`
+
+
+```{r}
+#| echo: true
+
+lwr_tail <- pbinom(6, size = 20, prob = 0.5) 
+upr_tail <- pbinom(13, size = 20, prob = 0.5, lower.tail = FALSE)
+
+# p-val
+lwr_tail + upr_tail
+
+# same same if we just do 2 * lwr_tail because symmetry and two-sided test
+2 * lwr_tail
+
+```
+
+
+::::
+
+:::
+
+
+

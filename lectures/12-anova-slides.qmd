@@ -1,0 +1,259 @@
+---
+title: "Analysis of Variance"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE,
+                      message = FALSE, eval = TRUE)
+
+library(cowplot)
+library(ggplot2)
+library(dplyr)
+library(viridis)
+library(glue)
+library(stringr)
+library(tidyr)
+library(purrr)
+library(magrittr)
+```
+
+## Learning Objectives
+
+1. Know when to use analysis of variance
+2. Understand that the null hypothesis for analysis of variance is no difference in means across groups or values of explanatory variables
+3. Understand how to decompose variance into its sources
+4. Understand the problem of multiple hypothesis testing
+
+# To the board...
+
+## Example ANOVA for multiple groups in *R*
+
+```{r echo = TRUE}
+# make some pretend data
+groups <- rep(LETTERS[1:3], each = 10)
+y <- 1.2 * as.numeric(as.factor(groups)) + rnorm(30, mean = 0, sd = 0.5)
+
+dat_groups <- data.frame(group = groups, y = y)
+
+head(dat_groups, n = 3)
+```
+
+## Example ANOVA for multiple groups in *R*
+
+```{r echo = TRUE, fig.align='center', fig.width=3, fig.height=3}
+ggplot(dat_groups, aes(x = group, y = y)) + geom_boxplot()
+```
+
+## Example ANOVA for multiple groups in *R*
+
+```{r echo = TRUE, fig.align='center', fig.width=3, fig.height=2}
+ggplot(dat_groups, aes(x = group, y = y)) +
+    geom_jitter(aes(color = group))
+```
+
+## Example ANOVA for multiple groups in *R*
+
+```{r echo = TRUE}
+mod_group <- lm(y ~ group, data = dat_groups)
+anova(mod_group)
+```
+
+## Assumptions of ANOVA for groups
+
+- Random and independent samples
+- Normal distribution for each group
+- Equal variances within each group
+
+## What to do if assumptions are not met?
+
+- Do ANOVA anyway (if deviations are minor)
+- Transform
+- More advanced stats
+
+## Interpreting ANOVA for groups
+
+ANOVA does not tell you which group(s) is/are different!  Just that a difference exists
+
+```{r echo = FALSE, fig.align='center', fig.width=3, fig.height=3}
+ggplot(dat_groups, aes(x = group, y = y)) + geom_boxplot()
+```
+
+## Interpreting ANOVA for groups
+
+If we want to know which groups are different, we need to do a "post hoc" test
+
+- Post hoc tests are designed to account for multiple comparisons
+- What are multiple comparisons and why can't we just do multiple $t$-tests?
+
+## Pos hoc tests and multiple comparisons
+
+Which groups are different?  Just do $t$-tests between all pairwise comparisons, right?
+
+- The problem is that doing multiple $t$-tests leads to a false positive rate $> \alpha$
+- If we do 3 pairwise comparisons with $t$-tests and $\alpha = 0.05$ for each one, then probability of at least 1 false positive is:
+
+```{r echo = TRUE}
+prob_false_positive <- 1 - dbinom(0, size = 3, prob = 0.05)
+prob_false_positive
+```
+
+## Pos hoc tests and multiple comparisons
+
+```{r echo = TRUE}
+prob_false_positive <- 1 - dbinom(0, size = 3, prob = 0.05)
+prob_false_positive
+```
+
+Each $t$-test is like a coin toss with "heads = false positive", the more you do, the more likely you'll get at least one "heads = false positive"
+
+## Pos hoc tests and multiple comparisons
+
+So we use a post hoc test:
+
+```{r echo = TRUE}
+# annoying, but we have to pass the model through the `aov` function
+aov_group <- aov(mod_group)
+```
+
+```{r echo = TRUE, eval = FALSE}
+# "Tukey Honest Significant Difference"
+TukeyHSD(aov_group)
+```
+
+## Pos hoc tests and multiple comparisons
+
+So we use a post hoc test:
+
+```{r echo = TRUE}
+# "Tukey Honest Significant Difference"
+TukeyHSD(aov_group)
+```
+
+## Pos hoc tests and multiple comparisons
+
+The adjusted Confidence Intervals and $P$-values make sure that the overall $\alpha$ remains at the desired level, usually 0.05
+
+# Break!
+
+# Multi-factor ANOVA
+
+## Learning Objectives
+
+1. What is a multi-factor ANOVA, when do you use it, and how?
+
+# To the board...
+
+## Example multi-factor ANOVA in *R*
+
+```{r echo = TRUE}
+# make some pretend data
+restoration <- factor(rep(c("restored", "control"), each = 30))
+impact <- factor(rep(c("low", "high"), 30),
+                 levels = c("low", "high"))
+
+# compute expected response
+fish_biomass <- -1 * as.numeric(impact) + 3 * as.numeric(restoration) -
+  1 * as.numeric(impact) * as.numeric(restoration)
+
+# add some noise
+set.seed(123)
+fish_biomass <- fish_biomass + rnorm(60, mean = 0, sd = 1)
+
+dat <- data.frame(restoration, impact, fish_biomass)
+```
+
+## Example multi-factor ANOVA in *R*
+
+```{r}
+# have a look at pretend data
+head(dat)
+```
+
+## Example multi-factor ANOVA in *R*
+
+```{r echo = TRUE, eval = FALSE}
+ggplot(dat, aes(x = restoration, y = fish_biomass,
+                fill = impact)) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "YlGnBu", direction = -1)
+```
+
+## Example multi-factor ANOVA in *R*
+
+```{r echo = FALSE, fig.align='center', fig.width=3, fig.height=2}
+gp <- ggplot(dat, aes(x = restoration, y = fish_biomass,
+                fill = impact)) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "YlGnBu", direction = -1)
+gp
+```
+
+## Example multi-factor ANOVA in *R*
+
+```{r echo = TRUE}
+mod <- lm(fish_biomass ~ impact + restoration, data = dat)
+anova(mod)
+```
+
+## Example multi-factor ANOVA in *R*
+
+How do we see the estimate of the effects?
+
+```{r echo = TRUE}
+summary(mod)
+```
+
+## Example multi-factor ANOVA in *R*
+
+But looking at the graph, it also seems like the effect of restoration depends on human impact
+
+```{r fig.align='center', fig.width=3, fig.height=2}
+gp
+```
+
+The two effects [interact]{.alert}
+
+## Example multi-factor ANOVA in *R* **with interactions**
+
+The asterisk `*` between terms allows for interactions
+
+```{r echo = TRUE}
+mod_interactions <- lm(fish_biomass ~ impact * restoration,
+                       data = dat)
+anova(mod_interactions)
+```
+
+## Example multi-factor ANOVA in *R* **with interactions**
+
+And the interaction effect is meaningful!
+
+```{r echo = TRUE}
+summary(mod_interactions)
+```
+
+Higher human impact *reduced* the effect of restoration
+
+## Example multi-factor ANOVA in *R* **with interactions**
+
+If you want to do a post-hock test, how would you do it?
+
+## Example multi-factor ANOVA in *R* **with interactions**
+
+If you want to do a post-hock test, how would you do it? *Just like before!*
+
+```{r echo = TRUE, eval = FALSE}
+aov_interactions <- aov(mod_interactions)
+TukeyHSD(aov_interactions)
+```
+
+```{r}
+aov_interactions <- aov(mod_interactions)
+TukeyHSD(aov_interactions)
+```
+
+## Example multi-factor ANOVA in *R* **with interactions**
+
+```{r}
+foo <- TukeyHSD(aov_interactions)
+foo[3]
+```

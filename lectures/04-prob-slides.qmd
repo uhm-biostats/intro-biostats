@@ -1,0 +1,1277 @@
+---
+title: "Probability"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE,
+                      eval = TRUE)
+
+library(cowplot)
+library(ggplot2)
+library(tibble)
+library(dplyr)
+library(tidyr)
+library(viridis)
+```
+
+## Ka hua ʻōlelo o ka haʻawina
+
+::: {style="text-align: center;"}
+[lūlū]{.alert}
+:::
+
+## Learning Objectives
+
+1. Define [random trial]{.alert}, [event]{.alert}, and [outcome]{.alert}
+2. Define [probability]{.alert}
+3. Describe discrete and continuous [probability distributions]{.alert}
+
+Next lecture:
+
+3. More on discrete and continuous [probability distributions]{.alert}
+4. Determine if events are [mutually exclusive]{.alert}
+5. Determine if events are [indipendent]{.alert}
+
+## Define [random trial]{.alert}
+
+- What's going to happen tomorrow?
+- If I flip a coin---heads or tails?
+- If I roll a die, what number comes up?
+- If I measure a fish, how long is it?
+- If I conduct an insect survey in the Koʻolau Mountains, how many species will I find?
+- What is the effect of a new drug on a patient enrolled in a clinical trial?
+
+These are all [random trials]{.alert}
+
+## Define [random trial]{.alert}
+
+*A [random trial]{.alert} is a process or experiment that has two or more possible outcomes whose occurrence cannot be predicted with certainty*
+
+![](/img/die_roll.png)
+
+## Define [event]{.alert} and [outcome]{.alert}
+
+*An [event]{.alert} is one observation of a random trial*
+
+*The [outcomes]{.alert} of a random trial describe all the possible events*
+
+## Define [random trial]{.alert}, [event]{.alert}, and [outcome]{.alert}
+
+::: columns
+::: {.column width="34%"}
+The [random trial:]{.alert}
+
+you roll the die
+
+![](/img/die_roll.png){width="3cm"}
+:::
+
+::: {.column width="28%"}
+An [event:]{.alert}
+
+you get a 5
+
+![](/img/5_die.png){width="1.5cm"}
+:::
+
+::: {.column width="38%"}
+All possible [outcomes:]{.alert}
+
+all integers 1---6
+:::
+:::
+
+## Define [probability]{.alert}
+
+*The [probability]{.alert} of an event is the proportion of times that event would occur if we repeated a random trial over and over again under the same conditions. Probability always ranges between 0 and 1*
+
+## Define [probability]{.alert}
+
+With a fair die, every outcome has equal probability:
+
+```{r}
+library(tidydice)
+library(gridExtra)
+
+d1 <- roll_dice(times = 1, prob = c(1, 0, 0, 0, 0, 0)) |>
+    plot_dice(detailed = FALSE) + labs(title = NULL)
+d2 <- roll_dice(times = 1, prob = c(0, 1, 0, 0, 0, 0)) |>
+    plot_dice(detailed = FALSE) + labs(title = NULL)
+d3 <- roll_dice(times = 1, prob = c(0, 0, 1, 0, 0, 0)) |>
+    plot_dice(detailed = FALSE) + labs(title = NULL)
+d4 <- roll_dice(times = 1, prob = c(0, 0, 0, 1, 0, 0)) |>
+    plot_dice(detailed = FALSE) + labs(title = NULL)
+d5 <- roll_dice(times = 1, prob = c(0, 0, 0, 0, 1, 0)) |>
+    plot_dice(detailed = FALSE) + labs(title = NULL)
+d6 <- roll_dice(times = 1, prob = c(0, 0, 0, 0, 0, 1), success = 1) |>
+    plot_dice(detailed = FALSE) + labs(title = NULL)
+
+pr <- data.frame(rep("= 1/6", 6))
+names(pr) <- NULL
+rownames(pr) <- paste0("Pr(rolling a ", 1:6, ")")
+
+grid.arrange(d1, tableGrob(pr[1, ], theme = ttheme_default(base_size = 32)),
+             d2, tableGrob(pr[2, ], theme = ttheme_default(base_size = 32)),
+             d3, tableGrob(pr[3, ], theme = ttheme_default(base_size = 32)),
+             d4, tableGrob(pr[4, ], theme = ttheme_default(base_size = 32)),
+             d5, tableGrob(pr[5, ], theme = ttheme_default(base_size = 32)),
+             d6, tableGrob(pr[6, ], theme = ttheme_default(base_size = 32)),
+             ncol = 2)
+```
+
+## Define [probability]{.alert}
+
+Probability is just counting, sometimes *very complex* counting.
+
+But with a die it is simple counting:
+
+$Pr(rolling~a~5) = 1/6$
+
+because there is only **1** way to roll a 5, and there are **6** possible outcomes
+
+Probability is all the ways you could get a specific event, divided by the number of possible outcomes
+
+## Define [probability]{.alert}
+
+Probability is all the ways you could get a specific event, divided by the number of possible outcomes
+
+Consider rolling **2 dice** what are all the possible outcomes?
+
+::: {.pause-think}
+Why is 7 a lucky number in many cultures?
+:::
+
+## Define [probability]{.alert}
+
+Probability is all the ways you could get a specific event, divided by the number of possible outcomes
+
+```{r eval = FALSE, echo = TRUE}
+# all the ways to get 7 from 2 dice:
+# (1, 6); (6, 1); (2, 5); (5, 2)
+# (3, 4); (4, 3)
+6
+
+# number of possible outcomes of 2 dice:
+6 * 6
+
+# probability of rolling a 7:
+6 / 36 # = 1/6
+```
+
+## Define [probability]{.alert}
+
+Probability is all the ways you could get a specific event, divided by the number of possible outcomes
+
+```{r echo = TRUE, eval = FALSE}
+# simulate it
+nroll <- 10000
+crap <- replicate(nroll, {
+    d1 <- sample(6, 1)
+    d2 <- sample(6, 1)
+
+    d1 + d2
+})
+
+sum(crap == 7) / nroll # this should be about 1/6
+```
+
+## Define [probability]{.alert}
+
+Probability is all the ways you could get a specific event, divided by the number of possible outcomes
+
+```{r echo = TRUE, eval = TRUE}
+# simulate it
+nroll <- 10000
+crap <- replicate(nroll, {
+    d1 <- sample(6, 1)
+    d2 <- sample(6, 1)
+
+    d1 + d2
+})
+```
+
+Instead of looking at one probability:
+
+```{r echo = TRUE, eval = FALSE}
+sum(crap == 7) / nroll # this should be about 1/6
+```
+
+## Define [probability distribution]{.alert}
+
+We could make a histogram-looking thing of all probabilities:
+
+```{r dicedist, echo = FALSE, eval = TRUE, fig.width=4, fig.height=2, cache=TRUE}
+ggplot(data.frame(sum_of_2_dice = crap), aes(x = sum_of_2_dice)) +
+    geom_histogram(aes(y = after_stat(density)),
+                   binwidth = 1, color = "black") +
+    scale_x_continuous(breaks = seq(2, 12, by = 1)) +
+    theme_cowplot()
+```
+
+This histogram-looking thing is called a [probability distribution]{.alert}
+
+## Define [probability distribution]{.alert}
+
+![](/img/2_dice_hist.png)
+
+This histogram-looking thing is called a [discrete probability distribution]{.alert}
+
+## Why do we care?
+
+Probability is everywhere!
+
+<https://www.youtube.com/watch?v=zJN5W-EreVs&ab>
+
+## Why do we care?
+
+::: columns
+::: {.column width="50%"}
+Probability is everywhere!
+
+*If I conduct an insect survey, how many species will I find?*
+:::
+
+::: {.column width="50%"}
+![](/img/hi_arth.png)
+:::
+:::
+
+## Why do we care?
+
+Probability is everywhere!
+
+*If I conduct an insect survey, how many species will I find?* What are all the outcomes:
+
+| Process | Event |
+|---------|-------|
+| No populations establish | $S = 0$ |
+| A population establishes and goes extinct | $S = 0$ |
+| 2 population establish and 1 goes extinct | $S = 1$ |
+| $\cdots$ | $\cdots$ |
+| N populations establish, M go extinct | $S = N - M$ |
+| $\cdots$ | $\cdots$ |
+| N populations establish, none go extinct | $S = N$ |
+| $\cdots$ | $\cdots$ |
+
+*Complex counting!*
+
+## Why do we care?
+
+::: columns
+::: {.column width="50%"}
+Probability is everywhere!
+
+*If I conduct an insect survey, how many species will I find?*
+
+Different forces in nature, like speciation or species interactions, change the probability of different processes.  In effect, those forces *load the dice* differently
+:::
+
+::: {.column width="50%"}
+![](/img/hi_arth.png)
+:::
+:::
+
+## Why do we care?
+
+::: columns
+::: {.column width="50%"}
+Probability is everywhere!
+
+*If I conduct an insect survey, how many species will I find?*
+
+Different forces in nature, like speciation or species interactions, change the probability of different processes.  In effect, those forces *load the dice* differently
+:::
+
+::: {.column width="50%"}
+```{r echo = FALSE, eval = TRUE, fig.width=3, fig.height=4}
+dat <- data.frame(y = c(rpois(100, 50), rpois(100, 80)),
+                  speciation = c(rep("less speciation", 100),
+                                 rep("more speciation", 100)))
+
+ggplot(dat, aes(x = y, fill = speciation)) +
+    geom_histogram(aes(y = after_stat(density)), bins = 20) +
+    facet_grid(rows = vars(speciation)) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    xlab("Number of species")
+```
+:::
+:::
+
+## Why do we care?
+
+::: columns
+::: {.column width="50%"}
+*Remember noni?*
+
+Suppose we run a clinical study of the effect of noni juice on inflammatory arthritis. We randomly assign half the patients to receive 10mg noni extract and the other half to receive a placebo. We measure change in erythrocyte sedimentation rate (*sed rate*) in all patients before and after treatment (either 10mg noni or placebo)
+:::
+
+::: {.column width="50%"}
+![](/img/noni.jpg){width="100%"}
+:::
+:::
+
+## Why do we care?
+
+::: columns
+::: {.column width="50%"}
+*Remember noni?*
+
+Noni is a crop brought to Hawaiʻi by Kānaka Moali. The ʻike of its use comes from inter-generational kilo.
+
+- Who gets to decide whether/how to commodify noni?
+- This clinical trial should be led by Native Hawaiian practitioners in collaboration with scholars who may or may not also be Native Hawaiian
+:::
+
+::: {.column width="50%"}
+![](/img/noni.jpg){width="100%"}
+:::
+:::
+
+## Why do we care?
+
+::: columns
+::: {.column width="50%"}
+*Remember noni?*
+
+Suppose we run a clinical study of the effect of noni juice on inflammatory arthritis. We randomly assign half the patients to receive 10mg noni extract and the other half to receive a placebo. We measure change in erythrocyte sedimentation rate (*sed rate*) in all patients before and after treatment (either 10mg noni or placebo)
+:::
+
+::: {.column width="50%"}
+```{r, fig.width=3, fig.height=4}
+set.seed(1)
+dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)),
+                  group = c(rep("10mg noni", 100),
+                            rep("placebo", 100)))
+
+ggplot(dat, aes(x = sed, fill = group)) +
+    geom_histogram(aes(y = after_stat(density)), bins = 20) +
+    facet_grid(rows = vars(group)) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    xlab("Change in sed rate [mm/hr]\n(after - before)")
+```
+:::
+:::
+
+## Define [continuous probability distribution]{.alert}
+
+```{r sedhist, echo = FALSE, eval = TRUE, fig.width=4, fig.height=2, cache=TRUE}
+ggplot(dat[dat$group != "placebo", ], aes(x = sed, fill = group)) +
+    geom_histogram(aes(y = after_stat(density)), bins = 20) +
+    facet_grid(rows = vars(group)) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    xlab("Change in sed rate [mm/hr]\n(after - before)")
+```
+
+*Change in sed rate [mm/hr] is* **not** *an integer*
+
+What do we do?!
+
+## Define [continuous probability distribution]{.alert}
+
+![](/img/sed_hist.png)
+
+## Define [continuous probability distribution]{.alert}
+
+Imagine we had millions of data points, and we could draw very narrow bins
+
+```{r echo = FALSE, eval = TRUE, fig.width=4, fig.height=2}
+dat <- data.frame(sed = rnorm(1000000, -2), group = "10mg noni")
+
+ggplot(dat, aes(x = sed, fill = group)) +
+    geom_histogram(aes(y = after_stat(density)), bins = 100) +
+    facet_grid(rows = vars(group)) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    xlab("Change in sed rate [mm/hr]\n(after - before)")
+```
+
+We would get a very smooth looking distribution
+
+## Define [continuous probability distribution]{.alert}
+
+Continuous probability distributions are typically visualized as smooth curves, *without bars*
+
+```{r seddens, echo = FALSE, eval = TRUE, fig.width=4, fig.height=2, cache=TRUE}
+ggplot(dat, aes(x = sed, fill = group)) +
+    geom_density() +
+    facet_grid(rows = vars(group)) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    xlab("Change in sed rate [mm/hr]\n(after - before)")
+```
+
+## Define [continuous probability distribution]{.alert}
+
+Continuous probability distributions are typically visualized as smooth curves, *without bars*
+
+![](/img/sed_den_area.png)
+
+# Break!
+
+## Learning Objectives
+
+Last lecture:
+
+1. Define [random trial]{.alert}, [event]{.alert}, and [outcome]{.alert} $\checkmark$
+2. Define [probability]{.alert} $\checkmark$
+3. Describe discrete and continuous [probability distributions]{.alert} $\checkmark$
+
+This lecture:
+
+3. More on discrete and continuous [probability distributions]{.alert}
+4. Determine if events are [mutually exclusive]{.alert}
+5. Determine if events are [indipendent]{.alert}
+
+## Define [random trial]{.alert}, [event]{.alert}, and [outcome]{.alert}
+
+::: columns
+::: {.column width="34%"}
+The [random trial:]{.alert}
+
+you roll the die
+
+![](/img/die_roll.png){width="3cm"}
+:::
+
+::: {.column width="28%"}
+An [event:]{.alert}
+
+you get a 5
+
+![](/img/5_die.png){width="1.5cm"}
+:::
+
+::: {.column width="38%"}
+All possible [outcomes:]{.alert}
+
+all integers 1---6
+:::
+:::
+
+## Define [probability]{.alert}
+
+*The [probability]{.alert} of an event is the proportion of times that event would occur if we repeated a random trial over and over again under the same conditions. Probability always ranges between 0 and 1*
+
+## Define [probability]{.alert}
+
+With a fair die, every outcome has equal probability:
+
+```{r}
+library(tidydice)
+library(gridExtra)
+
+d1 <- roll_dice(times = 1, prob = c(1, 0, 0, 0, 0, 0)) |>
+    plot_dice(detailed = FALSE) + labs(title = NULL)
+d2 <- roll_dice(times = 1, prob = c(0, 1, 0, 0, 0, 0)) |>
+    plot_dice(detailed = FALSE) + labs(title = NULL)
+d3 <- roll_dice(times = 1, prob = c(0, 0, 1, 0, 0, 0)) |>
+    plot_dice(detailed = FALSE) + labs(title = NULL)
+d4 <- roll_dice(times = 1, prob = c(0, 0, 0, 1, 0, 0)) |>
+    plot_dice(detailed = FALSE) + labs(title = NULL)
+d5 <- roll_dice(times = 1, prob = c(0, 0, 0, 0, 1, 0)) |>
+    plot_dice(detailed = FALSE) + labs(title = NULL)
+d6 <- roll_dice(times = 1, prob = c(0, 0, 0, 0, 0, 1), success = 1) |>
+    plot_dice(detailed = FALSE) + labs(title = NULL)
+
+pr <- data.frame(rep("= 1/6", 6))
+names(pr) <- NULL
+rownames(pr) <- paste0("Pr(rolling a ", 1:6, ")")
+
+grid.arrange(d1, tableGrob(pr[1, ], theme = ttheme_default(base_size = 32)),
+             d2, tableGrob(pr[2, ], theme = ttheme_default(base_size = 32)),
+             d3, tableGrob(pr[3, ], theme = ttheme_default(base_size = 32)),
+             d4, tableGrob(pr[4, ], theme = ttheme_default(base_size = 32)),
+             d5, tableGrob(pr[5, ], theme = ttheme_default(base_size = 32)),
+             d6, tableGrob(pr[6, ], theme = ttheme_default(base_size = 32)),
+             ncol = 2)
+```
+
+## Why do we care?
+
+::: columns
+::: {.column width="50%"}
+Probability is everywhere!
+
+*If I conduct an insect survey, how many species will I find?*
+
+Different forces in nature, like speciation or species interactions, change the probability of different processes.  In effect, those forces *load the dice* differently
+:::
+
+::: {.column width="50%"}
+![](/img/hi_arth.png)
+:::
+:::
+
+## Why do we care?
+
+::: columns
+::: {.column width="50%"}
+Probability is everywhere!
+
+*If I conduct an insect survey, how many species will I find?*
+
+Different forces in nature, like speciation or species interactions, change the probability of different processes.  In effect, those forces *load the dice* differently
+:::
+
+::: {.column width="50%"}
+```{r echo = FALSE, eval = TRUE, fig.width=3, fig.height=4}
+dat <- data.frame(y = c(rpois(100, 50), rpois(100, 80)),
+                  speciation = c(rep("less speciation", 100),
+                                 rep("more speciation", 100)))
+
+ggplot(dat, aes(x = y, fill = speciation)) +
+    geom_histogram(aes(y = after_stat(density)), bins = 20) +
+    facet_grid(rows = vars(speciation)) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    xlab("Number of species")
+```
+:::
+:::
+
+## Define [probability distribution]{.alert}
+
+![](/img/2_dice_hist.png)
+
+This histogram-looking thing is called a [discrete probability distribution]{.alert}
+
+## Why do we care?
+
+::: columns
+::: {.column width="50%"}
+*Remember noni?*
+
+Suppose we run a clinical study of the effect of noni juice on inflammatory arthritis. We randomly assign half the patients to receive 10mg noni extract and the other half to receive a placebo. We measure change in erythrocyte sedimentation rate (*sed rate*) in all patients before and after treatment (either 10mg noni or placebo)
+:::
+
+::: {.column width="50%"}
+![](/img/noni.jpg){width="100%"}
+:::
+:::
+
+## Why do we care?
+
+::: columns
+::: {.column width="50%"}
+*Remember noni?*
+
+Noni is a crop brought to Hawaiʻi by Kānaka Moali. The ʻike of its use comes from inter-generational kilo.
+
+- Who gets to decide whether/how to commodify noni?
+- This clinical trial should be led by Native Hawaiian practitioners in collaboration with scholars who may or may not also be Native Hawaiian
+:::
+
+::: {.column width="50%"}
+![](/img/noni.jpg){width="100%"}
+:::
+:::
+
+## Why do we care?
+
+::: columns
+::: {.column width="50%"}
+*Remember noni?*
+
+Suppose we run a clinical study of the effect of noni juice on inflammatory arthritis. We randomly assign half the patients to receive 10mg noni extract and the other half to receive a placebo. We measure change in erythrocyte sedimentation rate (*sed rate*) in all patients before and after treatment (either 10mg noni or placebo)
+:::
+
+::: {.column width="50%"}
+```{r, fig.width=3, fig.height=4}
+set.seed(1)
+dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)),
+                  group = c(rep("10mg noni", 100),
+                            rep("placebo", 100)))
+
+ggplot(dat, aes(x = sed, fill = group)) +
+    geom_histogram(aes(y = after_stat(density)), bins = 20) +
+    facet_grid(rows = vars(group)) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    xlab("Change in sed rate [mm/hr]\n(after - before)")
+```
+:::
+:::
+
+## Define [continuous probability distribution]{.alert}
+
+![](/img/sed_hist.png)
+
+## Define [continuous probability distribution]{.alert}
+
+Continuous probability distributions are typically visualized as smooth curves, *without bars*
+
+![](/img/sed_den_area.png)
+
+## Connecting descriptions of data to probability
+
+Let's calculate the mean and SD for these data
+
+```{r echo = FALSE, eval = TRUE, fig.width=4, fig.height=2.75}
+set.seed(1)
+dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)),
+                  group = c(rep("10mg noni", 100),
+                            rep("placebo", 100)))
+
+noni <- dat[dat$group != "placebo", ]
+ybar <- mean(noni$sed)
+s <- sd(noni$sed)
+
+ann <- data.frame(x = ybar + c(0, 2 * s, -2 * s),
+                  y = 0.5,
+                  labels = c("bar(y)", "bar(y) + 2*s", "bar(y) - 2*s"))
+
+p <- ggplot(noni, aes(x = sed, fill = group)) +
+    geom_histogram(aes(y = after_stat(density)), bins = 20) +
+    facet_grid(rows = vars(group)) +
+    theme_cowplot() +
+    theme(legend.position = "none") +
+    geom_vline(xintercept = ybar) +
+    geom_vline(xintercept = ybar + c(2 * s, -2 * s), linetype = 2) +
+    xlab("Change in sed rate [mm/hr]\n(after - before)")
+
+p + geom_label(data = ann, aes(x = x, y = y, label = labels),
+               inherit.aes = FALSE, parse = TRUE)
+```
+
+## Connecting descriptions of data to probability
+
+[Pause & Think:]{.alert} we say that 95% of the data fall within $\bar{y} \pm 2 s$, what does that mean in terms of probability?
+
+```{r echo = FALSE, eval = TRUE, fig.width=4, fig.height=2.75}
+p + geom_label(data = ann, aes(x = x, y = y, label = labels),
+              nudge_x = c(-0.25, 0, 0), inherit.aes = FALSE, parse = TRUE)
+```
+
+## Connecting descriptions of data to probability
+
+[Pause & Think:]{.alert} we say that 95% of the data fall within $\bar{y} \pm 2 s$, what does that mean in terms of probability?
+
+There is a 0.95 probability a randomly selected data point will be greater than $\bar{y} - 2 s$ and less than $\bar{y} + 2 s$
+
+::: {style="text-align: center;"}
+![](/img/brown_bag.png){height="50%"}
+:::
+
+"Put the data in a bag and shake it..."
+
+## Connecting descriptions of data to probability
+
+Now let's calculate the SE of the mean
+
+```{r echo = FALSE, eval = TRUE, fig.width=4, fig.height=2.75}
+p + geom_label(data = ann, aes(x = x, y = y, label = labels),
+              nudge_x = c(-0.25, 0, 0), inherit.aes = FALSE, parse = TRUE)
+```
+
+## Connecting descriptions of data to probability
+
+Now let's calculate the SE of the mean
+
+```{r echo = FALSE, eval = TRUE, fig.width=4, fig.height=2.75}
+se <- s / sqrt(nrow(noni))
+
+ann$color <- "black"
+ann <- rbind(ann,
+             data.frame(x = ybar + 2 * c(-se, se),
+                        y = c(0.4, 0.4),
+                        labels = c("bar(y) - 2*SE", "bar(y) + 2*SE"),
+                        color = "blue"))
+
+p + annotate("rect", xmin = ybar - 2 * se, xmax = ybar + 2 * se,
+             ymin = -Inf, ymax = Inf,
+             alpha = 0.5, fill = "blue", color = "blue", linetype = 2) +
+    geom_vline(xintercept = ybar) +
+    geom_label(data = ann, aes(x = x, y = y, label = labels),
+               color = ann$color,
+               nudge_x = c(0, 0, 0, -1.1, 1.1),
+               hjust = c("middle", "middle", "middle", "left", "right"),
+               inherit.aes = FALSE,
+               parse = TRUE)
+```
+
+## Connecting descriptions of data to probability
+
+[Pause & Think:]{.alert} What does the interval from $\bar{y} - 2 SE$ to $\bar{y} + 2 SE$ mean in terms of probability?
+
+```{r echo = FALSE, eval = TRUE, fig.width=4, fig.height=2.75}
+p + annotate("rect", xmin = ybar - 2 * se, xmax = ybar + 2 * se,
+             ymin = -Inf, ymax = Inf,
+             alpha = 0.5, fill = "blue", color = "blue", linetype = 2) +
+    geom_vline(xintercept = ybar) +
+    geom_label(data = ann, aes(x = x, y = y, label = labels),
+               color = ann$color,
+               nudge_x = c(0, 0, 0, -1.1, 1.1),
+               hjust = c("middle", "middle", "middle", "left", "right"),
+               inherit.aes = FALSE,
+               parse = TRUE)
+```
+
+## Connecting descriptions of data to probability
+
+[Pause & Think:]{.alert} What does the interval from $\bar{y} - 2 SE$ to $\bar{y} + 2 SE$ mean in terms of probability? *Hint:* it contains 0.95 probability, but of **which** distribution?
+
+```{r echo = FALSE, eval = TRUE, fig.width=4, fig.height=2.75}
+p + annotate("rect", xmin = ybar - 2 * se, xmax = ybar + 2 * se,
+             ymin = -Inf, ymax = Inf,
+             alpha = 0.5, fill = "blue", color = "blue", linetype = 2) +
+    geom_vline(xintercept = ybar) +
+    geom_label(data = ann, aes(x = x, y = y, label = labels),
+               color = ann$color,
+               nudge_x = c(0, 0, 0, -1.1, 1.1),
+               hjust = c("middle", "middle", "middle", "left", "right"),
+               inherit.aes = FALSE,
+               parse = TRUE)
+```
+
+## Connecting descriptions of data to probability
+
+[Pause & Think:]{.alert} What does the interval from $\bar{y} - 2 SE$ to $\bar{y} + 2 SE$ mean in terms of probability? *Hint:* it contains 0.95 probability, but of **which** distribution?
+
+::: {style="text-align: center;"}
+It contains the 0.95 probability of the [sampling distribution]{.alert} of the mean!!!
+:::
+
+## Connecting descriptions of data to probability
+
+[Pause & Think:]{.alert} What does it mean to say "It contains the 0.95 probability of the [sampling distribution]{.alert} of the mean!!!"???
+
+::: columns
+::: {.column width="50%"}
+Hint: what goes in the bag?
+
+![](/img/brown_bag.png){height="50%"}
+:::
+
+::: {.column width="50%"}
+&nbsp;
+:::
+:::
+
+## Connecting descriptions of data to probability
+
+[Pause & Think:]{.alert} What does it mean to say "It contains the 0.95 probability of the [sampling distribution]{.alert} of the mean!!!"???
+
+::: columns
+::: {.column width="50%"}
+Hint: what goes in the bag?
+
+![](/img/brown_bag.png){height="50%"}
+
+Infinite, hypothetical [random trials]{.alert} go in the bag!
+:::
+
+::: {.column width="50%"}
+The [sampling distribution]{.alert} of the mean comes from those trials
+
+```{r fig.width=3, fig.height=2.5}
+ggplot(data.frame(x = ybar + 3.75 * c(-se, se)), aes(x)) +
+    stat_function(fun = dnorm, args = list(mean = ybar, sd = se)) +
+    theme_cowplot() +
+    xlab("MEAN change in sed rate") +
+    ylab("density") +
+    stat_function(fun = dnorm,
+                  args = list(mean = ybar, sd = se),
+                  xlim = ybar + 2 * c(-se, se),
+                  geom = "area", fill = "blue", alpha = 0.5) +
+    geom_vline(xintercept = ybar + c(0, -2 * se, 2 * se),
+               linetype = c(1, 2, 2), color = c("black", "blue", "blue"))
+```
+:::
+:::
+
+## Rest your brain!
+
+![](/img/molokai.jpg)
+
+## Learning Objectives
+
+3. More on discrete and continuous [probability distributions]{.alert} $\checkmark$
+4. Determine if events are [mutually exclusive]{.alert}
+5. Determine if events are [indipendent]{.alert}
+
+# Rules of probability
+
+[Pause & Think:]{.alert} If 0.95 probability is contained in the [blue]{style="color: blue;"} region, how much is contained in the [orange]{style="color: orange;"} and [red]{style="color: red;"} regions combined?
+
+```{r fig.width=3, fig.height=2, fig.align='center'}
+ggplot(data.frame(x = ybar + 3.75 * c(-se, se)), aes(x)) +
+    theme_cowplot() +
+    xlab("MEAN change in sed rate") +
+    ylab("density") +
+    stat_function(fun = dnorm,
+                  args = list(mean = ybar, sd = se),
+                  xlim = ybar + 2 * c(-se, se),
+                  geom = "area", fill = "blue", alpha = 0.5) +
+    stat_function(fun = dnorm,
+                  args = list(mean = ybar, sd = se),
+                  xlim = ybar + c(-3.75 * se, -2 *se),
+                  geom = "area", fill = "orange") +
+    stat_function(fun = dnorm,
+                  args = list(mean = ybar, sd = se),
+                  xlim = ybar + c(2 * se, 3.75 *se),
+                  geom = "area", fill = "red") +
+    stat_function(fun = dnorm, args = list(mean = ybar, sd = se))
+```
+
+# Rules of probability
+
+[Pause & Think:]{.alert} If 0.95 probability is contained in the [blue]{style="color: blue;"} region, how much is contained in the [orange]{style="color: orange;"} and [red]{style="color: red;"} regions combined?
+
+```{r normArea, fig.width=3, fig.height=2, fig.align='center'}
+normArea <- ggplot(data.frame(x = ybar + 3.75 * c(-se, se)), aes(x)) +
+    theme_cowplot() +
+    xlab("MEAN change in sed rate") +
+    ylab("density") +
+    stat_function(fun = dnorm,
+                  args = list(mean = ybar, sd = se),
+                  xlim = ybar + 2 * c(-se, se),
+                  geom = "area", fill = "blue", alpha = 0.5) +
+    stat_function(fun = dnorm,
+                  args = list(mean = ybar, sd = se),
+                  xlim = ybar + c(-3.75 * se, -2 *se),
+                  geom = "area", fill = "orange") +
+    stat_function(fun = dnorm,
+                  args = list(mean = ybar, sd = se),
+                  xlim = ybar + c(2 * se, 3.75 *se),
+                  geom = "area", fill = "red") +
+    stat_function(fun = dnorm, args = list(mean = ybar, sd = se))
+
+normArea
+```
+
+[Answer:]{.alert} 0.025 + 0.025 = 0.05 probability...why?
+
+## Rules of probability
+
+1. Probability is always between 0 and 1
+2. The sum of all the probabilities of all the possible outcomes always equals 1
+
+## Rules of probability
+
+1. Probability is always between 0 and 1
+2. The sum of all the probabilities of all the possible outcomes always equals 1
+3. We can *add* the probabilities of [mutually exclusive]{.alert} outcomes
+
+```{r fig.width=3, fig.height=2, fig.align='center'}
+normArea
+```
+
+the [orange]{style="color: orange;"} and [red]{style="color: red;"} regions are [mutually exclusive]{.alert}
+
+## Rules of probability
+
+1. Probability is always between 0 and 1
+2. The sum of all the probabilities of all the possible outcomes always equals 1
+3. We can *add* the probabilities of [mutually exclusive]{.alert} events
+4. We can *simply multiply* the probabilities of [independent]{.alert} events
+
+::: {style="text-align: center;"}
+![](/img/dice_3-5.png){width="4cm"}
+:::
+
+the event of the second die roll is [indipendent]{.alert} of the first die roll, so the probability of a 3 for the first and a 5 for the second is $\frac{1}{6} \times \frac{1}{6} = \frac{1}{36}$
+
+## Rules of probability
+
+Adding and multiplying probabilities have special vocab:
+
+**Adding is an "OR" situation:**
+
+> The mean is less than -2 OR greater than -1.7
+
+$$Pr(\bar{y} < - 2) + Pr(\bar{y} > -1.7) = 0.05$$
+
+## Rules of probability
+
+Adding and multiplying probabilities have special vocab:
+
+**Multiplying is an "AND" situation:**
+
+> The first die is 3 AND the second is 5
+
+$$Pr(\text{1}^{st} \text{ die} = 3) \times Pr(\text{2}^{nd} \text{ die} = 5) = \frac{1}{36}$$
+
+## Rules of probability
+
+Adding and multiplying probabilities have special vocab:
+
+**Adding is an "OR" situation:**
+
+> The mean is less than -2 OR greater than -1.7
+
+$$Pr(\bar{y} < - 2) + Pr(\bar{y} > -1.7) = 0.05$$
+
+> The first die is 3 OR the second is 5
+
+$$Pr(\text{1}^{st} \text{ die} = 3) + Pr(\text{2}^{nd} \text{ die} = 5) = \frac{1}{3}$$
+
+## Rules of probability
+
+1. Probability is always between 0 and 1
+2. The sum of all the probabilities of all the possible outcomes always equals 1
+3. We can *add* the probabilities of [mutually exclusive]{.alert} events
+4. We can *simply multiply* the probabilities of [independent]{.alert} events
+5. We can *add* the probabilities of [independent]{.alert} events
+
+## Rules of probability
+
+1. Probability is always between 0 and 1
+2. The sum of all the probabilities of all the possible outcomes always equals 1
+3. We can *add* the probabilities of [mutually exclusive]{.alert} events
+4. We can *simply multiply* the probabilities of [independent]{.alert} events
+5. We can *add* the probabilities of [independent]{.alert} events
+5. What about multiplying [non-independent]{.alert} probabilities???
+
+::: {style="text-align: center;"}
+*Next time!*
+:::
+
+# Break!
+
+## Learning Objectives
+
+1. Determine if events are [mutually exclusive]{.alert}
+2. Determine if events are [indipendent]{.alert}
+
+## Define [probability]{.alert}
+
+*The [probability]{.alert} of an event is the proportion of times that event would occur if we repeated a random trial over and over again under the same conditions. Probability always ranges between 0 and 1*
+
+## Estimating [probability]{.alert}
+
+> The [probability]{.alert} of an event is the proportion of times that event would occur...
+
+What's the [probability]{.alert} I go to the beach and see a honu?
+
+```{r}
+x <- data.frame(December = c(11, 4), January = c(7, 2))
+rownames(x) <- c("Visits to beach", "Seen a honu")
+
+knitr::kable(x)
+```
+
+## Estimating [probability]{.alert}
+
+What's the [probability]{.alert} I go to the beach and see a honu?
+
+```{r echo = TRUE}
+# probability is (number of events) / (number of trials)
+dec_prob <- 4 / 11
+dec_prob
+
+jan_prob <- 2 / 7
+jan_prob
+
+# combine info using mean
+mean(dec_prob, jan_prob)
+```
+
+## Rules of probability
+
+1. Probability is always between 0 and 1
+2. The sum of all the probabilities of all the possible outcomes always equals 1
+
+## Rules of probability
+
+1. Probability is always between 0 and 1
+2. The sum of all the probabilities of all the possible outcomes always equals 1
+3. We can *add* the probabilities of [mutually exclusive]{.alert} outcomes
+
+the [orange]{style="color: orange;"} and [red]{style="color: red;"} regions are [mutually exclusive]{.alert}
+
+## Rules of probability
+
+1. Probability is always between 0 and 1
+2. The sum of all the probabilities of all the possible outcomes always equals 1
+3. We can *add* the probabilities of [mutually exclusive]{.alert} events
+4. We can *simply multiply* the probabilities of [independent]{.alert} events
+
+::: {style="text-align: center;"}
+![](/img/dice_3-5.png){width="4cm"}
+:::
+
+the event of the second die roll is [indipendent]{.alert} of the first die roll, so the probability of a 3 for the first and a 5 for the second is $\frac{1}{6} \times \frac{1}{6} = \frac{1}{36}$
+
+## Rules of probability
+
+Adding and multiplying probabilities have special vocab:
+
+**Adding is an "OR" situation:**
+
+> The mean is less than -2 OR greater than -1.7
+
+$$Pr(\bar{y} < - 2) + Pr(\bar{y} > -1.7) = 0.05$$
+
+## Rules of probability
+
+Adding and multiplying probabilities have special vocab:
+
+**Multiplying is an "AND" situation:**
+
+> The first die is 3 AND the second is 5
+
+$$Pr(\text{1}^{st} \text{ die} = 3) \times Pr(\text{2}^{nd} \text{ die} = 5) = \frac{1}{36}$$
+
+## Rules of probability
+
+Adding and multiplying probabilities have special vocab:
+
+**Adding is an "OR" situation:**
+
+> The mean is less than -2 OR greater than -1.7
+
+$$Pr(\bar{y} < - 2) + Pr(\bar{y} > -1.7) = 0.05$$
+
+> The first die is 3 OR the second is 5
+
+$$Pr(\text{1}^{st} \text{ die} = 3) + Pr(\text{2}^{nd} \text{ die} = 5) = \frac{1}{3}$$
+
+## Rules of probability
+
+1. Probability is always between 0 and 1
+2. The sum of all the probabilities of all the possible outcomes always equals 1
+3. We can *add* the probabilities of [mutually exclusive]{.alert} events
+4. We can *simply multiply* the probabilities of [independent]{.alert} events
+5. We can *add* the probabilities of [independent]{.alert} events
+
+## Rules of probability
+
+1. Probability is always between 0 and 1
+2. The sum of all the probabilities of all the possible outcomes always equals 1
+3. We can *add* the probabilities of [mutually exclusive]{.alert} events
+4. We can *simply multiply* the probabilities of [independent]{.alert} events
+5. We can *add* the probabilities of [independent]{.alert} events
+5. What about multiplying [non-independent]{.alert} probabilities???
+
+## Non-independent events
+
+You go catch a fish and...
+
+::: columns
+::: {.column width="50%"}
+::: {style="text-align: center;"}
+*A*
+:::
+:::
+
+::: {.column width="50%"}
+::: {style="text-align: center;"}
+*B*
+:::
+:::
+:::
+
+::: columns
+::: {.column width="50%"}
+**Length is greater than 50 cm**
+:::
+
+::: {.column width="50%"}
+**It's an uhu**
+
+![](/img/uhu.png)
+:::
+:::
+
+## Non-independent events
+
+```{r fig.align='center', fig.width=4, fig.height=3}
+library(sf)
+
+sfcirc <- function(x, y, r) {
+    st_point(c(x, y)) |>
+        st_sfc() |>
+        st_sf(geometry = _) |>
+        st_buffer(dist = r)
+}
+
+A <- sfcirc(-1, 0, 2)
+B <- sfcirc(1, 0, 2)
+
+AandB <- st_intersection(A, B)
+AorB <- st_union(A, B)
+Aonly <- st_difference(A, B)
+Bonly <- st_difference(B, A)
+
+Acol <- hsv(0.6, 1, 0.8)
+Afill <- hsv(0.6, 0.5)
+Bcol <- hsv(1, 0.7, 0.7)
+Bfill <- hsv(1, 0.4, 0.9)
+ABcol <- hsv(0.8, 1, 0.5)
+ABfill <- hsv(0.8, 0.7, 0.7)
+
+prob_venn <- ggplot() +
+    annotate("rect", xmin = -4, xmax = 4, ymin = -3, ymax = 3,
+             fill = "gray85", color = "black") +
+    annotate("text", x = 0, y = -2.5,
+             label = expression("not (A OR B) = ("*l <= 50*"cm & not uhu)"),
+             size = 5) +
+    geom_sf(data = B, fill = Bfill, color = Bcol, linewidth = 1) +
+    geom_sf(data = A, fill = Afill, color = Acol, linewidth = 1) +
+    geom_sf(data = AandB, fill = ABfill, color = ABcol, linewidth = 1) +
+    annotate("text", x = 2, y = 1, label = "B", color = Bcol, size = 6) +
+    annotate("text", x = 2, y = 0.5, label = "uhu", color = Bcol, size = 3) +
+    annotate("text", x = 2, y = 0, label = "0.3", color = Bcol, size = 6) +
+    annotate("text", x = 0, y = 0.75, label = "A&B", color = ABcol, size = 6) +
+    annotate("text", x = 0, y = 0, label = "0.1", color = ABcol, size = 6) +
+    annotate("text", x = -2, y = 1, label = "A", color = Acol, size = 6) +
+    annotate("text", x = -2, y = 0.5, label = "l > 50 cm", color = Acol,
+             size = 4) +
+    annotate("text", x = -2, y = 0, label = "0.2", color = Acol, size = 6) +
+    xlim(c(-4, 4)) + ylim(c(-3, 3)) +
+    theme_nothing()
+
+prob_venn
+```
+
+## Non-independent events
+
+::: columns
+::: {.column width="65%"}
+```{r fig.align='center', fig.width=4, fig.height=3}
+prob_venn
+```
+:::
+
+::: {.column width="35%"}
+**Calculating probabilities**
+
+$Pr(A) = 0.2$
+
+$Pr(B) = 0.3$
+
+$Pr(A~\&~B) = 0.1$
+
+$Pr(A~OR~B) = \text{??}$
+:::
+:::
+
+## Non-independent events
+
+::: columns
+::: {.column width="50%"}
+```{r fig.align='center', fig.width=4, fig.height=3}
+prob_venn + geom_sf(data = AorB, fill = "black") +
+    annotate("text", x = 0, y = 0, label = "A OR B", color = "white",
+             size = 6) +
+    annotate("rect", xmin = -3.9, xmax = 3.9, ymin = -2.9, ymax = -2.1,
+             fill = "gray85", color = "gray85")
+```
+
+```{r fig.align='center', fig.width=4, fig.height=3}
+prA <- ggplot() +
+    geom_sf(data = A, fill = Afill, color = Acol, linewidth = 1) +
+    geom_sf(data = AandB, fill = ABfill, color = ABcol, linewidth = 1) +
+    annotate("text", x = 0, y = 0.75, label = "A&B", color = ABcol, size = 6) +
+    annotate("text", x = -2, y = 1, label = "A", color = Acol, size = 6) +
+    theme_nothing()
+
+prB <- ggplot() +
+    geom_sf(data = B, fill = Bfill, color = Bcol, linewidth = 1) +
+    geom_sf(data = AandB, fill = ABfill, color = ABcol, linewidth = 1) +
+    annotate("text", x = 2, y = 1, label = "B", color = Bcol, size = 6) +
+    annotate("text", x = 0, y = 0.75, label = "A&B", color = ABcol, size = 6) +
+    theme_nothing()
+
+plot_grid(prA, prB, nrow = 1)
+```
+:::
+
+::: {.column width="50%"}
+**Calculating probabilities**
+
+$Pr(A~OR~B) \neq Pr(A) + Pr(B)$
+
+Why? Double counts $Pr(A~\&~B)$
+
+$Pr(A~OR~B) = Pr(A) + Pr(B) - Pr(A~\&~B)$
+
+$\Rightarrow Pr(A~OR~B) = 0.2 + 0.3 - 0.1 = 0.4$
+:::
+:::
+
+## Non-independent events
+
+::: columns
+::: {.column width="25%"}
+```{r fig.align='center', fig.width=2, fig.height=2}
+prA
+```
+:::
+
+::: {.column width="75%"}
+**Calculating probabilities**
+
+$Pr(B \mid A)$
+
+"The probability of observing $B$ given that we already know $A$ happened"
+
+$Pr(B \mid A) = \frac{Pr(A~\&~B)}{Pr(A)}$
+
+The [event]{.alert} is $A~\&~B$ and all the possible [outcomes]{.alert} are $A~\&~B$ or $A~NOT~B$. So we need to divide the probability of $A~\&~B$ by the probability of $A~\&~B$ or $A~NOT~B$.
+
+And $Pr(A) = Pr(A~\&~B) + Pr(A~NOT~B)$ so
+
+$Pr(B \mid A) = \frac{Pr(A~\&~B)}{Pr(A)}$
+:::
+:::
+
+## Non-independent events
+
+::: columns
+::: {.column width="50%"}
+```{r fig.align='center', fig.width=4, fig.height=3}
+prob_venn
+```
+:::
+
+::: {.column width="50%"}
+**Calculating probabilities**
+:::
+:::
+
+## Non-independent events
+
+**Calculating probabilities**
+
+Note that we can re-arrange this equation
+
+$Pr(B \mid A) = \frac{Pr(A~\&~B)}{Pr(A)}$
+
+$Pr(B \mid A) Pr(A) = Pr(A~\&~B)$
+
+By extension, this equation is also true
+
+$Pr(A \mid B) Pr(B) = Pr(A~\&~B)$
+
+Therefore
+
+$Pr(A \mid B) Pr(B) = Pr(B \mid A) Pr(A)$
+
+## Non-independent events
+
+$Pr(A \mid B) Pr(B) = Pr(B \mid A) Pr(A)$
+
+And re-arranging
+
+$$Pr(A \mid B)  = \frac{Pr(B \mid A) Pr(A)}{Pr(B)}$$
+
+**This is Bayes' Theorem** and it is super useful
+
+## Rules of probability
+
+1. Probability is always between 0 and 1
+2. The sum of all the probabilities of all the possible outcomes always equals 1
+3. We can *add* the probabilities of [mutually exclusive]{.alert} events
+5. We can *add* the probabilities of [independent]{.alert} events
+4. We can *simply multiply* the probabilities of [independent]{.alert} events
+
+For non-independent events (but also works for independent events):
+
+6. $Pr(A~OR~B) = Pr(A) + Pr(B) - Pr(A~\&~B)$
+7. $Pr(A~\&~B) = Pr(A | B) Pr(B)$
+8. Bayes' theorem: $Pr(A | B) = \frac{Pr(B | A) Pr(A)}{Pr(B)}$

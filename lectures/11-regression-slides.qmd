@@ -1,0 +1,171 @@
+---
+title: "Regression"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE,
+                      message = FALSE, eval = TRUE)
+
+library(cowplot)
+library(ggplot2)
+library(dplyr)
+library(viridis)
+library(glue)
+library(stringr)
+library(tidyr)
+library(purrr)
+library(magrittr)
+```
+
+## Are older insect lineages more species rich in Hawaiʻi?
+
+::: columns
+::: {.column width="50%"}
+*Hylaeus* bees
+
+- 700,000 years
+- 60-ish species
+
+![from: Magnacca and Danforth (2006) Cladistics 22](/img/hylid_phylo.png){width="80%"}
+:::
+
+::: {.column width="50%"}
+Native *Drosophila*
+
+- 25 million years
+- possibly 1000 species
+
+![from: Church and Extavour (2022) Molecular Biology and Evolution, 39](/img/drosoph_phylo.png){width="60%"}
+:::
+:::
+
+## Are older insect lineages more species rich in Hawaiʻi?
+
+Looks like it...a question for [correlation]{.alert}
+
+```{r fig.align='center', fig.width=4, fig.height=3}
+hi_insect <- read.csv("../data/hembry_etal.csv")
+hi_insect$clade_richness <- round(hi_insect$clade_richness)
+
+ggplot(hi_insect, aes(x = clade_age, y = clade_richness)) +
+    geom_point() +
+    theme_cowplot() +
+    xlab("Clade age (my)") +
+    ylab("Number of species")
+```
+
+## Are older insect lineages more species rich in Hawaiʻi?
+
+Using product-moment [correlation]{.alert}, we got a "significant" correlation
+
+```{r}
+cor.test(hi_insect$clade_age, hi_insect$clade_richness)
+```
+
+## Are older insect lineages more species rich in Hawaiʻi?
+
+The significant correlation means that clade age and number of species have a [predictive]{.alert} relationship (I could predict one from the other).
+
+How do we actually predict number of species from clade age?
+
+::: columns
+::: {.column width="50%"}
+```{r fig.align='center', fig.width=4, fig.height=3, out.width="100%"}
+hi_insect <- read.csv("../data/hembry_etal.csv")
+hi_insect$clade_richness <- round(hi_insect$clade_richness)
+
+ggplot(hi_insect, aes(x = clade_age, y = clade_richness)) +
+    geom_point() +
+    theme_cowplot() +
+    xlab("Clade age (my)") +
+    ylab("Number of species") +
+    geom_smooth(method = "lm", se = FALSE)
+```
+:::
+
+::: {.column width="50%"}
+*A job for [regression]{.alert}*
+:::
+:::
+
+## Learning Objectives
+
+1. Use linear regression to predict $Y$ based on $X$
+2. Test the null hypothesis of slope = 0
+3. Display uncertainty in predictions from a linear regression
+4. Use diagnostic plots to evaluate if data meet assumptions of regression
+
+## Using slides from supplemental textbook...
+
+# Break!
+
+## Showing steps for calculating regression models
+
+Make some fake tooth decay data
+
+```{r echo = TRUE}
+# this makes all "random" numbers the same every time
+# we run this code
+set.seed(12)
+
+# random dates
+deltaC14 <- runif(18, 0, 600)
+
+# simulate date of birth from slope, intercept,
+# and residual error
+dateOfBirth <- 1992.27 - 0.05326 * deltaC14 +
+    rnorm(18, sd = 10.99)
+```
+
+## Showing steps for calculating regression models
+
+Make some fake tooth decay data
+
+```{r echo = TRUE}
+# combine into data.frame
+tooth.data <- data.frame(deltaC14 = deltaC14,
+                         dateOfBirth = dateOfBirth)
+
+# have a look
+head(tooth.data)
+```
+
+## Showing steps for calculating regression models
+
+Plot it
+
+```{r echo = TRUE, fig.width=3.5, fig.height=3, fig.align='center', out.width="50%"}
+ggplot(tooth.data, aes(deltaC14, dateOfBirth)) +
+    geom_point()
+```
+
+## Showing steps for calculating regression models
+
+Make a linear model
+
+```{r echo = TRUE}
+tooth.model <- lm(dateOfBirth ~ deltaC14,
+                  data = tooth.data)
+```
+
+## Showing steps for calculating regression models
+
+Get info on null hypothesis tests
+
+```{r eval=FALSE, echo = TRUE}
+summary(tooth.model)
+```
+
+```{r echo=FALSE}
+summary(tooth.model)
+```
+
+Notice that `F-statistics` stuff, we'll get there! But not yet
+
+## Showing steps for calculating regression models
+
+Get confidence intervals of coefficient estimates
+
+```{r echo = TRUE}
+confint(tooth.model)
+```

@@ -1,0 +1,188 @@
+---
+title: "BIOL 220: Analysis of Variance"
+output: binb::metropolis
+header-includes:
+  - \usepackage{array}
+  - \usepackage{xcolor}
+  - \usepackage{colortbl}
+  - \usepackage[export]{adjustbox}
+  - \usepackage{pdfpages}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, 
+                      message = FALSE, eval = TRUE)
+
+library(cowplot)
+library(ggplot2)
+library(dplyr)
+library(viridis)
+library(glue)
+library(stringr)
+library(tidyr)
+library(googlesheets4)
+library(extraDistr)
+library(purrr)
+library(magrittr)
+```
+
+
+# Multi-factor ANOVA 
+
+## Learning Objectives
+
+
+1. What is a multi-factor ANOVA, when do you use it, and how?
+
+
+# To the board...
+
+
+## Example multi-factor ANOVA in *R*
+
+
+\small
+
+```{r echo = TRUE}
+# make some pretend data
+restoration <- factor(rep(c("restored", "control"), each = 30))
+impact <- factor(rep(c("low", "high"), 30), 
+                 levels = c("low", "high"))
+
+# compute expected response
+fish_biomass <- -1 * as.numeric(impact) + 3 * as.numeric(restoration) -
+  1 * as.numeric(impact) * as.numeric(restoration)
+
+# add some noise
+set.seed(123)
+fish_biomass <- fish_biomass + rnorm(60, mean = 0, sd = 1)
+
+dat <- data.frame(restoration, impact, fish_biomass)
+```
+
+
+## Example multi-factor ANOVA in *R*
+
+
+\small
+
+```{r}
+# have a look at pretend data
+head(dat)
+```
+
+
+## Example multi-factor ANOVA in *R*
+
+
+\small
+
+```{r echo = TRUE, eval = FALSE}
+ggplot(dat, aes(x = restoration, y = fish_biomass, 
+                fill = impact)) + 
+  geom_boxplot() + 
+  scale_fill_brewer(palette = "YlGnBu", direction = -1)
+```
+
+
+## Example multi-factor ANOVA in *R*
+
+
+```{r echo = FALSE, fig.align='center', fig.width=3, fig.height=2}
+gp <- ggplot(dat, aes(x = restoration, y = fish_biomass, 
+                fill = impact)) + 
+  geom_boxplot() + 
+  scale_fill_brewer(palette = "YlGnBu", direction = -1)
+gp
+```
+
+## Example multi-factor ANOVA in *R*
+
+
+\small
+
+```{r echo = TRUE}
+mod <- lm(fish_biomass ~ impact + restoration, data = dat)
+anova(mod)
+```
+
+## Example multi-factor ANOVA in *R*
+
+How do we see the estimate of the effects?
+\footnotesize
+
+```{r echo = TRUE}
+summary(mod)
+```
+
+## Example multi-factor ANOVA in *R*
+
+
+But looking at the graph, it also seems like the effect of restoration depends on human impact
+
+```{r fig.align='center', fig.width=3, fig.height=2}
+gp
+```
+
+The two effects \alert{interact}
+
+## Example multi-factor ANOVA in *R* **with interactions**
+
+The asterisk `*` between terms allows for interactions
+
+\small
+
+```{r echo = TRUE}
+mod_interactions <- lm(fish_biomass ~ impact * restoration, 
+                       data = dat)
+anova(mod_interactions)
+```
+
+
+## Example multi-factor ANOVA in *R* **with interactions**
+
+And the interaction effect is meaningful!
+
+\footnotesize
+
+```{r echo = TRUE}
+summary(mod_interactions)
+```
+
+
+Higher human impact *reduced* the effect of restoration
+
+
+## Example multi-factor ANOVA in *R* **with interactions**
+
+If you want to do a post-hock test, how would you do it?
+
+## Example multi-factor ANOVA in *R* **with interactions**
+
+If you want to do a post-hock test, how would you do it? *Just like before!*
+
+\small
+
+```{r echo = TRUE, eval = FALSE}
+aov_interactions <- aov(mod_interactions)
+TukeyHSD(aov_interactions)
+```
+
+\tiny
+
+```{r}
+aov_interactions <- aov(mod_interactions)
+TukeyHSD(aov_interactions)
+```
+
+## Example multi-factor ANOVA in *R* **with interactions**
+
+
+\tiny
+
+```{r}
+foo <- TukeyHSD(aov_interactions)
+foo[3]
+```
+
+

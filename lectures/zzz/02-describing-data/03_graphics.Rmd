@@ -1,0 +1,630 @@
+---
+title: "BIOL 220 Graphics"
+output: binb::metropolis
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+library(cowplot)
+library(ggplot2)
+library(scales)
+library(dplyr)
+library(tidyr)
+
+x <- read.csv("../../data/Focal_Bird_Morphology.csv")
+xname <- data.frame(species = tolower(c("JAWE", "RBLE", 
+                                        "RVBU", "RWBU",
+                                        "WRSH")), 
+                    full_name = c("Japanese white-eye", "red-billed leiothrix", 
+                                  "red-vented bulbul", "red-whiskered bulbul", 
+                                  "white-rumped shama"))
+
+x <- full_join(x, xname)
+```
+
+## Ka hua \`ōlelo o ka ha\`awina
+
+\centering \Large
+\alert{kuhikuhi}
+
+
+## Learning Objectives
+
+1. Distinguish between \alert{exploratory} and \alert{explanatory} figures
+2. Identify what makes a good graph
+3. Identify best practices in figure design
+4. Identify misleading graphics and fix them
+5. Understand how variable types determine figure design 
+
+# 5. Understand how variable types determine figure design 
+
+## 5. Understand how variable types determine figure design 
+
+We make use of the *R* package `ggplot2` for figure design
+
+The basic building blocks are:
+
+```{r eval = FALSE, echo=TRUE}
+library(ggplot2)
+
+ggplot(data = "the data.frame we're plotting", 
+       mapping = aes(x = "column with data for x-axis", 
+                     y = "column with data for y-axis")) +
+    geom_"type of plot"
+```
+
+
+## 5. Understand how variable types determine figure design 
+
+::: columns
+
+:::: {.column width=0.2}
+
+**Explanatory:** Numerical 
+\vspace{1em}
+
+**Response:** Numerical
+\vspace{1em}
+
+**Figure:** Scatter plot, `geom_point`
+
+::::
+
+:::: {.column width=0.8}
+
+
+```{r fig.align='center', fig.width=3, fig.height=3}
+set.seed(200)
+dat <- data.frame(treatment = rep(LETTERS[1:3], c(12, 30, 18)))
+
+dat$type <- as.factor(dat$treatment) |> 
+    as.numeric() |> 
+    rnorm(nrow(dat), mean = _) |> 
+    cut(breaks = 4) |> 
+    as.numeric() |> 
+    (\(x) paste0("type_0", x))()
+
+dat$x <- runif(nrow(dat), 0, 20)
+dat$y <- 0.5 * dat$x + 4 * as.numeric(as.factor(dat$treatment)) + rnorm(nrow(dat))
+
+
+ggplot(dat, aes(x = x, y = y)) +
+    geom_point()
+```
+
+::::
+
+:::
+
+## 5. Understand how variable types determine figure design 
+
+::: columns
+
+:::: {.column width=0.2}
+
+**Explanatory:** Categorical *or* Ordinal  
+\vspace{1em}
+
+**Response:** Numerical
+\vspace{1em}
+
+**Figure:** Jitter plot, `geom_jitter`
+
+::::
+
+:::: {.column width=0.8}
+
+```{r fig.align='center', fig.width=4, fig.height=4}
+ggplot(dat, aes(x = treatment, y = y, color = treatment)) +
+    geom_jitter() +
+    scale_color_viridis_d() +
+    theme(legend.position = "none")
+```
+
+::::
+
+:::
+
+## 5. Understand how variable types determine figure design 
+
+::: columns
+
+:::: {.column width=0.2}
+
+**Explanatory:** Categorical *or* Ordinal  
+\vspace{1em}
+
+**Response:** Numerical
+\vspace{1em}
+
+**Figure:** Box plot, `geom_boxplot`
+
+::::
+
+:::: {.column width=0.8}
+
+```{r fig.align='center', fig.width=4, fig.height=4}
+ggplot(dat, aes(x = treatment, y = y, fill = treatment)) +
+    geom_boxplot() +
+    scale_fill_viridis_d() +
+    theme(legend.position = "none")
+
+```
+
+::::
+
+:::
+
+
+## 5. Understand how variable types determine figure design 
+
+::: columns
+
+:::: {.column width=0.2}
+
+**Explanatory:** Categorical *or* Ordinal  
+\vspace{1em}
+
+**Response:** Categorical *or* Ordinal 
+\vspace{1em}
+
+**Figure:** Stacked bar plot, `geom_bar`
+
+::::
+
+:::: {.column width=0.8}
+
+```{r fig.align='center', fig.width=4, fig.height=4}
+ggplot(dat, aes(x = treatment, fill = type)) +
+    geom_bar() +
+    scale_fill_viridis_d(option = "inferno")
+
+```
+
+::::
+
+:::
+
+## 5. Understand how variable types determine figure design 
+
+::: columns
+
+:::: {.column width=0.2}
+
+**Explanatory:** Categorical *or* Ordinal  
+\vspace{1em}
+
+**Response:** Categorical *or* Ordinal 
+\vspace{1em}
+
+**Figure:** Stacked bar plot (scaled to percent), `geom_bar(position = "fill")`
+
+::::
+
+:::: {.column width=0.8}
+
+```{r fig.align='center', fig.width=4, fig.height=4}
+ggplot(dat, aes(x = treatment, fill = type)) +
+    geom_bar(position = "fill") +
+    scale_fill_viridis_d(option = "inferno") +
+    ylab("Percent")
+```
+
+::::
+
+:::
+
+## 5. Understand how variable types determine figure design 
+
+::: columns
+
+:::: {.column width=0.2}
+
+**Explanatory:** "none" (i.e. you just want to check out response)
+\vspace{1em}
+
+**Response:** Numerical
+\vspace{1em}
+
+**Figure:** Histogram, `geom_histogram`
+
+::::
+
+:::: {.column width=0.8}
+
+```{r fig.align='center', fig.width=4, fig.height=4}
+ggplot(dat, aes(x = y)) +
+    geom_histogram(color = "black", binwidth = 4)
+
+```
+
+::::
+
+:::
+
+## 5. Understand how variable types determine figure design 
+
+::: columns
+
+:::: {.column width=0.2}
+
+**Explanatory:** "none" (i.e. you just want to check out response)
+\vspace{1em}
+
+**Response:** Categorical *or* Ordinal 
+\vspace{1em}
+
+**Figure:** Bar plot, `geom_bar`
+
+::::
+
+:::: {.column width=0.8}
+
+```{r fig.align='center', fig.width=4, fig.height=4}
+ggplot(dat, aes(x = type)) +
+    geom_bar()
+
+```
+
+
+::::
+
+:::
+
+## 1. Distinguish between \alert{exploratory} and \alert{explanatory} figures
+
+For \alert{exploratory plots}: Don't worry about pretty colors, labels, names, etc. The goal is for you to understand the data.
+
+For \alert{explanatory plots}: Focus on all of this. You must consider your audience may, for example, consist of:
+
+- People unfamiliar with your data          
+- People with different vision, and/or black-and-white printing
+
+## 1. Distinguish between \alert{exploratory} and \alert{explanatory} figures
+
+Let's use an example 
+
+```{r, echo = TRUE}
+# Data on morphology of some non-native birds in Hawaiʻi
+# from Gleditsch & Sperry (2020) *Ecology and Evolution*
+birds <- read.csv("../../data/bird_morpho.csv")
+head(birds)
+```
+
+
+## 1. Distinguish between \alert{exploratory} and \alert{explanatory} figures
+
+```{r}
+gp1 <- ggplot(birds, aes(x = mass, y = wing)) +
+    geom_point() 
+
+
+gp2 <- ggplot(birds, aes(x = mass, y = wing)) +
+    geom_point(size = 2, alpha = 0.5) +
+    xlab("Body mass (g)") +
+    ylab("Wing length (mm)") +
+    geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+    theme_cowplot() +
+    theme(axis.text = element_text(size = 18),
+          axis.title = element_text(size = 20))
+```
+
+::: columns
+
+:::: column
+
+\Large \alert{Exploratory}
+
+```{r, fig.asp = 1, fig.width = 4}
+gp1
+```
+
+::::
+
+:::: column
+
+\Large \alert{Explanatory}
+```{r, fig.asp = 1, fig.width = 4}
+gp2
+```
+
+::::
+
+:::
+
+## 1. Distinguish between \alert{exploratory} and \alert{explanatory} figures
+
+Contrast code using **ggplot2** (we fully explain in Lab 02)
+
+::: columns
+
+:::: column
+
+\Large \alert{Exploratory}
+
+\tiny
+```{r, echo=TRUE, eval=FALSE}
+# minimal code needed
+ggplot(birds, aes(x = mass, y = wing)) +
+    geom_point() 
+```
+
+::::
+
+:::: column
+
+\Large \alert{Explanatory}
+
+\tiny
+```{r, echo=TRUE, eval=FALSE}
+# plenty more code needed
+ggplot(birds, aes(x = mass, y = wing)) +
+    geom_point(size = 2, alpha = 0.5) +
+    xlab("Body mass (g)") +
+    ylab("Wing length (mm)") +
+    geom_smooth(method = "lm", formula = y ~ x, 
+                se = FALSE) +
+    theme_cowplot() +
+    theme(axis.text = element_text(size = 18),
+          axis.title = element_text(size = 20))
+```
+
+::::
+
+:::
+
+
+
+# Keys to Good Data Visualization
+
+## Four keys of good data visualization
+
+1. Show the data
+2. Make patterns in the data easy to see
+3. Represent magnitudes honestly
+4. Display graphical elements clearly
+
+## Mistake 1: Hide the data
+
+How to hide data:
+
+- Provide only statistical summaries
+- Over-plotting
+
+How to show data:
+
+- Present all of the data points, while allowing all to be seen
+
+## Mistake 1: Hide the data
+
+This plot hides the variation within species
+
+```{r fig.align='center', fig.width=4, fig.height=3}
+bd <- birds[birds$species %in% c("rwbu", "wrsh", "jawe"), ]
+
+ggplot(bd, aes(x = full_name, y = mass, fill = full_name)) +
+    geom_bar(stat = "summary", fun = "mean") +
+    theme(legend.position = "none") +
+    xlab("") + ylab("Mass (g)") +
+    scale_fill_viridis_d() +
+    scale_x_discrete(labels = function(x) {
+        strwrap(x, width = 10, simplify = FALSE) |> 
+            sapply(FUN = paste, collapse = "\n")
+    })
+```
+
+
+## Mistake 1: Hide the data
+
+This plot hides the density of observations
+
+```{r fig.align='center', fig.width=4, fig.height=3}
+ggplot(bd, aes(x = full_name, y = mass, color = species)) +
+    geom_point() +
+    theme(legend.position = "none") +
+    xlab("") + ylab("Mass (g)") +
+    scale_color_viridis_d() +
+    scale_x_discrete(labels = function(x) {
+        strwrap(x, width = 10, simplify = FALSE) |> 
+            sapply(FUN = paste, collapse = "\n")
+    })
+```
+
+## Mistake 1: Hide the data
+
+**Fixed!** This plot shows all of the observations
+
+```{r fig.align='center', fig.width=4, fig.height=3}
+ggplot(bd, aes(x = full_name, y = mass, color = species)) +
+    geom_jitter(alpha = 0.5) +
+    scale_color_viridis_d() +
+    theme(legend.position = "none") +
+    xlab("") + ylab("Mass (g)") +
+    scale_x_discrete(labels = function(x) {
+        strwrap(x, width = 10, simplify = FALSE) |> 
+            sapply(FUN = paste, collapse = "\n")
+    })
+```
+
+
+## Mistake 2: Make patterns hard to see
+
+How to hide patterns:
+
+- Make one plot and call it good
+- Use unreasonable scales
+- Arrange factors nonsensically
+
+How to make patterns in the data easy to see:
+
+- Choose the best from multiple potential plots
+- Use appropriate scales
+- Arrange factors meaningfully
+
+
+## Mistake 2: Make patterns hard to see
+
+Non-intuitive ordering of categories hides patterns
+
+```{r fig.align='center', fig.width=4, fig.height=3}
+d <- data.frame(Treatment = rep(c("control", "low dose", "high dose"), 
+                            each = 20))
+
+set.seed(123)
+
+d$Response <- rnorm(nrow(d))
+
+d$Response[d$Treatment == "control"] <- 
+    d$Response[d$Treatment == "control"] + 3
+d$Response[d$Treatment == "low dose"] <- 
+    d$Response[d$Treatment == "low dose"] + 8
+
+d$Response[d$Treatment == "high dose"] <- 
+    d$Response[d$Treatment == "high dose"] + 10
+
+pal <- hsv(c(0.08, 0.12, 0.8), 
+           c(1.0, 0.7, 1.0), 
+           c(0.8, 0.9, 0.4))
+ggplot(d, aes(Treatment, Response, color = Treatment)) +
+    geom_jitter() +
+    scale_color_manual(values = pal[c(3, 1, 2)])
+```
+
+
+## Mistake 2: Make patterns hard to see
+
+*Fixed!* Intuitive ordering of categories emphasizes patterns
+
+```{r fig.align='center', fig.width=4, fig.height=3}
+d$Treatment <- factor(d$Treatment, 
+                      levels = c("control", "low dose", "high dose"))
+gtrial <- ggplot(d, aes(Treatment, Response, color = Treatment)) +
+    geom_jitter() +
+    scale_color_manual(values = pal[c(3, 1, 2)])
+
+gtrial
+```
+
+
+## Mistake 2: Make patterns hard to see
+
+Poorly chosen scale hides patterns
+
+```{r fig.align='center', fig.width=4, fig.height=3}
+gtrial + scale_y_continuous(limits = c(0, 400))
+```
+
+
+## Mistake 3: Display Magnitudes Dishonestly
+
+How to represent magnitudes *dis*honestly:
+
+- Starting/stopping axes at arbitrary values
+
+How to represent magnitudes *honestly*:
+
+- Don't do that!
+
+
+## Mistake 3: Display Magnitudes Dishonestly
+
+We've already seen this once
+
+```{r fig.align='center', fig.width=4, fig.height=3}
+gtrial + scale_y_continuous(limits = c(0, 400))
+```
+
+
+## Mistake 3: Display Magnitudes Dishonestly
+
+::: columns
+
+:::: column
+\includegraphics[width = \textwidth]{../../img/ws_magnitude-honest.pdf}
+::::
+
+:::: column
+**Note:** there are a small number of cases where barplots can *honestly* start at a value other than zero
+::::
+
+:::
+
+## Mistake 4: Display graphical elements unclearly
+
+How to display graphical elements unclearly:
+
+- Accept default plotting options
+- Do not consider how a diverse audience will interpret your figure
+
+How to display graphical elements clearly:
+
+- Reflect on plot design
+    - Are labels big enough?
+    - Can all elements be clearly seen?
+    - Is sizing and spacing appropriate?
+- Consider diverse audiences and how they will interact with your plot
+
+
+## Mistake 4: Display graphical elements unclearly
+
+Can you read the x-axis?
+
+```{r fig.width=4.5, fig.height=3}
+ggplot(birds, aes(x = full_name)) +
+    geom_bar() +
+    xlab("") +
+    ylab("Sample size")
+```
+
+## Mistake 4: Display graphical elements unclearly
+
+Flipping improves readability
+
+```{r fig.width=4.5, fig.height=3}
+ggplot(birds, aes(y = full_name)) +
+    geom_bar() +
+    xlab("Sample size") +
+    ylab("")
+```
+
+
+## Mistake 4: Display graphical elements unclearly
+
+Flipping improves readability...and we should probably re-order
+
+```{r fig.width=4.5, fig.height=3}
+birds$full_name <- factor(birds$full_name, 
+                          levels = names(sort(table(birds$full_name))))
+ggplot(birds, aes(y = full_name)) +
+    geom_bar() +
+    xlab("Sample size") +
+    ylab("")
+```
+
+
+## Mistake 4: Display graphical elements unclearly
+
+Consider colorblindness
+
+
+```{r fig.width=9, fig.height=4}
+gp3 <- ggplot(bd, aes(x = mass, y = wing, color = species)) +
+    geom_point() + 
+    xlab("Body mass (g)") +
+    ylab("Wing length (mm)") +
+    theme_cowplot() +
+    theme(axis.text = element_text(size = 18),
+          axis.title = element_text(size = 20), 
+          legend.position = c(0.6, 0.2))
+
+
+plot_grid(
+    gp3 + ggtitle("no color blindness"), 
+    gp3 + scale_color_manual(values = c("#A59A71", "#908048", "#768FF5")) +
+        ggtitle("red-green"), 
+    gp3 + scale_color_manual(values = c("#ED7377", "#51B293", "#60ADB7")) +
+        ggtitle("blue-yellow"), 
+    nrow = 1
+)
+```
+

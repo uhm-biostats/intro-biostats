@@ -1,0 +1,72 @@
+/*-- scss:defaults --*/
+
+// Scale all slide text. Headings are sized relative to this, so lowering it
+// shrinks the whole deck's text proportionally (reveal's default is ~42px).
+$presentation-font-size-root: 34px;
+
+// Accent color shared by .alert text and the .pause-think callout.
+$alert-color: #eb811b;
+
+/*-- scss:rules --*/
+
+// Highlight color for key terms marked with [text]{.alert}
+.alert {
+  color: $alert-color;
+  font-weight: 600;
+}
+
+// Custom "Pause & Think" callout: ::: {.pause-think}
+// The title and lightbulb icon are added automatically, so authors only
+// write the body content. NOTE: the %23eb811b in the icon below is the URL-
+// encoded form of $alert-color -- keep them in sync if you change the color.
+.reveal div.pause-think {
+  border: 1px solid rgba($alert-color, .25);
+  border-left: 5px solid $alert-color;
+  border-radius: .25rem;
+  margin: .5em 0;
+  overflow: hidden;
+  font-size: var(--r-main-font-size);
+}
+
+.reveal div.pause-think::before {
+  content: "Pause & Think";
+  display: block;
+  font-weight: 600;
+  color: $alert-color;
+  padding: .3em .7em .3em 2.4em;
+  border-bottom: 1px solid rgba($alert-color, .25);
+  background: rgba($alert-color, .1)
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23eb811b" viewBox="0 0 16 16"><path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6zm6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1z"/></svg>')
+    no-repeat .7em center / 1.25em 1.25em;
+}
+
+// Pad the body content (the ::before header handles its own padding)
+.reveal div.pause-think > * {
+  padding-left: .7em;
+  padding-right: .7em;
+}
+.reveal div.pause-think > *:first-child { padding-top: .5em; }
+.reveal div.pause-think > *:last-child { padding-bottom: .5em; margin-bottom: 0; }
+
+
+.reveal .slides section {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.reveal .slides section > h1 + *,
+.reveal .slides section > h2 + *,
+.reveal .slides section > h3 + * {
+  margin-top: auto;
+}
+
+.reveal .slides section > :last-child {
+  margin-bottom: auto;
+}
+
+.reveal .slides section.top-align > h2:first-child + *,
+.reveal .slides section.top-align > :last-child {
+  margin-top: 0;
+  margin-bottom: 0;
+}

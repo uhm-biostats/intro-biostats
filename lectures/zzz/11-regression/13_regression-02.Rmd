@@ -1,0 +1,115 @@
+---
+title: "BIOL 220: Regression"
+output: binb::metropolis
+header-includes:
+  - \usepackage{array}
+  - \usepackage{xcolor}
+  - \usepackage{colortbl}
+  - \usepackage[export]{adjustbox}
+  - \usepackage{pdfpages}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, 
+                      message = FALSE, eval = TRUE)
+
+library(cowplot)
+library(ggplot2)
+library(dplyr)
+library(viridis)
+library(glue)
+library(stringr)
+library(tidyr)
+library(googlesheets4)
+library(extraDistr)
+library(purrr)
+library(magrittr)
+```
+
+
+
+
+
+## Showing steps for calculating regression models
+
+Make some fake tooth decay data
+
+```{r}
+# this makes all "random" numbers the same every time
+# we run this code
+set.seed(12) 
+
+# random dates
+deltaC14 <- runif(18, 0, 600)
+
+# simulate date of birth from slope, intercept, 
+# and residual error
+dateOfBirth <- 1992.27 - 0.05326 * deltaC14 + 
+    rnorm(18, sd = 10.99)
+
+```
+
+## Showing steps for calculating regression models
+
+Make some fake tooth decay data
+
+```{r}
+# combine into data.frame
+tooth.data <- data.frame(deltaC14 = deltaC14, 
+                         dateOfBirth = dateOfBirth)
+
+# have a look
+head(tooth.data)
+
+```
+
+
+
+## Showing steps for calculating regression models
+
+Plot it
+
+```{r fig.width=3.5, fig.height=3, fig.align='center', out.width="50%"}
+ggplot(tooth.data, aes(deltaC14, dateOfBirth)) +
+    geom_point()
+```
+
+
+## Showing steps for calculating regression models
+
+Make a linear model
+
+```{r}
+tooth.model <- lm(dateOfBirth ~ deltaC14, 
+                  data = tooth.data)
+
+```
+
+
+## Showing steps for calculating regression models
+
+Get info on null hypothesis tests
+
+```{r eval=FALSE}
+summary(tooth.model)
+
+```
+
+\tiny
+
+```{r echo=FALSE}
+summary(tooth.model)
+```
+
+Notice that `F-statistics` stuff, we'll get there! But not yet
+
+
+## Showing steps for calculating regression models
+
+Get confidence intervals of coefficient estimates
+
+```{r}
+
+confint(tooth.model)
+
+```

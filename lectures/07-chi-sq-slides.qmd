@@ -1,0 +1,1761 @@
+---
+title: "Hypothesis Testing with Frequency Data"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE,
+                      message = FALSE, eval = TRUE)
+
+library(cowplot)
+library(ggplot2)
+library(dplyr)
+library(viridis)
+library(glue)
+library(stringr)
+library(tidyr)
+```
+
+## Ka hua ʻōlelo o ka lā
+
+::: {style="text-align: center;"}
+[kō]{.alert}
+:::
+
+## Kō
+
+*A kupuna crop, going from*
+
+::: columns
+::: {.column width="50%"}
+diversity and traditional use to...
+
+![](/img/ko.png)
+image credit: CTAHR
+:::
+
+::: {.column width="50%"}
+...exploitation and overthrow
+
+![](/img/cane_plantation.png)
+image credit: Getty Images
+:::
+:::
+
+## Back to the M&Ms
+
+We talked about the binomial test for the proportion of orange M&Ms...but there are more than just orange and not-orange!
+
+## Learning Objectives
+
+1. Analyze a single categorical variable with >2 categories using the [$\chi^2$ goodness-of-fit test]{.alert}
+
+## Fast facts
+
+|                       | **Binomial test of proportions** |
+|-----------------------|-----------------------|
+| Number of variables   | 1                     |
+| Type of data          | categorical **(2 categories)** |
+| Parameter             | $p$                   |
+| Estimate              | $\hat{p}$             |
+| Test                  | Binomial test         |
+| Sampling distribution | Binomial distribution |
+| Test statistic        | Number of "successes" |
+
+## Fast facts
+
+|           | **Binomial test of proportions**  | **$\chi^2$ goodness-of-fit test** |
+|-----------------------|-----------------------|-----------------------------------|
+| Number of variables   | 1                     | 1                     |
+| Type of data          | categorical **(2 categories)** | categorical **(>2 categories)** |
+| Parameter             | $p$                   | $\vec{p}$                   |
+| Estimate              | $\hat{p}$             | $\vec{\hat{p}}$             |
+| Sampling distribution | Binomial distribution | $\chi^2$ distribution |
+| Test statistic        | Number of "successes" | $\chi^2$ statistic |
+
+## [$\chi^2$ goodness-of-fit test]{.alert}
+
+> The [$\chi^2$ goodness-of-fit test]{.alert} compares frequency data to a probabiity model stated by the null hypothesis
+
+## M&M colors
+
+According to Mars Chocolate North America, the proportion of M&M colors in Milk Chocolate M&Ms are:
+
+ Color  | Proportion
+--------|:----------:
+ Blue   | 0.24
+ Orange | 0.20
+ Green  | 0.16
+ Yellow | 0.14
+ Red    | 0.13
+ Brown  | 0.13
+
+Last lecture we only cared about 2 categories: "orange" versus "not orange"
+
+Now, we care about all 6 categories
+
+## M&M colors
+
+ Color  | Proportion
+--------|:----------:
+ Blue   | 0.24
+ Orange | 0.20
+ Green  | 0.16
+ Yellow | 0.14
+ Red    | 0.13
+ Brown  | 0.13
+
+::: {.pause-think}
+According to the manufacturer, there are 210 candies in a 7 oz. bag. Suppose that you want to test the hypothesis that the specific bag you have is unusual. What's a reasonable null hypothesis?
+:::
+
+## M&M colors
+
+ Color  | Proportion
+--------|:----------:
+ Blue   | 0.24
+ Orange | 0.20
+ Green  | 0.16
+ Yellow | 0.14
+ Red    | 0.13
+ Brown  | 0.13
+
+::: {.pause-think}
+$H_0$: The frequency of M&Ms with each color in the bag is proportional to their proportion specified by the manufacturer
+
+$H_\mathrm{A}$: The frequency of M&Ms with each color in the bag is *not* proportional to their proportion specified by the manufacturer
+:::
+
+## M&M colors
+
+::: {.pause-think}
+For a bag with 210 candies, what's the frequency of each color expected under $H_0$?
+:::
+
+```{r}
+tibble(
+  Color = c("Blue", "Orange", "Green", "Yellow", "Red", "Brown"),
+  Proportion = c("0.24", "0.20", "0.16", "0.14", "0.13", "0.13"),
+  `Expected A` = rep(35, 6),
+  `Expected B` = c(24, 20, 16, 14, 13, 13),
+  `Expected C` = c("50.4", "42.0", "33.6", "29.4", "27.3", "27.3")
+) %>%
+  knitr::kable(align = "lcccc")
+```
+
+## M&M colors
+
+The frequency of each color expected under $H_0$ is the proportion multiplied by the total number (e.g. $0.24 \times 210 = 50.4$)
+
+ Color  | Proportion | Expected
+--------|:----------:|:--------:
+ Blue   | 0.24       | 50.4
+ Orange | 0.20       | 42.0
+ Green  | 0.16       | 33.6
+ Yellow | 0.14       | 29.4
+ Red    | 0.13       | 27.3
+ Brown  | 0.13       | 27.3
+ **Total**  | 1.00       | 210
+
+## M&M colors
+
+Now, take a random sample
+
+```{r, echo = TRUE, eval = FALSE}
+candies <- sample(
+  x = c("Blue", "Orange", "Green", "Yellow",
+        "Red", "Brown"),
+  size = 210,
+  replace = TRUE,
+  prob = c(0.24, 0.20, 0.16, 0.14, 0.13, 0.13)
+)
+
+table(candies)
+```
+
+## M&M colors
+
+ Color  | Proportion | Expected | Observed
+--------|------------|----------|----------
+ Blue   | 0.24       | 50.4     | 43
+ Orange | 0.20       | 42.0     | 40
+ Green  | 0.16       | 33.6     | 37
+ Yellow | 0.14       | 29.4     | 37
+ Red    | 0.13       | 27.3     | 33
+ Brown  | 0.13       | 27.3     | 20
+ **Total**  | 1.00   | 210      | 210
+
+::: {.pause-think}
+Which color in most over or underrepresented compared to the null hypothesis?
+
+Do you think the observations are consistent with the null hypothesis?
+:::
+
+## M&M colors
+
+```{r}
+E <- 210 * c(0.24, 0.20, 0.16, 0.14, 0.13, 0.13)
+O <- c(43, 40, 37, 37, 33, 20)
+```
+
+ Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
+--------|------------|----------|----------|-----------------
+ Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
+ Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
+ Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
+ Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
+ Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
+ Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
+ **Total**  | 1.00   | 210      | 210
+
+::: {.pause-think}
+Yellow! Why?
+
+Maybe? It's hard to tell by eye
+:::
+
+## $\chi^2_i$ measures discrepancy between observed and expected frequency
+
+$\chi^2_i$ is for observation $i$
+
+$$\chi^2_i = \frac{(Observed_i - Expected_i) ^ 2}{\mathit{Expected}_i}$$
+
+Shorter form:
+
+$$\chi^2_i = \frac{(O_i - E_i) ^ 2}{E_i}$$
+
+## M&M colors
+
+$$\chi^2_i = \frac{(O_i - E_i) ^ 2}{E_i} = \frac{(37 -29.4)^2}{29.4} = 1.96$$
+
+ Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
+--------|:----------:|:--------:|:--------:|:---------------:
+ Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
+ Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
+ Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
+ Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
+ Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
+ Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
+ **Total**  | 1.00   | 210      | 210
+
+## Why $\frac{(O_i - E_i) ^ 2}{E_i}$?
+
+Positive discrepancies have same magnitude as negative discrepancies
+
+$$(O_i - E_i) ^ 2$$
+
+Smaller $E_i$ have larger effect
+
+$$\frac{1}{E_i}$$
+
+ Proportion | Expected | Observed | $(O - E)^2 / E$
+------------|----------|----------|-----------------
+ 0.990      | 990      | 950      | `r round((950 - 990) ^ 2 / 990, 2)`
+ 0.005      | 5        | 5        | `r round((5 - 5) ^ 2 / 5, 2)`
+ 0.005      | 5        | 45       | `r round((45 - 5) ^ 2 / 5, 2)`
+
+## [Null Hypothesis Significance Testing]{.alert}
+
+1. State $H_0$ and $H_\mathrm{A}$
+2. Calculate the test statistic
+3. Generate the null distribution
+4. Calculate the $P$-value
+6. Decide:
+    - Reject $H_0$ if test statistic is $\ge$ critical value ($P \le \alpha$)
+    - Fail to reject $H_0$ if test statistic is < critical value ($P > \alpha$)
+
+## [$\chi^2$ statistic]{.alert}
+
+> The [$\chi^2$]{.alert} statistic measures the discrepency between observed frequencies from the data and expected frequencies from the null hypothesis
+
+[$\chi^2$ statistic]{.alert} is the test statistic for the [$\chi^2$]{.alert} test.
+
+## [$\chi^2$ statistic]{.alert}
+
+[$\chi^2$ statistic]{.alert} is calculated by summing up all $n$ $\chi^2_i$ values
+
+$$\chi^2 = \sum_{i=1}^n \chi^2_i= \sum_{i=1}^n \frac{(O_i - E_i) ^ 2}{E_i}$$
+
+## M&M colors
+
+ Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
+--------|:----------:|:--------:|:--------:|:---------------:
+ Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
+ Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
+ Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
+ Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
+ Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
+ Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
+ **Total**  | 1.00   | 210      | 210      | `r round(sum((O - E) ^ 2 / E), 2)`
+
+::: {.pause-think}
+What is the test statistic?
+:::
+
+## M&M colors
+
+ Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
+--------|:----------:|:--------:|:--------:|:---------------:
+ Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
+ Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
+ Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
+ Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
+ Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
+ Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
+ **Total**  | 1.00   | 210      | 210      | `r round(sum((O - E) ^ 2 / E), 2)`
+
+::: {.pause-think}
+What is the test statistic?
+
+$$\chi^2= \sum_{i=1}^n \frac{(O_i - E_i) ^ 2}{E_i} = `r round(sum((O - E) ^ 2 / E), 2)`$$
+:::
+
+## &nbsp;
+
+How often would we expect a discrepancy of $\ge `r round(sum((O - E) ^ 2 / E), 2)`$ under $H_0$?
+
+## [Null Hypothesis Significance Testing]{.alert}
+
+1. State $H_0$ and $H_\mathrm{A}$
+2. Calculate the test statistic
+3. **Generate the null distribution**
+4. Calculate the $P$-value
+6. Decide:
+    - Reject $H_0$ if test statistic is $\ge$ critical value ($P \le \alpha$)
+    - Fail to reject $H_0$ if test statistic is < critical value ($P > \alpha$)
+
+## [$\chi^2$ distribution]{.alert}
+
+> The **[$\chi^2$ distribution]{.alert}** is the sampling distribution for $\chi^2$ test statistic
+
+**Assumptions**
+
+* None of the categories should have an expected frequency of less than 1
+* No more than 20% of the categories should have expected frequencies less than 5
+
+## Checking assumptions
+
+ Color  | Proportion | Expected
+--------|:----------:|:--------:
+ Blue   | 0.24       | 50.4
+ Orange | 0.20       | 42.0
+ Green  | 0.16       | 33.6
+ Yellow | 0.14       | 29.4
+ Red    | 0.13       | 27.3
+ Brown  | 0.13       | 27.3
+ **Total**  | 1.00       | 210
+
+$\checkmark$ All Expected values > 1
+
+$\checkmark$ Under 20% of Expected values < 5
+
+## Checking assumptions
+
+ Color  | Proportion | Expected
+--------|:----------:|:--------:
+ Blue   | 0.24       | `r round(0.24 * 38, 1)`
+ Orange | 0.20       | `r round(0.20 * 38, 1)`
+ Green  | 0.16       | `r round(0.16 * 38, 1)`
+ Yellow | 0.14       | `r round(0.14 * 38, 1)`
+ Red    | 0.13       | **`r round(0.13 * 38, 1)`**
+ Brown  | 0.13       | **`r round(0.13 * 38, 1)`**
+ **Total**  | 1.00       | 38
+
+$\checkmark$ All Expected values > 1
+
+[✗]{.alert} Under 20% of Expected values < 5
+
+## Checking assumptions
+
+ Color  | Proportion | Expected
+--------|:----------:|:--------:
+ Blue   | 0.24       | `r round(0.24 * 7, 1)`
+ Orange | 0.20       | `r round(0.20 * 7, 1)`
+ Green  | 0.16       | `r round(0.16 * 7, 1)`
+ Yellow | 0.14       | `r round(0.14 * 7, 1)`
+ Red    | 0.13       | **`r round(0.13 * 7, 1)`**
+ Brown  | 0.13       | **`r round(0.13 * 7, 1)`**
+ **Total**  | 1.00       | 7
+
+[✗]{.alert} All Expected values > 1
+
+[✗]{.alert} Under 20% of Expected values < 5
+
+## [$\chi^2$ distribution]{.alert}
+
+> The **[$\chi^2$ distribution]{.alert}** is the sampling distribution for $\chi^2$ test statistic
+
+Under the null hypothesis, the more categories, the larger the test statistic
+
+::: columns
+::: {.column width="50%"}
+**3 categories**
+
+$$
+\begin{aligned}
+\chi^2 &= \sum_{i=1}^3 \frac{(O_i - E_i) ^ 2}{E_i} \\
+&= \frac{(O_1 - E_1) ^ 2}{E_1} + \frac{(O_2 - E_2) ^ 2}{E_2} + \frac{(O_3 - E_3) ^ 2}{E_3}
+\end{aligned}
+$$
+:::
+
+::: {.column width="50%"}
+**6 categories**
+
+$$
+\begin{aligned}
+\chi^2 = &\sum_{i=1}^6 \frac{(O_i - E_i) ^ 2}{E_i} \\
+= &\frac{(O_1 - E_1) ^ 2}{E_1} + \frac{(O_2 - E_2) ^ 2}{E_2} + \frac{(O_3 - E_3) ^ 2}{E_3} + \\
+&\frac{(O_4 - E_4) ^ 2}{E_4} + \frac{(O_5 - E_5) ^ 2}{E_5} + \frac{(O_6 - E_6) ^ 2}{E_6}
+\end{aligned}
+$$
+:::
+:::
+
+## [Degrees of freedom for $\chi^2$ distribution]{.alert}
+
+> The [degrees of freedom]{.alert} of a $\chi^2$ statistic capture this fact that more categories equates to larger values
+
+$$df = \mathrm{(Number~of~categories)} - 1$$
+
+## More [degrees of freedom]{.alert} = more likely to have larger values
+
+```{r, fig.align='center', fig.width=5, fig.height=4, out.height="80%"}
+df <- crossing(
+  x = seq(0, 20, 0.01),
+  df = c(2, 4, 8)
+) %>%
+  mutate(y = dchisq(x, df), panel = str_c("df = ", df))
+
+ggplot(df, aes(x, y)) +
+  facet_grid(rows = vars(panel)) +
+  geom_area(fill = "tomato") +
+  xlab(expression(chi^2~statistic)) +
+  ylab("Probability density") +
+  theme_cowplot() +
+  scale_y_continuous(n.breaks = 4)
+```
+
+## More [degrees of freedom]{.alert} = more likely to have larger values
+
+::: columns
+::: {.column width="50%"}
+```{r}
+df <- tibble(
+  Expected = c(60, 60, 60),
+  Observed = c(57, 62, 61),
+  `$\\chi^2_i$` = (Observed - Expected) ^ 2 / Expected
+)
+
+knitr::kable(df, escape = FALSE, align = rep("c", 3),
+             digits = 3)
+
+df$chisq <- df$`$\\chi^2_i$`
+```
+
+$$\mathit{df} = 3 - 1 = 2$$
+$$\chi^2 = `r str_c(round(df$chisq, 3), collapse = "+")` = `r round(sum(df$chisq), 3)`$$
+:::
+
+::: {.column width="50%"}
+```{r}
+df <- tibble(
+  Expected = c(40, 40, 40, 40),
+  Observed = c(41, 33, 44, 42),
+  `$\\chi^2_i$` = (Observed - Expected) ^ 2 / Expected
+)
+
+knitr::kable(df, escape = FALSE, align = rep("c", 3),
+             digits = 3)
+
+df$chisq <- df$`$\\chi^2_i$`
+```
+
+$$df = 4 - 1 = 3$$
+$$\chi^2 = `r str_c(round(df$chisq, 3), collapse = "+")` = `r round(sum(df$chisq), 3)`$$
+:::
+:::
+
+## Degrees of freedom depends on number of categories, not sample size
+
+::: columns
+::: {.column width="50%"}
+```{r}
+df <- tibble(
+  Expected = c(60, 60, 60),
+  Observed = c(57, 62, 61),
+  `$\\chi^2_i$` = (Observed - Expected) ^ 2 / Expected
+)
+
+knitr::kable(df, escape = FALSE, align = rep("c", 3),
+             digits = 3)
+
+df$chisq <- df$`$\\chi^2_i$`
+```
+
+$$\mathit{df} = 3 - 1 = 2$$
+$$\chi^2 = `r str_c(round(df$chisq, 3), collapse = "+")` = `r round(sum(df$chisq), 3)`$$
+:::
+
+::: {.column width="50%"}
+```{r}
+df <- tibble(
+  Expected = c(600, 600, 600),
+  Observed = c(570, 620, 610),
+  `$\\chi^2_i$` = (Observed - Expected) ^ 2 / Expected
+)
+
+knitr::kable(df, escape = FALSE, align = rep("c", 3),
+             digits = 3)
+
+df$chisq <- df$`$\\chi^2_i$`
+```
+
+$$\mathit{df} = 2 - 1 - 0 = 1$$
+$$\chi^2 = `r str_c(round(df$chisq, 3), collapse = "+")` = `r round(sum(df$chisq), 3)`$$
+:::
+:::
+
+## M&M colors
+
+ Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
+--------|:----------:|:--------:|:--------:|:---------------:
+ Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
+ Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
+ Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
+ Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
+ Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
+ Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
+ **Total**  | 1.00   | 210      | 210      | `r round(sum((O - E) ^ 2 / E), 2)`
+
+::: {.pause-think}
+How many degrees of freedom should we use for these data?
+:::
+
+## M&M colors
+
+::: {.pause-think}
+$$df =  \mathrm{(Number~of~categories)} - 1 $$
+
+$$\mathit{df} = 6 - 1 = 5$$
+:::
+
+## $\chi_5^2$ distribution (graphically)
+
+```{r, fig.align='center', out.width="100%"}
+df <- tibble(
+  x = seq(0, 20, 0.01),
+  y = dchisq(x, 5)
+)
+
+gp <- ggplot(df, aes(x, y)) +
+  geom_area(fill = "tomato") +
+  xlab(expression(chi^2~statistic)) +
+  ylab("Probability density") +
+  theme_cowplot() +
+  theme(
+    strip.text = element_text(size = 18),
+    axis.text = element_text(size = 18),
+    axis.title = element_text(size = 24),
+    title = element_text(size = 24)
+  )
+
+gp
+```
+
+## $\chi_\mathit{df}^2$ distribution
+
+Why is the $\chi_\mathit{df}^2$ distribution *continuous* even though we are working with a categorical variable with discrete frequencies?
+
+Because $\chi_\mathit{df}^2$ is an approximation of the "true" sampling distribution
+
+## $\chi_5^2$ distribution with test statistic
+
+Recall we calculated for the M&Ms: $\chi^2 = 6.63$
+
+```{r, fig.align='center', out.width="95%"}
+mm_test_stat <- sum((O - E) ^ 2 / E)
+
+gp +
+  geom_area(data = filter(df, x < mm_test_stat), fill = "white",
+            size = 2, color = "tomato") +
+  geom_vline(xintercept = mm_test_stat, size = 2)
+```
+
+## $\chi_\mathit{df}^2$ distribution
+
+$\chi_\mathit{df}^2$ distribution
+
+The $P$-value will be the area to the right of test statistic.
+
+So this is a [one-tailed]{.alert} test. Why?
+
+We are only interested if the discrepancy between *Expected* and *Observed* is **more** than we expect under $H_0$
+
+$$\frac{(O_i - E_i)^2}{E_i}$$
+
+Higher test statistics = more discrepancy between *Expected* and *Observed*
+
+## [Null Hypothesis Significance Testing]{.alert}
+
+1. State $H_0$ and $H_\mathrm{A}$
+2. Calculate the test statistic
+3. Generate the null distribution
+4. *Find the critical value at a specified $\alpha$*
+5. Calculate the $P$-value
+6. Decide:
+    - Reject $H_0$ if test statistic is $\ge$ critical value ($P \le \alpha$)
+    - Fail to reject $H_0$ if test statistic is < critical value ($P > \alpha$)
+
+## [Critical value]{.alert}
+
+> A [critical value]{.alert} is the value of a test statistic that marks the boundary of a specified area in the tail (or tails) of the sampling distribution under $H_0$
+
+## [Critical value]{.alert}
+
+You *can* look up critical values in a table if you're a dinosaur
+
+$\alpha = 0.05$, $\mathit{df} = 5$
+
+```{r, echo = TRUE}
+qchisq(0.05,
+       df = 5,
+       lower.tail = FALSE)
+```
+
+## $\chi_5^2$ distribution with critical value
+
+$\alpha = 0.05$, $\mathit{df} = 5$
+
+```{r, fig.align='center', out.width="90%"}
+mm_crit_stat <- qchisq(0.05, 5, lower.tail = FALSE)
+
+gp +
+  geom_area(data = filter(df, x < mm_crit_stat), fill = "white",
+            size = 2, color = "tomato") +
+  geom_vline(xintercept = mm_crit_stat, size = 2, linetype = "dashed")
+```
+
+## $\chi_5^2$ distribution with test statistic and critical value
+
+$\alpha = 0.05$, $\mathit{df} = 5$
+
+```{r, fig.align='center', out.width="90%"}
+mm_crit_stat <- qchisq(0.05, 5, lower.tail = FALSE)
+
+gp +
+  geom_area(data = filter(df, x < mm_test_stat), fill = "white",
+            size = 2, color = "tomato") +
+  geom_vline(xintercept = mm_test_stat, size = 2) +
+  geom_vline(xintercept = mm_crit_stat, size = 2, linetype = "dashed")
+```
+
+## [Null Hypothesis Significance Testing]{.alert}
+
+1. State $H_0$ and $H_\mathrm{A}$
+2. Calculate the test statistic
+3. Generate the null distribution
+4. Find the critical value at a specified $\alpha$
+5. *Find the $P$-value*
+6. Decide:
+    - Reject $H_0$ if test statistic is $\ge$ critical value ($P \le \alpha$)
+    - Fail to reject $H_0$ if test statistic is < critical value ($P > \alpha$)
+
+## [$P$-value]{.alert}
+
+$\chi^2~\text{statistic} = `r sum((O - E) ^ 2 / E)`$, $\mathit{df} = 5$
+
+```{r, echo = TRUE}
+pchisq(q = 6.632544,
+       df = 5,
+       lower.tail = FALSE)
+```
+
+*(Note: if you were alive in the Pleistocene you might look up a P-value and/or critical value in a table in the back of your stats book)*
+
+## [Null Hypothesis Significance Testing]{.alert}
+
+1. State $H_0$ and $H_\mathrm{A}$
+2. Calculate the test statistic
+3. Generate the null distribution
+4. Find the critical value at a specified $\alpha$
+5. Find the $P$-value
+6. *Decide:*
+    - Reject $H_0$ if test statistic is $\ge$ critical value ($P \le \alpha$)
+    - Fail to reject $H_0$ if test statistic is < critical value ($P > \alpha$)
+
+## Decide
+
+```{r}
+p_value <- pchisq(mm_test_stat, df = 5, lower.tail = FALSE)
+```
+
+$\alpha = 0.05$, $P = `r round(p_value, 2)`$
+
+$$`r round(p_value, 2)` > 0.05$$
+
+We fail to reject $H_0$
+
+We do not have sufficient evidence to say that the frequency of candy colors differs significantly from what we would expect based on the manufacturer's information
+
+## The quick way in *R*
+
+```{r, echo = TRUE}
+chisq.test(x = c(43, 40, 37, 37, 33, 20),
+           p = c(0.24, 0.20, 0.16, 0.14, 0.13, 0.13))
+```
+
+## Summary
+
+The [$\chi^2$ distribution]{.alert} describes the sampling distribution of the discrepancy between expected and observed frequencies
+
+It is an approximate test, but works well when sample size are large that assumptions are met
+
+# Break!
+
+## Ka hua ʻōlelo o ka lā
+
+::: {style="text-align: center;"}
+[hānau]{.alert}
+:::
+
+## Learning Objectives
+
+1. Analyze two or more categorical variable with $\ge 2$ categories using the [$\chi^2$ distribution]{.alert} and [contingency analysis]{.alert}
+
+## Review of $\chi^2$ goodness of fit test
+
+|           | **$\chi^2$ goodness-of-fit test** |
+|-----------------------|-----------------------|
+| Number of variables   | 1                     |
+| Type of data          | categorical **(>2 categories)** |
+| Parameter             | $\vec{p}$             |
+| Estimate              | $\vec{\hat{p}}$       |
+| Sampling distribution | $\chi^2$ distribution |
+| Test statistic        | $\chi^2$ statistic    |
+
+## [$\chi^2$ goodness-of-fit test]{.alert}
+
+> The [$\chi^2$ goodness-of-fit test]{.alert} compares frequency data to a probability model stated by the null hypothesis
+
+## M&M colors
+
+```{r}
+E <- 210 * c(0.24, 0.20, 0.16, 0.14, 0.13, 0.13)
+O <- c(43, 40, 37, 37, 33, 20)
+```
+
+ Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
+--------|------------|----------|----------|-----------------
+ Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
+ Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
+ Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
+ Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
+ Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
+ Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
+ **Total**  | 1.00   | 210      | 210
+
+$$\chi^2_i = \frac{(Observed_i - Expected_i) ^ 2}{\mathit{Expected}_i}$$
+
+$\chi^2_i$ measures discrepancy between observed and expected frequency
+
+## [$\chi^2$ statistic]{.alert}
+
+> The [$\chi^2$]{.alert} statistic measures the discrepency between observed frequencies from the data and expected frequencies from the null hypothesis
+
+[$\chi^2$ statistic]{.alert} is calculated by summing up all $n$ $\chi^2_i$ values
+
+$$\chi^2 = \sum_{i=1}^n \chi^2_i= \sum_{i=1}^n \frac{(O_i - E_i) ^ 2}{E_i}$$
+
+## M&M colors
+
+ Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
+--------|:----------:|:--------:|:--------:|:---------------:
+ Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
+ Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
+ Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
+ Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
+ Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
+ Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
+ **Total**  | 1.00   | 210      | 210      | `r round(sum((O - E) ^ 2 / E), 2)`
+
+::: {.pause-think}
+What is the test statistic?
+
+$$\chi^2= \sum_{i=1}^n \frac{(O_i - E_i) ^ 2}{E_i} = `r round(sum((O - E) ^ 2 / E), 2)`$$
+:::
+
+## &nbsp;
+
+How often would we expect a discrepancy of $\ge `r round(sum((O - E) ^ 2 / E), 2)`$ under $H_0$?
+
+## [Null Hypothesis Significance Testing]{.alert}
+
+1. State $H_0$ and $H_\mathrm{A}$
+2. Calculate the test statistic
+3. **Generate the null distribution**
+4. Calculate the $P$-value
+6. Decide:
+    - Reject $H_0$ if test statistic is $\ge$ critical value ($P \le \alpha$)
+    - Fail to reject $H_0$ if test statistic is < critical value ($P > \alpha$)
+
+## [$\chi^2$ distribution]{.alert}
+
+> The **[$\chi^2$ distribution]{.alert}** is the sampling distribution for $\chi^2$ test statistic
+
+**Assumptions**
+
+* None of the categories should have an expected frequency of less than 1
+* No more than 20% of the categories should have expected frequencies less than 5
+
+## [$\chi^2$ distribution]{.alert}
+
+> The **[$\chi^2$ distribution]{.alert}** is the sampling distribution for $\chi^2$ test statistic
+
+Under the null hypothesis, the more categories, the larger the test statistic
+
+::: columns
+::: {.column width="50%"}
+**3 categories**
+
+$$
+\begin{aligned}
+\chi^2 &= \sum_{i=1}^3 \frac{(O_i - E_i) ^ 2}{E_i} \\
+&= \frac{(O_1 - E_1) ^ 2}{E_1} + \frac{(O_2 - E_2) ^ 2}{E_2} + \frac{(O_3 - E_3) ^ 2}{E_3}
+\end{aligned}
+$$
+:::
+
+::: {.column width="50%"}
+**6 categories**
+
+$$
+\begin{aligned}
+\chi^2 = &\sum_{i=1}^3 \frac{(O_i - E_i) ^ 2}{E_i} \\
+= &\frac{(O_1 - E_1) ^ 2}{E_1} + \frac{(O_2 - E_2) ^ 2}{E_2} + \frac{(O_3 - E_3) ^ 2}{E_3} + \\
+&\frac{(O_4 - E_4) ^ 2}{E_4} + \frac{(O_5 - E_5) ^ 2}{E_5} + \frac{(O_6 - E_6) ^ 2}{E_6}
+\end{aligned}
+$$
+:::
+:::
+
+## [Degrees of freedom for $\chi^2$ distribution]{.alert}
+
+> The [degrees of freedom]{.alert} of a $\chi^2$ statistic capture this fact that more categories equates to larger values
+
+$$df = \mathrm{(Number~of~categories)} - 1$$
+
+## M&M colors
+
+ Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
+--------|:----------:|:--------:|:--------:|:---------------:
+ Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
+ Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
+ Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
+ Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
+ Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
+ Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
+ **Total**  | 1.00   | 210      | 210      | `r round(sum((O - E) ^ 2 / E), 2)`
+
+$$df =  \mathrm{(Number~of~categories)} - 1 $$
+
+$$\mathit{df} = 6 - 1 = 5$$
+
+## $\chi_5^2$ distribution with test statistic
+
+Recall we calculated for the M&Ms: $\chi^2 = 6.63$
+
+```{r, fig.align='center', out.width="95%"}
+mm_test_stat <- sum((O - E) ^ 2 / E)
+
+df <- tibble(
+  x = seq(0, 20, 0.01),
+  y = dchisq(x, 5)
+)
+
+gp <- ggplot(df, aes(x, y)) +
+  geom_area(fill = "tomato") +
+  xlab(expression(chi^2~statistic)) +
+  ylab("Probability density") +
+  theme_cowplot() +
+  theme(
+    strip.text = element_text(size = 18),
+    axis.text = element_text(size = 18),
+    axis.title = element_text(size = 24),
+    title = element_text(size = 24)
+  )
+
+gp +
+  geom_area(data = filter(df, x < mm_test_stat), fill = "white",
+            size = 2, color = "tomato") +
+  geom_vline(xintercept = mm_test_stat, size = 2)
+```
+
+## $\chi_\mathit{df}^2$ distribution
+
+The $P$-value will be the area to the right of test statistic.
+
+So this is a [one-tailed]{.alert} test. Why?
+
+We are only interested if the discrepancy between *Expected* and *Observed* is **more** than we expect under $H_0$
+
+$$\frac{(O_i - E_i)^2}{E_i}$$
+
+Higher test statistics = more discrepancy between *Expected* and *Observed*
+
+## [$P$-value]{.alert}
+
+$\chi^2~\text{statistic} = `r sum((O - E) ^ 2 / E)`$, $\mathit{df} = 5$
+
+```{r, echo = TRUE}
+pchisq(q = 6.632544,
+       df = 5,
+       lower.tail = FALSE)
+```
+
+## Contingency analysis: from 1 variable to **2**!
+
+|           | **$\chi^2$ goodness-of-fit test** | **Contingency test** |
+|-----------------------|-----------------------|-----------------------|
+| Number of variables   | 1                     | **2**                     |
+| Type of data          | categorical           | categorical  |
+| Parameter             | $\vec{p}$             | *???*  |
+| Estimate              | $\vec{\hat{p}}$       | *???*  |
+| Sampling distribution | $\chi^2$ distribution | $\chi^2$ distribution |
+| Test statistic        | $\chi^2$ statistic    | $\chi^2$ statistic    |
+
+## Contingency analysis: from 1 variable to **2**!
+
+::: columns
+::: {.column width="50%"}
+::: {style="text-align: center;"}
+$\chi^2$ goodness of fit
+:::
+
+| Category   | Frequency |
+|:----------:|:---------:|
+| category 1 | $O_1$     |
+| category 2 | $O_2$     |
+| category 3 | $O_3$     |
+:::
+
+::: {.column width="50%"}
+::: {style="text-align: center;"}
+Contingency Analysis
+:::
+
+|            | category A | category B |
+|:----------:|:----------:|:----------:|
+| category 1 | $O_{1A}$      | $O_{1B}$      |
+| category 2 | $O_{2A}$      | $O_{2B}$      |
+| category 3 | $O_{3A}$      | $O_{3B}$      |
+:::
+:::
+
+## Contingency analysis: this is a [contigency table]{.alert}
+
+::: columns
+::: {.column width="50%"}
+We will put the [response variable]{.alert} across rows
+:::
+
+::: {.column width="50%"}
+We will put the [explanatory variable]{.alert} across columns
+
+|            | category A | category B |
+|:----------:|:----------:|:----------:|
+| category 1 | $O_{1A}$      | $O_{1B}$      |
+| category 2 | $O_{2A}$      | $O_{2B}$      |
+| category 3 | $O_{3A}$      | $O_{3B}$      |
+:::
+:::
+
+## Example: birth outcomes for non-English and English speakers in Hawaiʻi
+
+|                            | non-English speaker | English speaker |
+|---------------------------:|:--------------------|:----------------|
+| Primary Caesarean delivery | 127                 | 934             |
+| Primary vaginal delivery   | `r 1149-127`        | `r 10270 - 934` |
+
+> Are non-English speakers more likely to undergo C-section in their first delivery?
+
+data from: Sentell et al. (2016). Maternal language and adverse birth outcomes in a statewide analysis. *Women & Health*
+
+## Example: birth outcomes for non-English and English speakers in Hawaiʻi
+
+**Context**
+
+![](/img/csection-fridays.png){width="75%" fig-align="center"}
+
+C-section rates have increased due to physician choices that disregard maternal/parental choice and health for parent and baby
+
+## Example: birth outcomes for non-English and English speakers in Hawaiʻi
+
+**Context**
+
+![](/img/healthcare_women.png)
+
+There's a breakdown in trust, ethics, and real healthcare
+
+## Example: birth outcomes for non-English and English speakers in Hawaiʻi
+
+**Context**
+
+![](/img/healthcare_race.png)
+
+The breakdown intersects with race
+
+## Example: birth outcomes for non-English and English speakers in Hawaiʻi
+
+**Context**
+
+![](/img/healthcare_trans.png){width="70%" fig-align="center"}
+
+The breakdown intersects with gender identity
+
+## Example: birth outcomes for non-English and English speakers in Hawaiʻi
+
+|  | non-English speaker | English speaker |
+|--:|:--:|:--:|
+| Primary Caesarean delivery | 127 | 934 |
+| Primary vaginal delivery | 1022 | 9336 |
+
+> Are non-English speakers more likely to undergo C-section in their first delivery?
+
+## [Null Hypothesis Significance Testing]{.alert}
+
+1. State $H_0$ and $H_\mathrm{A}$
+2. Calculate the test statistic
+3. Generate the null distribution
+5. Calculate the $P$-value
+6. Decide:
+    - Reject $H_0$ if test statistic is $\ge$ critical value ($P \le \alpha$)
+    - Fail to reject $H_0$ if test statistic is < critical value ($P > \alpha$)
+
+## Example: birth outcomes for non-English and English speakers in Hawaiʻi
+
+Contingency analysis uses the $\chi^2$ test statistic, so we need *observed* and *expected* frequencies
+
+|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ |
+|--:|:--:|:--:|:--:|:--:|
+| Primary Caesarean delivery | 127 | ?? | 934 | ?? |
+| Primary vaginal delivery | 1022 | ?? | 9336 | ?? |
+
+## Example: simpler numbers
+
+Contingency analysis uses the $\chi^2$ test statistic, so we need *observed* and *expected* frequencies
+
+|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ |
+|--:|:--:|:--:|:--:|:--:|
+| Primary Caesarean delivery | 1 | ?? | 2 | ?? |
+| Primary vaginal delivery | 5 | ?? | 16 | ?? |
+
+::: {.pause-think}
+What should the expected frequencies be?
+:::
+
+## Example: simpler numbers
+
+Contingency analysis uses the $\chi^2$ test statistic, so we need *observed* and *expected* frequencies
+
+|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ |
+|--:|:--:|:--:|:--:|:--:|
+| Primary Caesarean delivery | 1 | 1.5 | 2 | 1.5 |
+| Primary vaginal delivery | 5 | 10 | 16 | 10 |
+
+::: {.pause-think}
+Is that right?...No...
+:::
+
+## Example: simpler numbers
+
+Contingency analysis uses the $\chi^2$ test statistic, so we need *observed* and *expected* frequencies
+
+|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ |
+|--:|:--:|:--:|:--:|:--:|
+| Primary Caesarean delivery | 1 | ?? | 2 | ?? |
+| Primary vaginal delivery | 5 | ?? | 16 | ?? |
+
+::: {.pause-think}
+Expected frequencies come from the null hypothesis. What is the null hypothesis?
+:::
+
+## Example: simpler numbers
+
+Contingency analysis uses the $\chi^2$ test statistic, so we need *observed* and *expected* frequencies
+
+|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ |
+|--:|:--:|:--:|:--:|:--:|
+| Primary Caesarean delivery | 1 | ?? | 2 | ?? |
+| Primary vaginal delivery | 5 | ?? | 16 | ?? |
+
+::: {.pause-think}
+Expected frequencies come from the null hypothesis. What is the null hypothesis? **equal proportions across explanatory groups**
+:::
+
+## Example: simpler numbers
+
+Contingency analysis uses the $\chi^2$ test statistic, so we need *observed* and *expected* frequencies
+
+|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ | **Totals** |
+|--:|:--:|:--:|:--:|:--:|:--:|
+| Primary C-section | 1 | ?? | 2 | ?? | **3** |
+| Primary vaginal | 5 | ?? | 16 | ?? | **21** |
+| **Totals** | **6** |  | **18** |  | **24** |
+
+::: {.pause-think}
+Expected frequencies come from the null hypothesis. What is the null hypothesis? **equal proportions across explanatory groups**
+:::
+
+## Example: simpler numbers
+
+|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ | **Totals** |
+|--:|:--:|:--:|:--:|:--:|:--:|
+| Primary C-section | 1 | ?? | 2 | ?? | **3** |
+| Primary vaginal | 5 | ?? | 16 | ?? | **21** |
+| **Totals** | **6** |  | **18** |  | **24** |
+
+$\hat{\text{Pr}}(\text{non-English speaker}) = \frac{1}{4}$
+$\hat{\text{Pr}}(\text{English speaker}) = \frac{3}{4}$
+
+So expected frequencies assuming equal proportions across groups would be
+
+$E_{\text{C-section, non-English}} = \frac{1}{4} \times 3 = \frac{3}{4}$
+$E_{\text{C-section, English}} = \frac{3}{4} \times 3 = 2\frac{1}{4}$
+$E_{\text{VB, non-English}} = \frac{1}{4} \times 21 = 5 \frac{1}{4}$
+$E_{\text{C-section, English}} = \frac{3}{4} \times 21 = 15 \frac{3}{4}$
+
+## Example: simpler numbers
+
+|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ | **Totals** |
+|--:|:--:|:--:|:--:|:--:|:--:|
+| Primary C-section | 1 | $\frac{3}{4}$ | 2 | $2\frac{1}{4}$ | **3** |
+| Primary vaginal | 5 | $5 \frac{1}{4}$ | 16 | $15 \frac{3}{4}$ | **21** |
+| **Totals** | **6** |  | **18** |  | **24** |
+
+$\hat{\text{Pr}}(\text{non-English speaker}) = \frac{1}{4}$
+$\hat{\text{Pr}}(\text{English speaker}) = \frac{3}{4}$
+
+So expected frequencies assuming equal proportions across groups would be
+
+$E_{\text{C-section, non-English}} = \frac{1}{4} \times 3 = \frac{3}{4}$
+$E_{\text{C-section, English}} = \frac{3}{4} \times 3 = 2\frac{1}{4}$
+$E_{\text{VB, non-English}} = \frac{1}{4} \times 21 = 5 \frac{1}{4}$
+$E_{\text{C-section, English}} = \frac{3}{4} \times 21 = 15 \frac{3}{4}$
+
+## Example: simpler numbers
+
+$\chi^2$ test statistic is
+
+$$\chi^2 = \sum_{i=1}^n \frac{(O_i - E_i) ^ 2}{E_i}$$
+
+|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ | **Totals** |
+|--:|:--:|:--:|:--:|:--:|:--:|
+| Primary C-section | 1 | $\frac{3}{4}$ | 2 | $2\frac{1}{4}$ | **3** |
+| Primary vaginal | 5 | $5 \frac{1}{4}$ | 16 | $15 \frac{3}{4}$ | **21** |
+| **Totals** | **6** |  | **18** |  | **24** |
+
+$\chi^2 = \frac{0.25^2}{0.75} + \frac{-0.25^2}{5.25} + \frac{-0.25^2}{2.25} + \frac{0.25^2}{15.75}$
+
+$\chi^2 = 0.127$
+
+## Example: simpler numbers
+
+$\chi^2$ test statistic is $\chi^2 = 0.127$
+
+|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ | **Totals** |
+|--:|:--:|:--:|:--:|:--:|:--:|
+| Primary C-section | 1 | $\frac{3}{4}$ | 2 | $2\frac{1}{4}$ | **3** |
+| Primary vaginal | 5 | $5 \frac{1}{4}$ | 16 | $15 \frac{3}{4}$ | **21** |
+| **Totals** | **6** |  | **18** |  | **24** |
+
+What about degrees of freedom?
+
+For a contingency test, $df = (\text{number of rows} - 1) \times (\text{number of columns} - 1)$
+
+$df = (2 - 1) \times (2 - 1)$
+
+$df = 1$
+
+## Example: simpler numbers
+
+**Let's run our null hypothesis test**
+
+$H_0$: there is no difference in the proportions across explanatory groups
+
+$H_A$: there *is* a difference in the proportions across explanatory groups
+
+```{r echo = TRUE}
+chi2_test_stat <- 0.127
+df <- 1
+
+pchisq(chi2_test_stat, df, lower.tail = FALSE)
+```
+
+We fail to reject the null
+
+## Example: simpler numbers
+
+**Let's run our null hypothesis test**
+
+$H_0$: there is no difference in the proportions across explanatory groups
+
+$H_A$: there *is* a difference in the proportions across explanatory groups
+
+```{r echo = TRUE}
+dat <- matrix(c(1, 5, 2, 16), nrow = 2)
+dat
+```
+
+```{r eval = FALSE}
+# simpler to use the built-in chi-squared test function
+chisq.test(dat)
+```
+
+## Example: simpler numbers
+
+```{r echo = TRUE, warning=TRUE}
+# simpler to use the built-in chi-squared test function
+chisq.test(dat)
+```
+
+And this tells us we shouldn't be using $\chi^2$ because our sample size is too small!
+
+## Example: simpler numbers
+
+**Sure enough we had an expected frequency less than 1!!!**
+
+**Also half our expected frequencies are under 5**
+
+|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ | **Totals** |
+|--:|:--:|:--:|:--:|:--:|:--:|
+| Primary C-section | 1 | $\frac{3}{4}$ | 2 | $2\frac{1}{4}$ | **3** |
+| Primary vaginal | 5 | $5 \frac{1}{4}$ | 16 | $15 \frac{3}{4}$ | **21** |
+| **Totals** | **6** |  | **18** |  | **24** |
+
+## Example: birth outcomes for non-English and English speakers in Hawaiʻi
+
+The real data have sufficient sample size to do a $\chi^2$ test
+
+|  | non-English speaker | English speaker |
+|--:|:--:|:--:|
+| Primary Caesarean delivery | 127 | 934 |
+| Primary vaginal delivery | 1022 | 9336 |
+
+## Example: birth outcomes for non-English and English speakers in Hawaiʻi
+
+**Let's run our null hypothesis test for real**
+
+$H_0$: there is no difference in the proportions across explanatory groups
+
+$H_A$: there *is* a difference in the proportions across explanatory groups
+
+```{r echo = TRUE}
+dat <- matrix(c(127, 1022, 934, 9336), nrow = 2)
+dat
+```
+
+## Example: birth outcomes for non-English and English speakers in Hawaiʻi
+
+```{r echo = TRUE}
+chisq.test(dat)
+```
+
+We reject the null
+
+# Break!
+
+## Learning Objectives
+
+1. Understand [odds ratios]{.alert}, their connection to [contingency analysis]{.alert}, and their confidence intervals
+2. Gain appreciation for missuses of $P$-values and the partial solution offered by confidence intervals
+3. Gain appreciation for the role of racism, eugenics, and personal bias (not statistical bias) in foundational statistics
+
+## Review: [$\chi^2$ statistic]{.alert}
+
+> The [$\chi^2$]{.alert} statistic measures the discrepency between observed frequencies from the data and expected frequencies from the null hypothesis
+
+[$\chi^2$ statistic]{.alert} is calculated by summing up all $n$ $\chi^2_i$ values
+
+$$\chi^2 = \sum_{i=1}^n \chi^2_i= \sum_{i=1}^n \frac{(O_i - E_i) ^ 2}{E_i}$$
+
+## Review: [$\chi^2$ distribution]{.alert}
+
+> The **[$\chi^2$ distribution]{.alert}** is the sampling distribution for $\chi^2$ test statistic
+
+**Assumptions**
+
+* None of the categories should have an expected frequency of less than 1
+* No more than 20% of the categories should have expected frequencies less than 5
+
+## [$\chi^2$ distribution]{.alert}
+
+> The **[$\chi^2$ distribution]{.alert}** is the sampling distribution for $\chi^2$ test statistic
+
+Under the null hypothesis, the more categories, the larger the test statistic
+
+::: columns
+::: {.column width="50%"}
+**3 categories**
+
+$$
+\begin{aligned}
+\chi^2 &= \sum_{i=1}^3 \frac{(O_i - E_i) ^ 2}{E_i} \\
+&= \frac{(O_1 - E_1) ^ 2}{E_1} + \frac{(O_2 - E_2) ^ 2}{E_2} + \frac{(O_3 - E_3) ^ 2}{E_3}
+\end{aligned}
+$$
+:::
+
+::: {.column width="50%"}
+**6 categories**
+
+$$
+\begin{aligned}
+\chi^2 = &\sum_{i=1}^3 \frac{(O_i - E_i) ^ 2}{E_i} \\
+= &\frac{(O_1 - E_1) ^ 2}{E_1} + \frac{(O_2 - E_2) ^ 2}{E_2} + \frac{(O_3 - E_3) ^ 2}{E_3} + \\
+&\frac{(O_4 - E_4) ^ 2}{E_4} + \frac{(O_5 - E_5) ^ 2}{E_5} + \frac{(O_6 - E_6) ^ 2}{E_6}
+\end{aligned}
+$$
+:::
+:::
+
+## [Degrees of freedom for $\chi^2$ distribution]{.alert}
+
+> The [degrees of freedom]{.alert} of a $\chi^2$ statistic capture this fact that more categories equates to larger values
+
+**For goodness of fit test:** $df = \mathrm{(Number~of~categories)} - 1$
+
+**For contingency analysis:** $df = (\mathrm{Number~of~rows} - 1) \times (\mathrm{Number~of~columns} - 1)$
+
+## Example: birth outcomes for non-English and English speakers in Hawaiʻi
+
+|                            | non-English speaker | English speaker |
+|---------------------------:|:--------------------|:----------------|
+| Primary Caesarean delivery | 127                 | 934             |
+| Primary vaginal delivery   | 1022                | 9336 |
+
+> Are non-English speakers more likely to undergo C-section in their first delivery?
+
+data from: Sentell et al. (2016). Maternal language and adverse birth outcomes in a statewide analysis. *Women & Health*
+
+## [Null Hypothesis Significance Testing]{.alert}
+
+1. State $H_0$ and $H_\mathrm{A}$
+2. Calculate the test statistic
+3. Generate the null distribution
+5. Calculate the $P$-value
+6. Decide:
+    - Reject $H_0$ if test statistic is $\ge$ critical value ($P \le \alpha$)
+    - Fail to reject $H_0$ if test statistic is < critical value ($P > \alpha$)
+
+## Example: birth outcomes for non-English and English speakers in Hawaiʻi
+
+**Let's run our null hypothesis test for real**
+
+$H_0$: there is no difference in the proportions across explanatory groups
+
+$H_A$: there *is* a difference in the proportions across explanatory groups
+
+```{r echo = TRUE}
+dat <- matrix(c(127, 1022, 934, 9336), nrow = 2)
+dat
+```
+
+## Example: birth outcomes for non-English and English speakers in Hawaiʻi
+
+```{r echo = TRUE}
+chisq.test(dat)
+```
+
+We reject the null
+
+## Contingency analysis
+
+|                       | **Contingency test**  |
+|-----------------------|-----------------------|
+| Number of variables   | **2**                 |
+| Type of data          | categorical  |
+| Parameter             | *???*  |
+| Estimate              | *???*  |
+| Sampling distribution | $\chi^2$ distribution |
+| Test statistic        | $\chi^2$ statistic    |
+
+## Contingency analysis
+
+|                       | **Contingency test**  |
+|-----------------------|-----------------------|
+| Number of variables   | **2**                 |
+| Type of data          | categorical  |
+| Parameter             | *Odds ratio (OR)*  |
+| Estimate              | $\hat{OR}$  |
+| Sampling distribution | $\chi^2$ distribution |
+| Test statistic        | $\chi^2$ statistic    |
+
+The [odds ratio]{.alert} is the fraction of how likely a certain outcome is in one group compared to the other
+
+## Odds and odds ratio
+
+[Odds]{.alert} describes how likely, e.g., C-section is compared to vaginal birth
+
+$$
+\text{Odds(C-section)} = \frac{Pr(\text{C-section})}{Pr(\text{vaginal birth})}
+$$
+
+If the [odds]{.alert} are equal to 1, both outcomes are equally probable
+
+## Odds and odds ratio
+
+[Odds ratio]{.alert} compares the odds of an outcome, e.g., C-section, across different groups
+
+(note: only works for `2 x 2` contingency tables)
+
+$$
+\text{OR} = \frac{\text{Odds(C-section for non-English speakers)}}{\text{Odds(C-section for English speakers)}}
+$$
+
+If the [odds ratio]{.alert} is equal to 1, both groups have the same odds
+
+**Our null hypothesis is that the odds ratio is equal to 1**
+
+## Odds and odds ratio
+
+The [odds ratio]{.alert} we calculate from data is an estimate $\hat{OR}$
+
+|                            | non-English speaker | English speaker |
+|---------------------------:|:--------------------|:----------------|
+| Primary Caesarean delivery | 127                 | 934             |
+| Primary vaginal delivery   | 1022                | 9336            |
+| Odds $\hat{O}$             | 127/1022            | 934/9336 |
+
+$$
+\begin{aligned}
+\hat{OR} &= \frac{\hat{O}_{nE}}{\hat{O}_{E}} \\
+&= \frac{127/1022}{934/9336} \\
+&= 1.242
+\end{aligned}
+$$
+
+## Odds and odds ratio
+
+The [odds ratio]{.alert} we calculate from data is an estimate $\hat{OR}$
+
+|                            | non-English speaker | English speaker |
+|---------------------------:|:--------------------|:----------------|
+| Primary Caesarean delivery | 127                 | 934             |
+| Primary vaginal delivery   | 1022                | 9336            |
+| Odds $\hat{O}$             | 127/1022            | 934/9336 |
+
+$$
+\hat{OR} = 1.242
+$$
+
+**Our null hypothesis is that the odds ratio is equal to 1**
+
+Null hypothesis test: *Is 1.242 significantly different from 1?*
+
+- $P$-value
+- or...
+
+## Confidence interval for the odds ratio
+
+**95% CI**
+
+- the range of values that contain 95% of the central probability of the sampling distribution for the estimate
+- the range will overlap the *true population parameter* 95% of the time in hypothetical repeat studies
+- if the 95% CI does not overlap the null hypothesis (e.g. $OR = 1$) we reject the null at $\alpha = 0.05$
+- confidence intervals give us more information that $P$-values alone
+
+## Confidence interval for the odds ratio
+
+The **95% CI** for the natural log of the odds ratio follows the nice (approximate) rule
+
+$$
+\text{95\% CI} = \ln(\hat{OR}) \pm 2 \times SE_\text{log-scale}
+$$
+
+An even better approximation is
+
+$$
+\text{95\% CI} = \ln(\hat{OR}) \pm 1.96 \times SE_\text{log-scale}
+$$
+
+## Confidence interval for the odds ratio
+
+$$
+\text{95\% CI} = \ln(\hat{OR}) \pm 1.96 \times SE_\text{log-scale}
+$$
+
+But what is $SE_\text{log-scale}$?  Just take my word for it:
+
+::: columns
+::: {.column width="50%"}
+|              | group 1 | group 2 |
+|-------------:|:----------------|:----------------|
+| response 1 | a               | c             |
+| response 2 | b               | d            |
+:::
+
+::: {.column width="50%"}
+$$
+SE_\text{log-scale} = \sqrt{\frac{1}{a} + \frac{1}{b} + \frac{1}{c} + \frac{1}{d}}
+$$
+:::
+:::
+
+## Confidence interval for the odds ratio
+
+|                            | non-English speaker | English speaker |
+|---------------------------:|:--------------------|:----------------|
+| Primary Caesarean delivery | 127                 | 934             |
+| Primary vaginal delivery   | 1022                | 9336            |
+
+$$
+\begin{aligned}
+\text{95\% CI} &= \ln(\hat{OR}) \pm 1.96 \times SE_\text{log-scale} \\
+&= \ln(1.242) \pm 1.96 \times \sqrt{\frac{1}{127} + \frac{1}{1022} + \frac{1}{934} + \frac{1}{9336}} \\
+&= \ln(1.242) \pm 1.96 \times 0.100 \\
+&= \ln(1.242) \pm 0.196
+\end{aligned}
+$$
+
+## Confidence interval for the odds ratio
+
+|                            | non-English speaker | English speaker |
+|---------------------------:|:--------------------|:----------------|
+| Primary Caesarean delivery | 127                 | 934             |
+| Primary vaginal delivery   | 1022                | 9336            |
+
+$$
+\begin{aligned}
+\text{95\% CI} &= \ln(\hat{OR}) \pm 1.96 \times SE_\text{log-scale} \\
+&= \ln(1.242) \pm 0.196
+\end{aligned}
+$$
+
+```{r echo = TRUE}
+ci95logLo <- log(1.242) - 0.196
+ci95logHi <- log(1.242) + 0.196
+
+# convert back to linear (not log) measurements
+exp(c(ci95logLo, ci95logHi))
+```
+
+## $\chi^2$ contingency tests are all approximate
+
+Here is a more accurate what of getting all the same information:
+
+```{r echo = TRUE}
+# make the contingency table in R
+d <- matrix(c(127, 1022, 934, 9336), nrow = 2)
+```
+
+```{r echo = TRUE, eval = FALSE}
+# an "exact" test without the chi-sqrd assumptions
+fisher.test(d)
+```
+
+## $\chi^2$ contingency tests are all approximate
+
+Here is a more accurate what of getting all the same information:
+
+```{r echo = TRUE}
+fisher.test(d)
+```
+
+## Why do we care so much about [confidence intervals]{.alert}?
+
+**There's a replication crisis in biostatistics**
+
+- Studies will publish a "significant" finding (one with $P$-value $\le 0.05$)
+- Other researchers will try to reproduce that finding, and more often than not, **they fail**
+- Are any of our insights valid?!
+
+[Blakeley et al. (2019)](https://www.tandfonline.com/doi/full/10.1080/00031305.2018.1527253) write about this problem in an article titled:
+
+::: {style="text-align: center;"}
+*Abandon Statistical Significance*
+:::
+
+(i.e. no more $P$-values, please)
+
+## Why do we care so much about [confidence intervals]{.alert}?
+
+**There's a replication crisis in biostatistics**
+
+Confidence intervals are a small, simple, incomplete fix: they let us keep doing statistics pretty much the same, but CIs are *more informative* and thus less prone to *P-hacking*
+
+## Why do we care so much about [confidence intervals]{.alert}?
+
+**There's a replication crisis in biostatistics**
+
+Confidence intervals are a small, simple, incomplete fix
+
+An example with odds ratios (the null hypothesis is $OR = 1$)
+
+| $P$-value | $\chi^2$ stat | odds ratio | (95% CI) |
+|-----------|---------------|------------|----------|
+| $P = 0.01$ | 6.63 | 1.211 | (1.011, 1.425) |
+| $P = 0.01$ | 6.63 | 1.003 | (1.001, 1.004) |
+| $P = 0.01$ | 6.63 | 2.327 | (1.983, 3.782) |
+
+$P$-values are all the same, but due to different sample sizes and true effect sizes, odds ratios and confidence intervals are wildly different, with some warranting our interest and others not
+
+## Why do we care so much about [confidence intervals]{.alert}?
+
+**There's a replication crisis in biostatistics**
+
+Confidence intervals are a small, simple, incomplete fix
+
+An example with odds ratios (the null hypothesis is $OR = 1$)
+
+| $P$-value | $\chi^2$ stat | odds ratio | (95% CI) | conclusion |
+|-----------|---------------|------------|----------|------------|
+| $P = 0.01$ | 6.63 | 1.211 | (1.011, 1.425) | Could be interesting, needs more samples |
+| $P = 0.01$ | 6.63 | 1.003 | (1.001, 1.004) | Huge sample size, biologically meaningless |
+| $P = 0.01$ | 6.63 | 2.327 | (1.983, 3.782) | Clearly there's an effect |
+
+## How did we get here?
+
+**There's a replication crisis in biostatistics**
+
+## How did we get here?
+
+**There's a replication crisis in biostatistics**
+
+::: columns
+::: {.column width="50%"}
+![](/img/bernoulli_falacy.jpg)
+:::
+
+::: {.column width="50%"}
+Aubrey Clayton argues that "political agendas" of early statisticians drove them to develop methods that could prove their own "unpopular" beliefs and shield their "controversial" views behind the guise of "objectivity"
+
+(quotes are not Clayton's...I'm building suspense...)
+:::
+:::
+
+## How did we get here?
+
+**There's a replication crisis in biostatistics**
+
+::: columns
+::: {.column width="50%"}
+**Early statisticians**
+
+Ronald Fisher
+
+- promoted $P$-values
+- developed that "Fisher exact test" thing
+- lots more we'll be talking about
+
+Karl Pearson
+
+- developed the $chi^2$ test
+- developed methods for correlation
+- lots more we'll be talking about
+:::
+
+::: {.column width="50%"}
+"political agendas" = eugenics
+
+"unpopular" beliefs = white supremacy
+
+"controversial" views = genocide is necessary
+:::
+:::
+
+## Disease at the root, disease in the shoot
+
+::: columns
+::: {.column width="70%"}
+*"Available scientific knowledge provides a firm basis for believing that the groups of mankind differ in their innate capacity for intellectual and emotional development"*
+
+*"I am sorry that there should be propaganda in favour of miscegenation* [bigoted term for marriage between perceived racial groups] *in North America as I am sure it can do nothing but harm"*
+
+*"Unfortunately, considerable propaganda is now being developed to convince the public that cigarette smoking is dangerous"* [Fisher was funded by the tobacco industry]
+:::
+
+::: {.column width="30%"}
+![](/img/fisher.jpeg)
+
+Ronald Fisher
+
+- Racist
+- Eugenicist
+- Pawn of big tobacco
+:::
+:::
+
+## Disease at the root, disease in the shoot
+
+::: columns
+::: {.column width="30%"}
+![](/img/Karl_Pearson_1912.jpg)
+
+Karl Pearson
+
+- Racist
+- Eugenicist
+- Antisemite
+:::
+
+::: {.column width="70%"}
+*"My view---and I think it may be called the scientific view of a nation---is that of an organized whole, kept up to a high pitch of internal efficiency by insuring that its numbers are substantially recruited from the better stocks, and kept up to a high pitch of external efficiency by contest, chiefly by way of war with inferior races"*
+
+*"It is a false view of human solidarity, a weak humanitarianism, not a true humanism, which regrets that a capable and stalwart race of white men should replace a dark-skinned tribe..."*
+:::
+:::
+
+## Disease at the root, disease in the shoot
+
+::: columns
+::: {.column width="30%"}
+![](/img/Karl_Pearson_1912.jpg)
+
+Karl Pearson
+
+- Racist
+- Eugenicist
+- Antisemite
+:::
+
+::: {.column width="70%"}
+*"It is a false view of human solidarity, a weak humanitarianism, not a true humanism, which regrets that a capable and stalwart race of white men should replace a dark-skinned tribe which can neither utilize its land for the full benefit of mankind, nor contribute its quota to the common stock of human knowledge."*
+
+*"Taken on the average, and regarding both sexes, this alien Jewish population is somewhat inferior physically and mentally to the native population"*
+:::
+:::
+
+## Disease at the root, disease in the shoot
+
+::: {style="text-align: center;"}
+What do we do? Why learn "statistics"?
+:::
+
+## Disease at the root, disease in the shoot
+
+What do we do? Why learn "statistics"?
+
+- Why learn statistics?
+    - It holds a powerful position in science and society
+    - To undo harm, "beat them at their own game"
+    - Some methods (even $P$-values) not wrong, just poorly applied
+    - Those f@&%kers were **NOT** geniuses, others would have developed similar ideas and did (e.g. Anil Kumar Gain)
+
+## Disease at the root, disease in the shoot
+
+What do we do? Why learn "statistics"?
+
+- Stop the spread
+    - Confront the history
+    - Remove its influence on the contemporary
+- Be intentional and self-reflective about how and why we use statistics
+
+## Disease at the root, disease in the shoot
+
+What do we do? Why learn "statistics"?
+
+- Seek and embrace alternative knowledge systems
+    - Reject the idea that western science is a superior knowledge system
+    - Do not be extractive in connection to other knowledge systems
+    - Check out Ethnomathematics here at UH
+    - Let's see if we can decolonize statistics

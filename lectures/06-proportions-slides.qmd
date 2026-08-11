@@ -1,0 +1,461 @@
+---
+title: "Hypothesis Testing with Proportion Data"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE,
+                      message = FALSE, eval = TRUE)
+
+library(cowplot)
+library(ggplot2)
+library(dplyr)
+library(viridis)
+library(glue)
+library(stringr)
+```
+
+## Learning Objectives
+
+1. Analyze a single categorical variable using the [binomial test]{.alert}, a type of null hypothesis significance test
+2. Determine when to use a binomial test
+3. Estimate uncertainty of a proportion
+
+## Orange M&Ms
+
+According to Mars Chocolate North America, 20% of Milk Chocolate M&Ms are [orange]{.alert}
+
+![](/img/orange-mm.jpg){width="25%" fig-align="center"}
+
+::: {.pause-think}
+If you sample 3 M&Ms at random from a bag, what is the probability you have exactly 1 [orange]{.alert} M&M?
+:::
+
+## Orange M&Ms
+
+According to Mars Chocolate North America, 20% of Milk Chocolate M&Ms are [orange]{.alert}
+
+![](/img/orange-mm.jpg){width="25%" fig-align="center"}
+
+::: {.pause-think}
+If you sample 3 M&Ms at random from a bag, what is the probability you have exactly 1 [orange]{.alert} M&M?
+
+Pr[1 of 3 [orange]{.alert} M&Ms] = `r dbinom(1, 3, 0.2)`
+:::
+
+## Pr[1 of 3 [orange]{.alert} M&Ms]
+
+Using a [probability tree]{.alert} can help!
+
+```{r, out.width = "75%"}
+df_tree <- tibble(
+  x = c(rep(0, 2), rep(2, 4), rep(4, 8)),
+  y = c(rep(0, 2), rep(c(-2, 2), each = 2), rep(c(-3, -1, 1, 3), each = 2)),
+  xend = x + 1,
+  yend = c(-2, 2, -3, -1, 1, 3, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5)
+)
+
+df_label <- tibble(
+  x = rep(c(1.5, 3.5, 5.5), c(2, 4, 8)),
+  y = c(-2, 2, -3, -1, 1, 3, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5),
+  color = rep(c("orange", "not orange"), 7),
+  prob = rep(c("0.2", "0.8"), 7)
+)
+
+df_summary <- tidyr::crossing(
+  prob1 = c(0.2, 0.8), prob2 = c(0.2, 0.8), prob3 = c(0.2, 0.8)
+  ) |>
+  mutate(
+    x = 7,
+    y = seq(-3.5, 3.5, 1),
+    prob = glue("{prob1} %*% {prob2} %*% {prob3}")
+  ) |>
+  rowwise() |>
+  summarize(
+    x = x, y = y,
+    prob = prob,
+    n_orange = sum(c_across(matches("^prob[1-3]$")) == 0.2))
+
+gp <- ggplot(df_tree, aes(x, y, xend = xend, yend = yend)) +
+  xlim(-1, 8.5) + ylim(-4, 4) +
+  geom_segment(size = 1.2) +
+  geom_point(
+    data = df_label,
+    mapping = aes(x, y, fill = color), shape = 21,
+    inherit.aes = FALSE, size = 6
+  ) +
+  geom_text(
+    data = df_label,
+    mapping = aes(x - 1, y, label = prob),
+    inherit.aes = FALSE, size = 6
+  ) +
+  annotate("text", x = c(1.5, 3.5, 5.5), y= 4, label = str_c("M&M ", 1:3),
+           size = 6) +
+  scale_fill_manual(values = c("white", "orange")) +
+  guides(colour = guide_legend(override.aes = list(size=10))) +
+  theme_void() +
+  theme(
+    legend.position = c(0.1, 0.9),
+    legend.text = element_text(size = 18),
+    legend.title = element_text(size = 18)
+  )
+
+gp
+```
+
+## Pr[1 of 3 [orange]{.alert} M&Ms]
+
+Calculate probability of each outcome
+
+```{r, out.width = "75%"}
+gp +
+  geom_text(
+    data = df_summary,
+    mapping = aes(x, y, label = prob),
+    inherit.aes = FALSE, parse = TRUE, size = 8
+  ) +
+  annotate("text", x = 7, y= 4, label = "Probability", size = 6)
+```
+
+## Pr[1 of 3 [orange]{.alert} M&Ms]
+
+Count the ways to get desired outcome
+
+```{r, out.width = "75%"}
+gp +
+  geom_text(
+    data = df_summary,
+    mapping = aes(x, y, label = prob),
+    inherit.aes = FALSE, parse = TRUE, size = 8
+  ) +
+  annotate("text", x = 7, y= 4, label = "Probability", size = 6) +
+  geom_text(
+    data = df_summary,
+    mapping = aes(x + 1.5, y, label = n_orange),
+    inherit.aes = FALSE, size = 8
+  ) +
+  annotate("text", x = 8.5, y= 4, label = "italic(N)[orange]", size = 6, parse = TRUE) +
+  NULL
+```
+
+## Pr[1 of 3 [orange]{.alert} M&Ms]
+
+Add up probabilities: $3 \times (0.2 \times 0.8 \times 0.8) = `r dbinom(1, 3, 0.2)`$
+
+```{r, out.width = "75%"}
+gp +
+  geom_text(
+    data = df_summary,
+    mapping = aes(x, y, label = prob, color = n_orange == 1),
+    inherit.aes = FALSE, parse = TRUE, size = 8, show.legend = FALSE
+  ) +
+  scale_color_manual(values = c("grey", "black")) +
+  annotate("text", x = 7, y= 4, label = "Probability", size = 6) +
+  geom_text(
+    data = df_summary,
+    mapping = aes(x + 1.5, y, label = n_orange, color = n_orange == 1),
+    inherit.aes = FALSE, size = 8, show.legend = FALSE
+  ) +
+  annotate("text", x = 8.5, y= 4, label = "italic(N)[orange]", size = 6, parse = TRUE) +
+  NULL
+```
+
+## Orange M&Ms
+
+What is the probability of sampling 4 [orange]{.alert} M&Ms from a bag of 20 if $p = 0.2$ orange?
+
+Drawing a probability tree would be too hard.
+
+Fortunately, there's an equation!
+
+## Binomial distribution
+
+> The **binomial distribution** provides the probability distribution for the number of "successes" in a fixed number of independent trials, when the probability of success is the same in each trial.
+
+Assumptions:
+
+* the number of trials ($n$) is fixed
+* separate trials are independent, and
+* the probability of "success" ($p$) is the same in every trial
+
+## Binomial distribution
+
+$$\text{Pr}[X~\textit{successes}] = {n \choose X} p^X (1 - p)^{(n - X)}$$
+
+- ${n \choose X}$: a count of the number of ways you could get $X$ successes in $n$ trials
+- $p^X$: the probability of $X$ "successes" (multiplication rule)
+- $(1-p)^{n-X}$: the probability of $n - X$ "failures" (multiplication rule)
+
+## Binomial distribution (graphically)
+
+$p \in {0.1, 0.5, 0.9}$
+
+$n = 20$ trials
+
+```{r, echo = FALSE, eval = TRUE, fig.width=6, fig.height=4, message=FALSE, warning=FALSE}
+df <- tidyr::crossing(
+  n = 20,
+  `X successes` = 0:20,
+  p = c(0.1, 0.5, 0.9)
+) |>
+  mutate(Probability = dbinom(`X successes`, n, p))
+
+ggplot(df, aes(`X successes`, Probability)) +
+  facet_grid(. ~ p, labeller = label_bquote(cols = italic(p) == .(p))) +
+  geom_col(fill = "tomato") +
+  theme_cowplot()
+```
+
+## Binomial distribution
+
+What is the probability of sampling 4 [orange]{.alert} M&Ms from a bag of 20 if $p = 0.2$ orange?
+
+General equation:
+
+$$\text{Pr}[X~\textit{successes}] = {n \choose X} p^X (1 - p)^{(n - X)}$$
+Equation for this example:
+
+$$\text{Pr}[4~\text{orange}~M\&Ms] = {20 \choose 4} 0.2^4 (1 - 0.2)^{(20 - 4)}$$
+
+## Binomial distribution (graphically)
+
+What is the probability of sampling $X$ [orange]{.alert} M&Ms from a bag of 20 if $p = 0.2$ orange?
+
+$p = 0.2$
+
+$n = 20$ trials
+
+```{r, echo = FALSE, eval = TRUE, out.height = "50%", fig.width=4, fig.height=4, message=FALSE, warning=FALSE}
+df <- tidyr::crossing(
+  n = 20,
+  `X successes` = 0:20,
+  p = 0.2
+) |>
+  mutate(Probability = dbinom(`X successes`, n, p))
+
+ggplot(df, aes(`X successes`, Probability)) +
+  facet_grid(. ~ p, labeller = label_bquote(cols = italic(p) == .(p))) +
+  geom_col(fill = "tomato") +
+  xlab(expression(paste(italic(X), " orange M&Ms"))) +
+  theme_cowplot()
+```
+
+## Binomial distribution (in code)
+
+::: columns
+::: {.column width="50%"}
+$p = 0.2$
+
+$n = 20$ trials
+
+```{r, echo = FALSE, eval = TRUE, out.height = "50%", fig.width=4, fig.height=4, message=FALSE, warning=FALSE}
+df <- tidyr::crossing(
+  n = 20,
+  `X successes` = 0:20,
+  p = 0.2
+) |>
+  mutate(Probability = dbinom(`X successes`, n, p))
+
+ggplot(df, aes(`X successes`, Probability)) +
+  facet_grid(. ~ p, labeller = label_bquote(cols = italic(p) == .(p))) +
+  geom_col(fill = "tomato") +
+  xlab(expression(paste(italic(X), " orange M&Ms"))) +
+  theme_cowplot()
+```
+:::
+
+::: {.column width="50%"}
+What is $Pr(X = 1)$?
+
+```{r echo = TRUE}
+dbinom(1, size = 20, p = 0.2)
+```
+
+What is $Pr(X \leq 1)$?
+
+```{r echo = TRUE}
+pbinom(1, size = 20, p = 0.2)
+```
+:::
+:::
+
+## Summary
+
+The [binomial distribution]{.alert} describes the probability of all possible outcomes from $n$ trials with probability of success $p$
+
+Therefore, it is a [sampling distribution]{.alert} from a sample size of $n$ from a population where a proportion $p$ of the population is one discrete value (e.g. orange)
+
+## M&Ms are fun and all...
+
+But what are some biologically relevant examples?
+
+## M&Ms are fun and all...
+
+But what are some biologically relevant examples?
+
+- Does a certain species prefer one habitat over another? [test statistic:]{.alert} number of occurrences in first habitat type versus the other
+- Is a certain class of gene clustered on one chromosome? [test statistic:]{.alert} count of genes in the class on a specific chromosome versus all other chromosomes
+- What is the dietary preference of some species? [test statistic:]{.alert} count of times the species ate one food type versus another
+
+## Food preferences of the pulelehua Kamehameha caterpillar
+
+![](/img/kamehameha_butterfly.png)
+
+image credit: Hawaiʻi Public Radio
+
+## Food preferences of the pulelehua Kamehameha caterpillar
+
+**Question:** Do pulelehua Kamehameha caterpillars prefer māmaki over plants in the *Urtica* genus?
+
+**Scientific hypothesis:** Yes, pulelehua Kamehameha caterpillars prefer māmaki over plants in the *Urtica* genus
+
+::: columns
+::: {.column width="50%"}
+**Conduct a feeding trial**
+:::
+
+::: {.column width="50%"}
+![](/img/feeding_trial.png){width="5cm" fig-align="center"}
+:::
+:::
+
+## Food preferences of the pulelehua Kamehameha caterpiller
+
+::: columns
+::: {.column width="40%"}
+::: {.pause-think}
+What are $H_0$ and $H_A$?
+:::
+:::
+
+::: {.column width="60%"}
+![](/img/feeding_trial.png){width="7cm" fig-align="center"}
+:::
+:::
+
+## Food preferences of the pulelehua Kamehameha caterpiller
+
+::: columns
+::: {.column width="40%"}
+- $H_0$: The proportion of times pulelehua Kamehameha caterpillars choose māmaki versus *Urtica* will be 0.5
+- $H_A$: The proportion of times pulelehua Kamehameha caterpillars choose māmaki versus *Urtica* will not be 0.5
+:::
+
+::: {.column width="60%"}
+![](/img/feeding_trial.png){width="7cm" fig-align="center"}
+:::
+:::
+
+## [Null Hypothesis Significance Testing]{.alert}
+
+1. State $H_0$ and $H_\mathrm{A}$
+2. Calculate the test statistic
+3. Generate the null distribution
+4. Calculate the $P$-value
+5. Decide:
+    - Reject $H_0$ if $P$-value $\le \alpha$
+    - Fail to reject $H_0$ if $P$-value $> \alpha$
+
+## $H_0$ and $H_A$ deal with proportions
+
+> A **proportion** is the fraction of individuals having a particular attribute.
+
+$$p = \frac{\text{Number of "successes"}}{\text{Number of trials}}$$
+
+Example: 21 out of 30 pulelehua Kamehameha caterpillars chose māmaki over *Urtica*, so the proportion is $\frac{21}{30}=0.7$
+
+The **proportion** is a population parameter, and we can estimate it from data
+
+## Parameter and estimate
+
+ Parameter | Estimate
+:---------:|:--------:
+ $p$       | $\hat{p}$
+
+## Food preferences of the pulelehua Kamehameha caterpiller
+
+::: columns
+::: {.column width="40%"}
+- $H_0$: The proportion of times pulelehua Kamehameha caterpillars choose māmaki versus *Urtica* will be 0.5
+- $H_A$: The proportion of times pulelehua Kamehameha caterpillars choose māmaki versus *Urtica* will not be 0.5
+:::
+
+::: {.column width="60%"}
+![](/img/feeding_trial.png){width="7cm" fig-align="center"}
+:::
+:::
+
+## Food preferences of the pulelehua Kamehameha caterpiller
+
+::: columns
+::: {.column width="40%"}
+- $H_0$: The true population proportion $p = 0.5$
+- $H_A$: The true population proportion $p \ne 0.5$
+:::
+
+::: {.column width="60%"}
+![](/img/feeding_trial.png){width="7cm" fig-align="center"}
+:::
+:::
+
+## Food preferences of the pulelehua Kamehameha caterpiller
+
+- $H_0$: The true population proportion $p = 0.5$
+- $H_A$: The true population proportion $p \ne 0.5$
+- Test statistic: (# times chose māmaki) = 21 out of 30
+- What is the null distribution???
+
+## Food preferences of the pulelehua Kamehameha caterpiller
+
+- $H_0$: The true population proportion $p = 0.5$
+- $H_A$: The true population proportion $p \ne 0.5$
+- Test statistic: (# times chose māmaki) = 21 out of 30
+- The null distribution is the [binomial distribution]{.alert} with $p = 0.5$
+
+## Food preferences of the pulelehua Kamehameha caterpiller
+
+```{r echo = TRUE}
+n <- 30 # number of trials
+
+nsuccess <- 21 # number of times chose māmaki
+
+p <- 0.5 # null hypothesis proportion
+
+# P-value
+upper <- pbinom(nsuccess, size = n, prob = p,
+                lower.tail = FALSE)
+lower <- pbinom(n - nsuccess, size = n, prob = p,
+                lower.tail = TRUE)
+pval <- upper + lower
+pval
+```
+
+## Food preferences of the pulelehua Kamehameha caterpillar
+
+- $H_0$: The true population proportion $p = 0.5$
+- $H_A$: The true population proportion $p \ne 0.5$
+- Test statistic: (# times chose māmaki) = 21 out of 30
+- The null distribution is the [binomial distribution]{.alert} with $p = 0.5$
+- With $P$-value = `r round(pval, 3)` we **reject** the null at $\alpha = 0.05$ significance
+
+## Confidence Interval of a proportion
+
+Remember, $\hat{p}$ (the proportion) is a sample estimate of the population parameter. Like any estimate we can calculate a confidence interval. But...
+
+The 2 SE rule does not work for 95% Confidence Intervals of the binomial distribution.
+
+## Confidence Interval of a proportion
+
+The 2 SE rule does not work for 95% Confidence Intervals of the binomial distribution. So...
+
+We use R code instead
+
+```{r echo = TRUE}
+n <- 30
+nsuccess <- 21
+phat <- nsuccess / n
+phat
+
+# 95% CI
+ci95 <- qbinom(c(0.025, 0.975), n, phat) / n
+ci95
+```

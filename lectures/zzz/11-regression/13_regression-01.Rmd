@@ -1,0 +1,128 @@
+---
+title: "BIOL 220: Regression"
+output: binb::metropolis
+header-includes:
+  - \usepackage{array}
+  - \usepackage{xcolor}
+  - \usepackage{colortbl}
+  - \usepackage[export]{adjustbox}
+  - \usepackage{pdfpages}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, 
+                      message = FALSE, eval = TRUE)
+
+library(cowplot)
+library(ggplot2)
+library(dplyr)
+library(viridis)
+library(glue)
+library(stringr)
+library(tidyr)
+library(googlesheets4)
+library(extraDistr)
+library(purrr)
+library(magrittr)
+```
+
+
+
+
+
+## Are older insect lineages more species rich in Hawai\`i?
+
+::: columns
+
+:::: column
+
+
+*Hylaeus* bees
+
+- 700,000 years 
+- 60-ish species
+
+![from: Magnacca and Danforth (2006) Cladistics 22](img/hylid_phylo.png){width="80%"}
+
+::::
+
+:::: column
+
+Native *Drosophila*
+
+- 25 million years
+- possibly 1000 species
+
+![from: Church and Extavour (2022) Molecular Biology and Evolution, 39](img/drosoph_phylo.png){width="60%"}
+
+::::
+
+:::
+
+## Are older insect lineages more species rich in Hawai\`i? {.t}
+
+Looks like it...a question for \alert{correlation}
+
+```{r fig.align='center', fig.width=4, fig.height=3}
+hi_insect <- read.csv("data/hembry_etal.csv")
+hi_insect$clade_richness <- round(hi_insect$clade_richness)
+
+ggplot(hi_insect, aes(x = clade_age, y = clade_richness)) +
+    geom_point() +
+    theme_cowplot() +
+    xlab("Clade age (my)") + 
+    ylab("Number of species")
+```
+
+## Are older insect lineages more species rich in Hawai\`i? {.t}
+
+Using product-moment \alert{correlation}, we got a "significant" correlation
+
+```{r}
+cor.test(hi_insect$clade_age, hi_insect$clade_richness)
+```
+
+
+## Are older insect lineages more species rich in Hawai\`i? {.t}
+
+The significant correlation means that clade age and number of species have a \alert{predictive} relationship (I could predict one from the other).
+
+How do we actually predict number of species from clade age?
+
+::: columns
+
+:::: column
+
+```{r fig.align='center', fig.width=4, fig.height=3, out.width="100%"}
+hi_insect <- read.csv("data/hembry_etal.csv")
+hi_insect$clade_richness <- round(hi_insect$clade_richness)
+
+ggplot(hi_insect, aes(x = clade_age, y = clade_richness)) +
+    geom_point() +
+    theme_cowplot() +
+    xlab("Clade age (my)") + 
+    ylab("Number of species") +
+    geom_smooth(method = "lm", se = FALSE)
+```
+
+::::
+
+:::: column
+
+\vspace{4em}
+\large
+\it A job for \alert{regression}
+
+::::
+
+:::
+
+## Learning Objectives
+
+1. Use linear regression to predict $Y$ based on $X$
+2. Test the null hypothesis of slope = 0
+3. Display uncertainty in predictions from a linear regression
+4. Use diagnostic plots to evaluate if data meet assumptions of regression
+
+
+## Using slides from supplemental textbook...

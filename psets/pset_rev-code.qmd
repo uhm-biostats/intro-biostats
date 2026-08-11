@@ -1,0 +1,139 @@
+# 🎉 Review 🎉 coding, data, graphics
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, message = FALSE, warning = FALSE)
+
+library(cowplot)
+library(dplyr)
+library(DT)
+library(ggplot2)
+library(infer)
+library(readr)
+library(tibble)
+library(palmerpenguins)
+
+```
+
+
+**Due Thursday, Feb 15, 2024 before class**
+
+**Submit your answers via Google Classroom**
+
+
+
+## Speed round (jk take your time) {.unnumbered}
+
+
+::: {.callout-tip}
+## Plotting
+
+1. Fix the code below, you're not trying to make the plot look nicer, just trying to correct errors (hint: try running it in R to see if you fixed it all the way; what type of plot should we use for these kinds of data?) [1 point]
+
+```{r eval = FALSE}
+library(palmerpenguins)
+# library(ggplot2)
+
+ggplot(penguins, 
+       aes(x = bill_depth_mm, y = bill_length_mm, 
+           color = "species")) +
+    geom_boxplot() + 
+    scale_color_viridis_c()
+```
+
+2. Match the plot to the data type (e.g. "a. goes to iii."---that is not correct, just an example!) [1 point]
+
+::: columns
+
+:::: column
+
+a. *Response:* categorical, *Explanatory:* none
+b. *Response:* numerical, *Explanatory:* categorical
+c. *Response:* numerical, *Explanatory:* numerical
+d. *Response:* numerical, *Explanatory:* none
+
+::::
+
+:::: column
+
+i. Scatter plot
+ii. Bar plot
+iii. Box plot
+iv. Histogram 
+
+::::
+
+:::
+
+:::
+
+
+::: {.callout-tip}
+## Estimates
+
+3. Fix this code to calculate the standard error (again, don't add to the code, just correct it) [2 points]
+
+```{r eval = FALSE}
+gentoo <- subset(penguins, penguins$species == "Gentoo")
+
+y <- gentoo$flipper_length_mm
+y <- y[!is.na(y)]
+
+n <- nrow(y)
+
+ybar <- mean(y)
+
+s2 <- 1 / n * sum((y - ybar))
+s <- sqrt(s2)
+
+se <- 1 / sqrt(n) * s
+se
+
+# compare to the below calculation (this code is correct)
+sd(y, na.rm = TRUE) / sqrt(n)
+```
+
+:::
+
+
+## Putting it all together {.unnumbered}
+
+Let's keep using the `penguins` data.  Here we'll compare the data from Gentoo and Adelie penguin flippers.
+
+To start, I'll show you a faceted histogram (of an *exploratory* quality) of flipper lengths across these two species:
+
+```{r}
+ggplot(subset(penguins, penguins$species != "Chinstrap"), 
+              aes(x = flipper_length_mm, fill = species)) +
+    geom_histogram() +
+    facet_grid(rows = vars(species)) +
+    theme(legend.position = "none")
+```
+
+
+::: {.callout-tip}
+## Use the `penguins` data (and refer to the above graph) to answer questions 4--6
+
+4. Make a boxplot of the Adelie and Gentoo penguins 
+    a. use *ggplot* code to make the plot and upload the image to Google Forms (e.g. take a screenshot and upload that) [1 point]
+    b. what does the boxplot tell you that the histrogram does not; what does the histogram tell you that the boxplot does not? [1 point]
+
+5. Now we will look numerically at the spread of these the data on these two species
+    a. calculate the mean and standard deviation of flipper length of both species, report your answer with 1 decimal place [1 point]
+    b. calculate the standard errors of the means for both species, again, 1 decimal place [1 point]
+
+6. Explain the standard deviations and standard errors
+    a. which species has the bigger standard deviation, which has the bigger standard error? Based on the graphs of the data, did you expect this answer or were you surprised?  Why or why not? [1 point]
+    b. Compare the standard **error** of the Gentoo versus the Adelie, what is more likely to explain why one is larger than the other: the sample sizes for the two different species, or the standard deviations for the two different species? Explain why you picked your answer [1 point]
+    
+:::
+
+```{r, eval = FALSE, echo = FALSE}
+dat <- subset(penguins, penguins$species != "Chinstrap" & 
+                  !is.na(penguins$flipper_length_mm))
+
+dat <- group_by(dat, species)
+
+dat <- summarize(dat, sd = sd(flipper_length_mm), n = n())
+
+dat$sd / sqrt(dat$n)
+```

@@ -1,0 +1,833 @@
+---
+title: "BIOL 220 Hypothesis Testing with Frequency Data"
+output: binb::metropolis
+header-includes:
+  - \usepackage{array}
+  - \usepackage{xcolor}
+  - \usepackage[export]{adjustbox}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, 
+                      message = FALSE, eval = TRUE)
+
+library(cowplot)
+library(ggplot2)
+library(dplyr)
+library(viridis)
+library(glue)
+library(stringr)
+library(tidyr)
+```
+
+
+## Ka hua `ōlelo o ka lā
+
+\centering
+\Large
+\alert{kō}
+
+## Kō
+
+*A kupuna crop, going from*
+
+::: columns
+
+:::: column
+diversity and traditional use to...
+
+![](img//ko.png)
+image credit: CTAHR
+::::
+
+:::: column
+...exploitation and overthrow
+
+![](img//cane_plantation.png)
+image credit: Getty Images
+::::
+
+:::
+
+
+## Back to the M&Ms
+
+We talked about the binomial test for the proportion of orange M&Ms...but there are more than just orange and not-orange!
+
+## Learning Objectives
+
+1. Analyze a single categorical variable with >2 categories using the \alert{$\chi^2$ goodness-of-fit test}
+
+## Fast facts
+
+|                       | **Binomial test of proportions** |
+|-----------------------|-----------------------|
+| Number of variables   | 1                     |
+| Type of data          | categorical **(2 categories)** |
+| Parameter             | $p$                   |
+| Estimate              | $\hat{p}$             |
+| Test                  | Binomial test         |
+| Sampling distribution | Binomial distribution |
+| Test statistic        | Number of "successes" |
+
+## Fast facts
+
+
+|           | **Binomial test of proportions**  | **$\chi^2$ goodness-of-fit test** |
+|-----------------------|-----------------------|-----------------------------------|
+| Number of variables   | 1                     | 1                     |
+| Type of data          | categorical **(2 categories)** | categorical **(>2 categories)** |
+| Parameter             | $p$                   | $\vec{p}$                   |
+| Estimate              | $\hat{p}$             | $\vec{\hat{p}}$             |
+| Sampling distribution | Binomial distribution | $\chi^2$ distribution |
+| Test statistic        | Number of "successes" | $\chi^2$ statistic |
+
+
+## \alert{$\chi^2$ goodness-of-fit test}
+
+> The \alert{$\chi^2$ goodness-of-fit test} compares frequency data to a probabiity model stated by the null hypothesis
+
+## M&M colors
+
+
+
+According to Mars Chocolate North America, the proportion of M&M colors in Milk Chocolate M&Ms are:
+
+ Color  | Proportion
+--------|:----------:
+ Blue   | 0.24
+ Orange | 0.20
+ Green  | 0.16
+ Yellow | 0.14
+ Red    | 0.13
+ Brown  | 0.13
+
+Last lecture we only cared about 2 categories: "orange" versus "not orange"
+
+Now, we care about all 6 categories
+
+## M&M colors
+
+ Color  | Proportion
+--------|:----------:
+ Blue   | 0.24
+ Orange | 0.20
+ Green  | 0.16
+ Yellow | 0.14
+ Red    | 0.13
+ Brown  | 0.13
+
+\begin{columns}
+\column{\textwidth}
+  \metroset{block=fill}
+
+  \begin{alertblock}{Pause \& Think}
+
+According to the manufacturer, there are 210 candies in a 7 oz. bag. Suppose that you want to test the hypothesis that the specific bag you have is unusual. What's a reasonable null hypothesis?
+  
+  \end{alertblock}
+
+\end{columns}
+
+## M&M colors
+
+ Color  | Proportion
+--------|:----------:
+ Blue   | 0.24
+ Orange | 0.20
+ Green  | 0.16
+ Yellow | 0.14
+ Red    | 0.13
+ Brown  | 0.13
+
+\begin{columns}
+\column{\textwidth}
+  \metroset{block=fill}
+
+  \begin{alertblock}{Pause \& Think}
+
+$H_0$: The frequency of M\&Ms with each color in the bag is proportional to their proportion specified by the manufacturer
+
+$H_\mathrm{A}$: The frequency of M\&Ms with each color in the bag is \textit{not} proportional to their proportion specified by the manufacturer
+
+  \end{alertblock}
+
+\end{columns}
+
+## M&M colors
+
+\begin{columns}
+\column{\textwidth}
+  \metroset{block=fill}
+
+  \begin{alertblock}{Pause \& Think}
+
+For a bag with 210 candies, what's the frequency of each color expected under $H_0$?
+
+  \end{alertblock}
+
+\end{columns}
+
+\begin{columns}
+
+\column{\textwidth}
+
+```{r}
+tibble(
+  Color = c("Blue", "Orange", "Green", "Yellow", "Red", "Brown"),
+  Proportion = c("0.24", "0.20", "0.16", "0.14", "0.13", "0.13"),
+  `Expected A` = rep(35, 6),
+  `Expected B` = c(24, 20, 16, 14, 13, 13),
+  `Expected C` = c("50.4", "42.0", "33.6", "29.4", "27.3", "27.3")
+) %>%
+  knitr::kable(format = "latex", align = "lcccc")
+```
+
+\end{columns}
+
+## M&M colors
+
+The frequency of each color expected under $H_0$ is the proportion multiplied by the total number (e.g. $0.24 \times 210 = 50.4$)
+
+ Color  | Proportion | Expected 
+--------|:----------:|:--------:
+ Blue   | 0.24       | 50.4
+ Orange | 0.20       | 42.0
+ Green  | 0.16       | 33.6
+ Yellow | 0.14       | 29.4
+ Red    | 0.13       | 27.3
+ Brown  | 0.13       | 27.3
+ **Total**  | 1.00       | 210
+
+## M&M colors
+
+Now, take a random sample
+
+```{r, echo = TRUE, eval = FALSE}
+candies <- sample(
+  x = c("Blue", "Orange", "Green", "Yellow", 
+        "Red", "Brown"),
+  size = 210,
+  replace = TRUE,
+  prob = c(0.24, 0.20, 0.16, 0.14, 0.13, 0.13)
+)
+
+table(candies)
+
+```
+
+## M&M colors
+
+ Color  | Proportion | Expected | Observed 
+--------|------------|----------|----------
+ Blue   | 0.24       | 50.4     | 43
+ Orange | 0.20       | 42.0     | 40
+ Green  | 0.16       | 33.6     | 37
+ Yellow | 0.14       | 29.4     | 37
+ Red    | 0.13       | 27.3     | 33
+ Brown  | 0.13       | 27.3     | 20
+ **Total**  | 1.00   | 210      | 210
+
+\begin{columns}
+\column{\textwidth}
+  \metroset{block=fill}
+
+  \begin{alertblock}{Pause \& Think}
+
+Which color in most over or underrepresented compared to the null hypothesis?
+
+Do you think the observations are consistent with the null hypothesis?
+
+  \end{alertblock}
+
+\end{columns}
+
+## M&M colors
+
+```{r}
+
+E <- 210 * c(0.24, 0.20, 0.16, 0.14, 0.13, 0.13)
+O <- c(43, 40, 37, 37, 33, 20)
+
+```
+
+ Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
+--------|------------|----------|----------|-----------------
+ Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
+ Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
+ Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
+ Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
+ Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
+ Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
+ **Total**  | 1.00   | 210      | 210
+
+\begin{columns}
+\column{\textwidth}
+  \metroset{block=fill}
+
+  \begin{alertblock}{Pause \& Think}
+
+Yellow! Why?
+
+Maybe? It's hard to tell by eye
+
+  \end{alertblock}
+
+\end{columns}
+
+## $\chi^2_i$ measures discrepancy between observed and expected frequency
+
+$\chi^2_i$ is for observation $i$
+
+$$\chi^2_i = \frac{(Observed_i - Expected_i) ^ 2}{\mathit{Expected}_i}$$
+
+Shorter form:
+
+$$\chi^2_i = \frac{(O_i - E_i) ^ 2}{E_i}$$
+
+## M&M colors
+
+$$\chi^2_i = \frac{(O_i - E_i) ^ 2}{E_i} = \frac{(37 -29.4)^2}{29.4} = 1.96$$
+ 
+ Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
+--------|:----------:|:--------:|:--------:|:---------------:
+ Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
+ Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
+ Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
+ Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
+ Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
+ Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
+ **Total**  | 1.00   | 210      | 210
+
+## Why $\frac{(O_i - E_i) ^ 2}{E_i}$?
+
+Positive discrepancies have same magnitude as negative discrepancies
+
+$$(O_i - E_i) ^ 2$$
+
+Smaller $E_i$ have larger effect
+
+$$\frac{1}{E_i}$$
+
+ Proportion | Expected | Observed | $(O - E)^2 / E$
+------------|----------|----------|-----------------
+ 0.990      | 990      | 950      | `r round((950 - 990) ^ 2 / 990, 2)`
+ 0.005      | 5        | 5        | `r round((5 - 5) ^ 2 / 5, 2)`
+ 0.005      | 5        | 45       | `r round((45 - 5) ^ 2 / 5, 2)`
+
+
+## \alert{Null Hypothesis Significance Testing}
+
+1. State $H_0$ and $H_\mathrm{A}$
+2. Calculate the test statistic
+3. Generate the null distribution
+4. Calculate the $P$-value
+6. Decide:
+    - Reject $H_0$ if test statistic is $\ge$ critical value ($P \le \alpha$)
+    - Fail to reject $H_0$ if test statistic is < critical value ($P > \alpha$)
+
+## \alert{$\chi^2$ statistic}
+
+> The \alert{$\chi^2$} statistic measures the discrepency between observed frequencies from the data and expected frequencies from the null hypothesis
+
+\alert{$\chi^2$ statistic} is the test statistic for the \alert{$\chi^2$} test.
+
+## \alert{$\chi^2$ statistic}
+
+\alert{$\chi^2$ statistic} is calculated by summing up all $n$ $\chi^2_i$ values
+
+$$\chi^2 = \sum_{i=1}^n \chi^2_i= \sum_{i=1}^n \frac{(O_i - E_i) ^ 2}{E_i}$$
+
+## M&M colors
+
+ Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
+--------|:----------:|:--------:|:--------:|:---------------:
+ Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
+ Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
+ Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
+ Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
+ Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
+ Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
+ **Total**  | 1.00   | 210      | 210      | `r round(sum((O - E) ^ 2 / E), 2)`
+
+\begin{columns}
+\column{\textwidth}
+  \metroset{block=fill}
+
+  \begin{alertblock}{Pause \& Think}
+
+What is the test statistic?
+
+  \end{alertblock}
+
+\end{columns}
+
+## M&M colors
+
+ Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
+--------|:----------:|:--------:|:--------:|:---------------:
+ Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
+ Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
+ Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
+ Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
+ Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
+ Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
+ **Total**  | 1.00   | 210      | 210      | `r round(sum((O - E) ^ 2 / E), 2)`
+
+\begin{columns}
+\column{\textwidth}
+  \metroset{block=fill}
+
+  \begin{alertblock}{Pause \& Think}
+
+What is the test statistic?
+
+$$\chi^2= \sum_{i=1}^n \frac{(O_i - E_i) ^ 2}{E_i} = `r round(sum((O - E) ^ 2 / E), 2)`$$ 
+  \end{alertblock}
+
+\end{columns}
+
+##
+
+How often would we expect a discrepancy of $\ge `r round(sum((O - E) ^ 2 / E), 2)`$ under $H_0$?
+
+## \alert{Null Hypothesis Significance Testing}
+
+1. State $H_0$ and $H_\mathrm{A}$
+2. Calculate the test statistic
+3. **Generate the null distribution**
+4. Calculate the $P$-value
+6. Decide:
+    - Reject $H_0$ if test statistic is $\ge$ critical value ($P \le \alpha$)
+    - Fail to reject $H_0$ if test statistic is < critical value ($P > \alpha$)
+
+## \alert{$\chi^2$ distribution}
+
+> The **\alert{$\chi^2$ distribution}** is the sampling distribution for $\chi^2$ test statistic
+
+**Assumptions**
+
+* None of the categories should have an expected frequency of less than 1
+* No more than 20% of the categories should have expected frequencies less than 5
+
+## Checking assumptions
+
+ Color  | Proportion | Expected 
+--------|:----------:|:--------:
+ Blue   | 0.24       | 50.4
+ Orange | 0.20       | 42.0
+ Green  | 0.16       | 33.6
+ Yellow | 0.14       | 29.4
+ Red    | 0.13       | 27.3
+ Brown  | 0.13       | 27.3
+ **Total**  | 1.00       | 210
+
+$\checkmark$ All Expected values > 1
+
+$\checkmark$ Under 20% of Expected values < 5
+
+## Checking assumptions
+
+ Color  | Proportion | Expected 
+--------|:----------:|:--------:
+ Blue   | 0.24       | `r round(0.24 * 38, 1)`
+ Orange | 0.20       | `r round(0.20 * 38, 1)`
+ Green  | 0.16       | `r round(0.16 * 38, 1)`
+ Yellow | 0.14       | `r round(0.14 * 38, 1)`
+ Red    | 0.13       | **`r round(0.13 * 38, 1)`**
+ Brown  | 0.13       | **`r round(0.13 * 38, 1)`**
+ **Total**  | 1.00       | 38
+
+$\checkmark$ All Expected values > 1
+
+\alert{$\text{\sffamily X}$} Under 20% of Expected values < 5
+
+## Checking assumptions
+
+ Color  | Proportion | Expected 
+--------|:----------:|:--------:
+ Blue   | 0.24       | `r round(0.24 * 7, 1)`
+ Orange | 0.20       | `r round(0.20 * 7, 1)`
+ Green  | 0.16       | `r round(0.16 * 7, 1)`
+ Yellow | 0.14       | `r round(0.14 * 7, 1)`
+ Red    | 0.13       | **`r round(0.13 * 7, 1)`**
+ Brown  | 0.13       | **`r round(0.13 * 7, 1)`**
+ **Total**  | 1.00       | 7
+
+\alert{$\text{\sffamily X}$} All Expected values > 1
+
+\alert{$\text{\sffamily X}$} Under 20% of Expected values < 5
+
+## \alert{$\chi^2$ distribution} {.t}
+
+> The **\alert{$\chi^2$ distribution}** is the sampling distribution for $\chi^2$ test statistic
+
+Under the null hypothesis, the more categories, the larger the test statistic 
+
+\begin{columns}[t]
+
+\column{0.5\textwidth}
+
+\bf 3 categories
+
+\scriptsize
+
+$$
+\begin{aligned}
+\chi^2 &= \sum_{i=1}^3 \frac{(O_i - E_i) ^ 2}{E_i} \\ 
+&= \frac{(O_1 - E_1) ^ 2}{E_1} + \frac{(O_2 - E_2) ^ 2}{E_2} + \frac{(O_3 - E_3) ^ 2}{E_3}
+\end{aligned}
+$$
+
+
+\column{0.5\textwidth}
+
+\bf 6 categories
+
+\scriptsize
+
+$$
+\begin{aligned}
+\chi^2 = &\sum_{i=1}^6 \frac{(O_i - E_i) ^ 2}{E_i} \\
+= &\frac{(O_1 - E_1) ^ 2}{E_1} + \frac{(O_2 - E_2) ^ 2}{E_2} + \frac{(O_3 - E_3) ^ 2}{E_3} + \\
+&\frac{(O_4 - E_4) ^ 2}{E_4} + \frac{(O_5 - E_5) ^ 2}{E_5} + \frac{(O_6 - E_6) ^ 2}{E_6}
+\end{aligned}
+$$
+
+\end{columns}
+
+
+
+## \alert{Degrees of freedom for $\chi^2$ distribution}
+
+> The \alert{degrees of freedom} of a $\chi^2$ statistic capture this fact that more categories equates to larger values
+
+$$df = \mathrm{(Number~of~categories)} - 1$$
+
+## More \alert{degrees of freedom} = more likely to have larger values
+
+```{r, fig.align='center', fig.width=5, fig.height=4, out.height="80%"}
+
+df <- crossing(
+  x = seq(0, 20, 0.01),
+  df = c(2, 4, 8)
+) %>%
+  mutate(y = dchisq(x, df), panel = str_c("df = ", df))
+
+ggplot(df, aes(x, y)) +
+  facet_grid(rows = vars(panel)) +
+  geom_area(fill = "tomato") +
+  xlab(expression(chi^2~statistic)) +
+  ylab("Probability density") +
+  theme_cowplot() +
+  scale_y_continuous(n.breaks = 4)
+```
+
+## More \alert{degrees of freedom} = more likely to have larger values
+
+\begin{columns}[t]
+
+\column{0.5\textwidth}
+
+```{r}
+
+df <- tibble(
+  Expected = c(60, 60, 60), 
+  Observed = c(57, 62, 61), 
+  `$\\chi^2_i$` = (Observed - Expected) ^ 2 / Expected
+)
+
+knitr::kable(df, format = "latex", escape = FALSE, align = rep("c", 3),
+             digits = 3)
+
+df$chisq <- df$`$\\chi^2_i$`
+
+```
+
+$$\mathit{df} = 3 - 1 = 2$$
+$$\chi^2 = `r str_c(round(df$chisq, 3), collapse = "+")` = `r round(sum(df$chisq), 3)`$$ 
+
+\column{0.5\textwidth}
+
+```{r}
+
+df <- tibble(
+  Expected = c(40, 40, 40, 40), 
+  Observed = c(41, 33, 44, 42), 
+  `$\\chi^2_i$` = (Observed - Expected) ^ 2 / Expected
+)
+
+knitr::kable(df, format = "latex", escape = FALSE, align = rep("c", 3),
+             digits = 3)
+
+df$chisq <- df$`$\\chi^2_i$`
+
+```
+
+$$df = 4 - 1 = 3$$
+$$\chi^2 = `r str_c(round(df$chisq, 3), collapse = "+")` = `r round(sum(df$chisq), 3)`$$ 
+
+
+\end{columns}
+
+## Degrees of freedom depends on number of categories, not sample size
+
+\begin{columns}
+
+\column{0.5\textwidth}
+
+```{r}
+
+df <- tibble(
+  Expected = c(60, 60, 60), 
+  Observed = c(57, 62, 61), 
+  `$\\chi^2_i$` = (Observed - Expected) ^ 2 / Expected
+)
+
+knitr::kable(df, format = "latex", escape = FALSE, align = rep("c", 3),
+             digits = 3)
+
+df$chisq <- df$`$\\chi^2_i$`
+
+```
+
+$$\mathit{df} = 3 - 1 = 2$$
+$$\chi^2 = `r str_c(round(df$chisq, 3), collapse = "+")` = `r round(sum(df$chisq), 3)`$$ 
+
+\column{0.5\textwidth}
+
+```{r}
+
+df <- tibble(
+  Expected = c(600, 600, 600), 
+  Observed = c(570, 620, 610), 
+  `$\\chi^2_i$` = (Observed - Expected) ^ 2 / Expected
+)
+
+knitr::kable(df, format = "latex", escape = FALSE, align = rep("c", 3),
+             digits = 3)
+
+df$chisq <- df$`$\\chi^2_i$`
+
+```
+
+$$\mathit{df} = 2 - 1 - 0 = 1$$
+$$\chi^2 = `r str_c(round(df$chisq, 3), collapse = "+")` = `r round(sum(df$chisq), 3)`$$ 
+
+\end{columns}
+
+## M&M colors
+
+ Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
+--------|:----------:|:--------:|:--------:|:---------------:
+ Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
+ Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
+ Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
+ Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
+ Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
+ Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
+ **Total**  | 1.00   | 210      | 210      | `r round(sum((O - E) ^ 2 / E), 2)`
+
+  \metroset{block=fill}
+
+\begin{alertblock}{Pause \& Think}
+
+How many degrees of freedom should we use for these data?
+
+\end{alertblock}
+
+## M&M colors
+
+  \metroset{block=fill}
+
+\begin{alertblock}{Pause \& Think}
+
+$$df =  \mathrm{(Number~of~categories)} - 1 $$
+
+$$\mathit{df} = 6 - 1 = 5$$
+\end{alertblock}
+
+## $\chi_5^2$ distribution (graphically)
+
+```{r, fig.align='center', out.width="100%"}
+
+df <- tibble(
+  x = seq(0, 20, 0.01),
+  y = dchisq(x, 5)
+)
+
+gp <- ggplot(df, aes(x, y)) +
+  geom_area(fill = "tomato") +
+  xlab(expression(chi^2~statistic)) +
+  ylab("Probability density") +
+  theme_cowplot() +
+  theme(
+    strip.text = element_text(size = 18),
+    axis.text = element_text(size = 18),
+    axis.title = element_text(size = 24),
+    title = element_text(size = 24)
+  )
+
+gp
+
+```
+
+## $\chi_\mathit{df}^2$ distribution
+
+Why is the $\chi_\mathit{df}^2$ distribution *continuous* even though we are working with a categorical variable with discrete frequencies?
+
+Because $\chi_\mathit{df}^2$ is an approximation of the "true" sampling distribution
+
+## $\chi_5^2$ distribution with test statistic
+
+Recall we calculated for the M&Ms: $\chi^2 = 6.63$
+
+```{r, fig.align='center', out.width="95%"}
+
+mm_test_stat <- sum((O - E) ^ 2 / E)
+
+gp + 
+  geom_area(data = filter(df, x < mm_test_stat), fill = "white", 
+            size = 2, color = "tomato") +
+  geom_vline(xintercept = mm_test_stat, size = 2) 
+
+```
+
+## $\chi_\mathit{df}^2$ distribution
+
+$\chi_\mathit{df}^2$ distribution
+
+The $P$-value will be the area to the right of test statistic.
+
+So this is a \alert{one-tailed} test. Why?
+
+We are only interested if the discrepancy between *Expected* and *Observed* is **more** than we expect under $H_0$
+
+$$\frac{(O_i - E_i)^2}{E_i}$$
+
+Higher test statistics = more discrepancy between *Expected* and *Observed*
+
+## \alert{Null Hypothesis Significance Testing} 
+
+1. State $H_0$ and $H_\mathrm{A}$
+2. Calculate the test statistic
+3. Generate the null distribution
+4. *Find the critical value at a specified $\alpha$*
+5. Calculate the $P$-value
+6. Decide:
+    - Reject $H_0$ if test statistic is $\ge$ critical value ($P \le \alpha$)
+    - Fail to reject $H_0$ if test statistic is < critical value ($P > \alpha$)
+
+## \alert{Critical value}
+
+> A \alert{critical value} is the value of a test statistic that marks the boundary of a specified area in the tail (or tails) of the sampling distribution under $H_0$
+
+## \alert{Critical value}
+
+You *can* look up critical values in a table if you're a dinosaur
+
+$\alpha = 0.05$, $\mathit{df} = 5$
+
+```{r, echo = TRUE}
+
+qchisq(0.05, 
+       df = 5, 
+       lower.tail = FALSE)
+
+```
+
+## $\chi_5^2$ distribution with critical value
+
+$\alpha = 0.05$, $\mathit{df} = 5$
+```{r, fig.align='center', out.width="90%"}
+
+mm_crit_stat <- qchisq(0.05, 5, lower.tail = FALSE)
+
+gp + 
+  geom_area(data = filter(df, x < mm_crit_stat), fill = "white", 
+            size = 2, color = "tomato") +
+  # geom_vline(xintercept = mm_test_stat, size = 2) +
+  geom_vline(xintercept = mm_crit_stat, size = 2, linetype = "dashed") 
+
+```
+
+## $\chi_5^2$ distribution with test statistic and critical value
+
+$\alpha = 0.05$, $\mathit{df} = 5$
+```{r, fig.align='center', out.width="90%"}
+
+mm_crit_stat <- qchisq(0.05, 5, lower.tail = FALSE)
+
+gp + 
+  geom_area(data = filter(df, x < mm_test_stat), fill = "white", 
+            size = 2, color = "tomato") +
+  geom_vline(xintercept = mm_test_stat, size = 2) +
+  geom_vline(xintercept = mm_crit_stat, size = 2, linetype = "dashed") 
+
+```
+
+## \alert{Null Hypothesis Significance Testing} 
+
+1. State $H_0$ and $H_\mathrm{A}$
+2. Calculate the test statistic
+3. Generate the null distribution
+4. Find the critical value at a specified $\alpha$
+5. *Find the $P$-value*
+6. Decide:
+    - Reject $H_0$ if test statistic is $\ge$ critical value ($P \le \alpha$)
+    - Fail to reject $H_0$ if test statistic is < critical value ($P > \alpha$)
+
+## \alert{$P$-value}
+
+$\chi^2~\text{statistic} = `r mm_test_stat`$, $\mathit{df} = 5$
+
+```{r, echo = TRUE}
+
+pchisq(q = 6.632544, 
+       df = 5, 
+       lower.tail = FALSE)
+
+```
+
+*(Note: if you were alive in the Pleistocene you might look up a P-value and/or critical value in a table in the back of your stats book)*
+
+## \alert{Null Hypothesis Significance Testing} 
+
+1. State $H_0$ and $H_\mathrm{A}$
+2. Calculate the test statistic
+3. Generate the null distribution
+4. Find the critical value at a specified $\alpha$
+5. Find the $P$-value
+6. *Decide:*
+    - Reject $H_0$ if test statistic is $\ge$ critical value ($P \le \alpha$)
+    - Fail to reject $H_0$ if test statistic is < critical value ($P > \alpha$)
+
+## Decide
+
+```{r}
+p_value <- pchisq(mm_test_stat, df = 5, lower.tail = FALSE)
+```
+
+$\alpha = 0.05$, $P = `r round(p_value, 2)`$
+
+$$`r round(p_value, 2)` > 0.05$$
+
+We fail to reject $H_0$
+
+We do not have sufficient evidence to say that the frequency of candy colors differs significantly from what we would expect based on the manufacturer's information
+
+## The quick way in *R*
+
+```{r, echo = TRUE}
+
+chisq.test(x = c(43, 40, 37, 37, 33, 20),
+           p = c(0.24, 0.20, 0.16, 0.14, 0.13, 0.13))
+
+```
+
+## Summary
+
+The \alert{$\chi^2$ distribution} describes the sampling distribution of the discrepancy between expected and observed frequencies
+
+It is an approximate test, but works well when sample size are large that assumptions are met
+

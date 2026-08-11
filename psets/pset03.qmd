@@ -1,0 +1,202 @@
+# Sample estimates and confidence intervals
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval = TRUE, message = FALSE, warning = FALSE)
+
+library(cowplot)
+library(dplyr)
+library(DT)
+library(ggplot2)
+library(infer)
+
+```
+
+
+
+## How much caffeine is in your coffee?
+
+```{r, fig.align = "center", out.width="50%", fig.cap="A cup of black coffee. (Photo credit: Julius Schorzman)"}
+knitr::include_graphics("img/A_small_cup_of_coffee.jpeg")
+```
+
+The table below contains data on the amount of caffeine in a 16 oz. cup of coffee obtained from various vendors. For context, doses of caffeine over 25 mg are enough to increase anxiety in some people, and doses over 300 to 360 mg are enough to significantly increase heart rate in most people. A can of Red Bull contains 80mg of caffeine.
+
+```{r}
+caf <- read.csv("data/caffeine.csv")
+
+datatable(caf,
+          width = 400,
+          rownames = FALSE,
+          extensions = "Buttons",
+          options = list(dom = 'Brtip',  # no 'f' to remove the search field
+                         pageLength = nrow(caf), 
+                         buttons = list(
+                             list(extend = 'copy',
+                                  title = NULL) 
+                         ),
+                         paging = FALSE   # Disable pagination
+          ))
+```
+
+::: {.callout-tip}
+## Use the data on coffee caffeine concentration to answers Questions 1--3
+
+These same data are available in the `data` folder in your student folder on Koa. You can read them into your R session like this:
+
+```{r}
+#| eval: false
+#| echo: true
+
+# remember to replace `username` with your actual user name!
+caf <- read.csv("biol220_class/students/username/data/caffeine.csv")
+```
+
+After reading into R, use those data to answer the following questions.
+
+1. What is the mean amount of caffeine in the sample of 16 oz. coffees? Round your answer to 2 decimal places. [1 point]
+
+2. What is the 95% confidence interval for the mean? Use the 2 SE rule and round your answer to 2 decimal places. Report your answer like "lower - upper". For example, if the confidence interval were -1.11 to 2.22, then I would report "-1.11, - 2.22". [2 point]
+
+3. Is the amount of caffeine in a cup of coffee relatively consistent from one vendor to another? To help answer that, calculate the standard deviation of caffeine level and round your answer to 2 decimal places. [1 point]
+
+:::
+
+The table below has data on six 16 oz. cups of Breakfast Blend coffee sampled on six different days from a Starbucks location. 
+
+```{r}
+sb <- read.csv("data/caffeineStarbucks.csv")
+
+datatable(sb,
+          width = 400,
+          rownames = FALSE,
+          extensions = "Buttons",
+          options = list(dom = 'Brtip',  # no 'f' to remove the search field
+                         pageLength = nrow(sb), 
+                         buttons = list(
+                             list(extend = 'copy',
+                                  title = NULL) 
+                         ),
+                         paging = FALSE   # Disable pagination
+          ))
+```
+
+::: {.callout-tip}
+## Use the two different caffine datasets to compare caffeine concentrations
+
+The Starbucks data are also available in the `data` folder in your student folder on Koa. You can read them into your R session like this:
+
+```{r}
+#| eval: false
+#| echo: true
+
+# again, remember to change `username`
+bucks <- read.csv("biol220_class/students/username/data/caffeineStarbucks.csv")
+
+```
+
+4. Calculate the the 95% confidence interval for the mean using the 2 SE rule for the Starbucks data. Report your answer in the same format as Question 2. [2 point]
+
+5. Compare these results to the data taken on the broader sample of vendors in the first datasest. Describe the difference in 1-2 sentences. [2 point]
+
+6. Based on the two data sets above (Multiple brands and Starbucks), which of the figures below depicts the mean caffeine concentration with error bars equal to $\pm$ 1 standard error of the mean? [1 point]
+
+```{r, fig.align = "center", out.width="60%"}
+
+df <- rbind(select(caf, caffeine_mg_16oz)  |> 
+                mutate(`Data set` = "Multiple brands"),
+            select(sb, caffeine_mg_16oz) |> 
+                mutate(`Data set` = "Starbucks")) |>
+    group_by(`Data set`) |>
+    summarize(mu = mean(caffeine_mg_16oz),
+              sd = sd(caffeine_mg_16oz),
+              n = n()) |>
+    mutate(se = sd / sqrt(n))
+
+gp1 <- ggplot(df, aes(`Data set`, mu)) +
+    geom_errorbar(aes(ymin = mu - se, ymax = mu + se), width = 0.1) +
+    geom_point(size = 2) +
+    scale_y_continuous(limits = c(150, 510)) +
+    ylab("Caffeine\n(mg per 16 oz.)") +
+    theme_cowplot()
+
+gp2 <- ggplot(df, aes(`Data set`, mu)) +
+    geom_errorbar(aes(ymin = mu - 2 * se, ymax = mu + 2 * se), width = 0.1) +
+    geom_point(size = 2) +
+    scale_y_continuous(limits = c(150, 510)) +
+    ylab("Caffeine\n(mg per 16 oz.)") +
+    theme_cowplot()
+
+gp3 <- ggplot(df, aes(`Data set`, mu)) +
+    geom_errorbar(aes(ymin = mu - 2.5 * se, ymax = mu + 2.5 * se), width = 0.1) +
+    geom_point(size = 2) +
+    scale_y_continuous(limits = c(150, 510)) +
+    ylab("Caffeine\n(mg per 16 oz.)") +
+    theme_cowplot()
+
+gp4 <- ggplot(df, aes(`Data set`, mu)) +
+    geom_errorbar(aes(ymin = mu - sd, ymax = mu + sd), width = 0.1) +
+    geom_point(size = 2) +
+    scale_y_continuous(limits = c(150, 510)) +
+    ylab("Caffeine\n(mg per 16 oz.)") +
+    theme_cowplot()
+
+plot_grid(gp4, gp3, gp1, gp2, labels = "AUTO", nrow = 2)
+
+```
+
+:::
+
+## Understanding confidence intervals
+
+```{r}
+
+set.seed(20210203)
+population <- data.frame(x = scale(rnorm(1e6))[, 1])
+sample_size <- 16
+n_reps <- 100
+
+df <- population |> 
+    rep_slice_sample(sample_size, reps = n_reps) |> 
+    (\(x) rbind(x, x))() |> # this step simulates pseudo-replication
+    summarize(ybar = mean(x),
+              n = n(),
+              s = sd(x)) |>
+    group_by(replicate) |>
+    mutate(se = s / sqrt(n), lower = ybar - 2 * se, upper = ybar + 2 * se) |>
+    arrange(ybar) |>
+    ungroup() |>
+    mutate(overlap = (lower < 0 & upper > 0), y = row_number())
+
+```
+
+The figure below shows sample means (points) and associated confidence intervals of the mean (horizontal lines) from `r n_reps` different samples of the same population. In each case, the sample size is exactly $n = `r sample_size`$. Assume that all samples were conducted using an identical procedure.
+
+`r sum(df$overlap)` of `r n_reps` have confidence intervals that overlap the true population mean (vertical black line). These are shown with **black** points and lines. `r sum(!df$overlap)` of `r n_reps` have confidence intervals that do **not** overlap the true population mean (vertical black line). These are shown with <strong><span style="color:red">red</span></strong> points and lines. 
+
+```{r, fig.align = "center", fig.width=3, fig.height=6}
+
+ggplot(df, aes(ybar, y, color = overlap)) +
+    geom_vline(xintercept = 0) +
+    geom_errorbarh(aes(xmin = lower, xmax = upper), height = 0,
+                   show.legend = FALSE) +
+    scale_color_manual(values = c("red", "black")) +
+    geom_point(show.legend = FALSE) +
+    theme_cowplot() +
+    theme(axis.title = element_blank(),
+          axis.text = element_blank(),
+          axis.line.y = element_blank(),
+          axis.ticks = element_blank())
+```
+
+::: {.callout-tip}
+## Use the figure above to answer Question 9
+  
+
+7. Which of the following statements most likely explains what you observe in this figure? [1 point]
+
+* These are 95% confidence intervals from 100 random samples
+* These are 95% confidence intervals from 100 nonrandom samples
+* These are 95% confidence intervals but some confidence intervals do not overlap the population mean because the sample size is too small
+* These are 95% confidence intervals but some confidence intervals do not overlap the population mean because the samples are biased
+
+:::

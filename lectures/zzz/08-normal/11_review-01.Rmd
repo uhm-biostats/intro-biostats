@@ -1,0 +1,652 @@
+---
+title: "BIOL 220 Contingency analysis wrap-up and some review"
+date: March 12, 2024
+output: binb::metropolis
+header-includes:
+  - \usepackage{array}
+  - \usepackage{xcolor}
+  - \usepackage{colortbl}
+  - \usepackage[export]{adjustbox}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, 
+                      message = FALSE, eval = TRUE)
+
+library(cowplot)
+library(ggplot2)
+library(dplyr)
+library(viridis)
+library(glue)
+library(stringr)
+library(tidyr)
+```
+
+
+## Logistics
+
+
+**Assignments**
+
+* *Lab Report 09: Binomial* due this week before your lab section
+* Working on *Lab 10: Contingency*
+
+**Readings:** WS Chapter 9
+
+
+**Group projects:**
+
+- Due week after spring break: revised questions and hypotheses
+
+
+## Learning Objectives
+
+1. Understand \alert{odds ratios}, their connection to \alert{contingency analysis}, and their confidence intervals
+2. Gain appreciation for missuses of $P$-values and the partial solution offered by confidence intervals
+3. Gain appreciation for the role of racism, eugenics, and personal bias (not statistical bias) in foundational statistics 
+
+## Review: \alert{$\chi^2$ statistic}
+
+> The \alert{$\chi^2$} statistic measures the discrepency between observed frequencies from the data and expected frequencies from the null hypothesis
+
+\alert{$\chi^2$ statistic} is calculated by summing up all $n$ $\chi^2_i$ values
+
+$$\chi^2 = \sum_{i=1}^n \chi^2_i= \sum_{i=1}^n \frac{(O_i - E_i) ^ 2}{E_i}$$
+
+
+## Review: \alert{$\chi^2$ distribution}
+
+> The **\alert{$\chi^2$ distribution}** is the sampling distribution for $\chi^2$ test statistic
+
+**Assumptions**
+
+* None of the categories should have an expected frequency of less than 1
+* No more than 20% of the categories should have expected frequencies less than 5
+
+
+## \alert{$\chi^2$ distribution} {.t}
+
+> The **\alert{$\chi^2$ distribution}** is the sampling distribution for $\chi^2$ test statistic
+
+Under the null hypothesis, the more categories, the larger the test statistic 
+
+\begin{columns}[t]
+
+\column{0.5\textwidth}
+
+\bf 3 categories
+
+\scriptsize
+
+$$
+\begin{aligned}
+\chi^2 &= \sum_{i=1}^3 \frac{(O_i - E_i) ^ 2}{E_i} \\ 
+&= \frac{(O_1 - E_1) ^ 2}{E_1} + \frac{(O_2 - E_2) ^ 2}{E_2} + \frac{(O_3 - E_3) ^ 2}{E_3}
+\end{aligned}
+$$
+
+
+\column{0.5\textwidth}
+
+\bf 6 categories
+
+\scriptsize
+
+$$
+\begin{aligned}
+\chi^2 = &\sum_{i=1}^3 \frac{(O_i - E_i) ^ 2}{E_i} \\
+= &\frac{(O_1 - E_1) ^ 2}{E_1} + \frac{(O_2 - E_2) ^ 2}{E_2} + \frac{(O_3 - E_3) ^ 2}{E_3} + \\
+&\frac{(O_4 - E_4) ^ 2}{E_4} + \frac{(O_5 - E_5) ^ 2}{E_5} + \frac{(O_6 - E_6) ^ 2}{E_6}
+\end{aligned}
+$$
+
+\end{columns}
+
+
+
+## \alert{Degrees of freedom for $\chi^2$ distribution}
+
+> The \alert{degrees of freedom} of a $\chi^2$ statistic capture this fact that more categories equates to larger values
+
+**For goodness of fit test:** $df = \mathrm{(Number~of~categories)} - 1$
+
+**For contingency analysis:** $df = (\mathrm{Number~of~rows} - 1) \times (\mathrm{Number~of~columns} - 1)$
+
+
+## Example: birth outcomes for non-English and English speakers in Hawai\`i
+
+|                            | non-English speaker | English speaker |
+|---------------------------:|:--------------------|:----------------|
+| Primary Caesarean delivery | 127                 | 934             |
+| Primary vaginal delivery   | 1022                | 9336 |
+
+> Are non-English speakers more likely to undergo C-section in their first delivery?
+
+\vspace{4em}
+
+data from: Sentell et al. (2016). Maternal language and adverse birth outcomes in a statewide analysis. *Women & Health*
+
+
+
+
+## \alert{Null Hypothesis Significance Testing} 
+
+1. State $H_0$ and $H_\mathrm{A}$
+2. Calculate the test statistic
+3. Generate the null distribution
+5. Calculate the $P$-value
+6. Decide:
+    - Reject $H_0$ if test statistic is $\ge$ critical value ($P \le \alpha$)
+    - Fail to reject $H_0$ if test statistic is < critical value ($P > \alpha$)
+
+
+
+## Example: birth outcomes for non-English and English speakers in Hawai\`i
+
+**Let's run our null hypothesis test for real**
+
+$H_0$: there is no difference in the proportions across explanatory groups
+
+$H_A$: there *is* a difference in the proportions across explanatory groups
+
+```{r echo = TRUE}
+dat <- matrix(c(127, 1022, 934, 9336), nrow = 2)
+dat
+```
+
+## Example: birth outcomes for non-English and English speakers in Hawai\`i
+
+
+```{r echo = TRUE}
+chisq.test(dat)
+```
+
+We reject the null
+
+
+## Contingency analysis
+
+
+|                       | **Contingency test**  |
+|-----------------------|-----------------------|
+| Number of variables   | **2**                 |
+| Type of data          | categorical  |
+| Parameter             | *???*  |
+| Estimate              | *???*  |
+| Sampling distribution | $\chi^2$ distribution |
+| Test statistic        | $\chi^2$ statistic    |
+
+
+## Contingency analysis
+
+
+|                       | **Contingency test**  |
+|-----------------------|-----------------------|
+| Number of variables   | **2**                 |
+| Type of data          | categorical  |
+| Parameter             | *Odds ratio (OR)*  |
+| Estimate              | $\hat{OR}$  |
+| Sampling distribution | $\chi^2$ distribution |
+| Test statistic        | $\chi^2$ statistic    |
+
+
+The \alert{odds ratio} is the fraction of how likely a certain outcome is in one group compared to the other
+
+## Odds and odds ratio 
+
+\alert{Odds} describes how likely, e.g., C-section is compared to vaginal birth
+
+$$
+\text{Odds(C-section)} = \frac{Pr(\text{C-section})}{Pr(\text{vaginal birth})}
+$$
+
+If the \alert{odds} are equal to 1, both outcomes are equally probable
+
+
+## Odds and odds ratio 
+
+\alert{Odds ratio} compares the odds of an outcome, e.g., C-section, across different groups
+
+(note: only works for `2 x 2` contingency tables)
+
+$$
+\text{OR} = \frac{\text{Odds(C-section for non-English speakers)}}{\text{Odds(C-section for English speakers)}}
+$$
+
+If the \alert{odds ratio} is equal to 1, both groups have the same odds
+
+**Our null hypothesis is that the odds ratio is equal to 1**
+
+
+## Odds and odds ratio 
+
+The \alert{odds ratio} we calculate from data is an estimate $\hat{OR}$
+
+
+|                            | non-English speaker | English speaker |
+|---------------------------:|:--------------------|:----------------|
+| Primary Caesarean delivery | 127                 | 934             |
+| Primary vaginal delivery   | 1022                | 9336            |
+| Odds $\hat{O}$             | 127/1022            | 934/9336 |
+
+
+$$
+\begin{aligned}
+\hat{OR} &= \frac{\hat{O}_{nE}}{\hat{O}_{E}} \\
+&= \frac{127/1022}{934/9336} \\
+&= 1.242
+\end{aligned}
+$$
+
+
+## Odds and odds ratio 
+
+The \alert{odds ratio} we calculate from data is an estimate $\hat{OR}$
+
+
+|                            | non-English speaker | English speaker |
+|---------------------------:|:--------------------|:----------------|
+| Primary Caesarean delivery | 127                 | 934             |
+| Primary vaginal delivery   | 1022                | 9336            |
+| Odds $\hat{O}$             | 127/1022            | 934/9336 |
+
+
+$$
+\hat{OR} = 1.242
+$$
+
+**Our null hypothesis is that the odds ratio is equal to 1**
+
+Null hypothesis test: *Is 1.242 significantly different from 1?*
+
+- $P$-value
+- or...
+
+## Confidence interval for the odds ratio
+
+**95% CI**
+
+- the range of values that contain 95% of the central probability of the sampling distribution for the estimate
+- the range will overlap the *true population parameter* 95% of the time in hypothetical repeat studies
+- if the 95% CI does not overlap the null hypothesis (e.g. $OR = 1$) we reject the null at $\alpha = 0.05$
+- confidence intervals give us more information that $P$-values alone
+
+
+## Confidence interval for the odds ratio
+
+The **95% CI** for the natural log of the odds ratio follows the nice (approximate) rule
+
+$$
+\text{95\% CI} = \ln(\hat{OR}) \pm 2 \times SE_\text{log-scale}
+$$
+
+An even better approximation is 
+
+$$
+\text{95\% CI} = \ln(\hat{OR}) \pm 1.96 \times SE_\text{log-scale}
+$$
+
+
+## Confidence interval for the odds ratio
+
+$$
+\text{95\% CI} = \ln(\hat{OR}) \pm 1.96 \times SE_\text{log-scale}
+$$
+
+But what is $SE_\text{log-scale}$?  Just take my word for it:
+
+::: columns
+
+:::: column
+
+|              | group 1 | group 2 |
+|-------------:|:----------------|:----------------|
+| response 1 | a               | c             |
+| response 2 | b               | d            |
+
+::::
+
+:::: column
+
+$$ 
+SE_\text{log-scale} = \sqrt{\frac{1}{a} + \frac{1}{b} + \frac{1}{c} + \frac{1}{d}}
+$$
+
+::::
+
+:::
+
+
+## Confidence interval for the odds ratio
+
+
+|                            | non-English speaker | English speaker |
+|---------------------------:|:--------------------|:----------------|
+| Primary Caesarean delivery | 127                 | 934             |
+| Primary vaginal delivery   | 1022                | 9336            |
+
+$$
+\begin{aligned}
+\text{95\% CI} &= \ln(\hat{OR}) \pm 1.96 \times SE_\text{log-scale} \\
+&= \ln(1.242) \pm 1.96 \times \sqrt{\frac{1}{127} + \frac{1}{1022} + \frac{1}{934} + \frac{1}{9336}} \\
+&= \ln(1.242) \pm 1.96 \times 0.100 \\
+&= \ln(1.242) \pm 0.196
+\end{aligned}
+$$
+
+
+## Confidence interval for the odds ratio
+
+
+|                            | non-English speaker | English speaker |
+|---------------------------:|:--------------------|:----------------|
+| Primary Caesarean delivery | 127                 | 934             |
+| Primary vaginal delivery   | 1022                | 9336            |
+
+\vspace{-2em}
+
+$$
+\begin{aligned}
+\text{95\% CI} &= \ln(\hat{OR}) \pm 1.96 \times SE_\text{log-scale} \\
+&= \ln(1.242) \pm 0.196
+\end{aligned}
+$$
+
+```{r echo = TRUE}
+ci95logLo <- log(1.242) - 0.196 
+ci95logHi <- log(1.242) + 0.196 
+
+# convert back to linear (not log) measurements
+exp(c(ci95logLo, ci95logHi))
+```
+
+## $\chi^2$ contingency tests are all approximate {.t}
+
+Here is a more accurate what of getting all the same information:
+
+```{r echo = TRUE}
+# make the contingency table in R
+d <- matrix(c(127, 1022, 934, 9336), nrow = 2)
+
+```
+
+```{r echo = TRUE, eval = FALSE}
+# an "exact" test without the chi-sqrd assumptions
+fisher.test(d)
+```
+
+
+## $\chi^2$ contingency tests are all approximate {.t}
+
+Here is a more accurate what of getting all the same information:
+
+\small
+```{r echo = TRUE}
+fisher.test(d)
+```
+
+## Why do we care so much about \alert{confidence intervals}?
+
+**There's a replication crisis in biostatistics**
+
+- Studies will publish a "significant" finding (one with $P$-value $\le 0.05$)
+- Other researchers will try to reproduce that finding, and more often than not, **they fail**
+- Are any of our insights valid?!
+
+
+[Blakeley et al. (2019)](https://www.tandfonline.com/doi/full/10.1080/00031305.2018.1527253) write about this problem in an article titled:
+
+\Large
+\centering
+*Abandon Statistical Significance*
+
+\normalsize
+(i.e. no more $P$-values, please)
+
+## Why do we care so much about \alert{confidence intervals}? 
+
+**There's a replication crisis in biostatistics**
+
+Confidence intervals are a small, simple, incomplete fix: they let us keep doing statistics pretty much the same, but CIs are *more informative* and thus less prone to *P-hacking*
+
+
+## Why do we care so much about \alert{confidence intervals}? 
+
+**There's a replication crisis in biostatistics**
+
+Confidence intervals are a small, simple, incomplete fix
+
+An example with odds ratios (the null hypothesis is $OR = 1$)
+
+\begin{tabular}{l l r l}
+ \hline
+ $P$-value & $\chi^2$ stat & odds ratio & (95\% CI) \\
+ \hline
+ $P = 0.01$ & 6.63 & 1.211 & (1.011, 1.425) \\
+ $P = 0.01$ & 6.63 & 1.003 & (1.001, 1.004) \\
+ $P = 0.01$ & 6.63 & 2.327 & (1.983, 3.782) \\
+ \hline
+\end{tabular}
+
+$P$-values are all the same, but due to different sample sizes and true effect sizes, odds ratios and confidence intervals are wildly different, with some warranting our interest and others not
+
+## Why do we care so much about \alert{confidence intervals}? 
+
+**There's a replication crisis in biostatistics**
+
+Confidence intervals are a small, simple, incomplete fix
+
+An example with odds ratios (the null hypothesis is $OR = 1$)
+
+\begin{tabular}{l l r l p{3cm}}
+ \hline
+ $P$-value & $\chi^2$ stat & odds ratio & (95\% CI) & conclusion \\
+ \hline
+ $P = 0.01$ & 6.63 & 1.211 & (1.011, 1.425) & Could be interesting, needs more samples \\
+ $P = 0.01$ & 6.63 & 1.003 & (1.001, 1.004) & Huge sample size, biologically meaningless \\
+ $P = 0.01$ & 6.63 & 2.327 & (1.983, 3.782) & Clearly there's an effect \\
+ \hline
+\end{tabular}
+
+
+## How did we get here?
+
+**There's a replication crisis in biostatistics**
+
+
+## How did we get here?
+
+**There's a replication crisis in biostatistics**
+
+::: columns
+
+:::: column
+
+![](../img/bernoulli_falacy.jpg)
+
+::::
+
+:::: column
+
+Aubrey Clayton argues that "political agendas" of early statisticians drove them to develop methods that could prove their own "unpopular" beliefs and shield their "controversial" views behind the guise of "objectivity"
+
+\vspace{2em}
+
+(quotes are not Clayton's...I'm building suspense...)
+
+::::
+
+:::
+
+
+## How did we get here?
+
+**There's a replication crisis in biostatistics**
+
+::: columns
+
+:::: column
+
+**Early statisticians**
+
+Ronald Fisher
+
+- promoted $P$-values
+- developed that "Fisher exact test" thing
+- lots more we'll be talking about
+
+Karl Pearson
+
+- developed the $chi^2$ test
+- developed methods for correlation
+- lots more we'll be talking about
+
+::::
+
+:::: column
+
+"political agendas" = eugenics 
+
+"unpopular" beliefs = white supremacy 
+
+"controversial" views = genocide is necessary 
+
+
+::::
+
+:::
+
+
+## Disease at the root, disease in the shoot
+
+::: columns
+
+:::: {.column width=0.7}
+
+*"Available scientific knowledge provides a firm basis for believing that the groups of mankind differ in their innate capacity for intellectual and emotional development"*
+\vspace{1em}
+
+*"I am sorry that there should be propaganda in favour of miscegenation* [bigoted term for marriage between perceived racial groups] *in North America as I am sure it can do nothing but harm"*
+\vspace{1em}
+
+*"Unfortunately, considerable propaganda is now being developed to convince the public that cigarette smoking is dangerous"* [Fisher was funded by the tobacco industry]
+
+::::
+
+:::: {.column width=0.3}
+
+![](../img/fisher.jpeg)
+
+Ronald Fisher
+
+- Racist
+- Eugenicist
+- Pawn of big tobacco
+
+::::
+
+:::
+
+
+## Disease at the root, disease in the shoot
+
+::: columns
+
+:::: {.column width=0.3}
+
+![](../img/Karl_Pearson_1912.jpg)
+
+Karl Pearson
+
+- Racist
+- Eugenicist
+- Antisemite
+
+::::
+
+:::: {.column width=0.7}
+
+*"My view---and I think it may be called the scientific view of a nation---is that of an organized whole, kept up to a high pitch of internal efficiency by insuring that its numbers are substantially recruited from the better stocks, and kept up to a high pitch of external efficiency by contest, chiefly by way of war with inferior races"*
+\vspace{1em}
+
+*"It is a false view of human solidarity, a weak humanitarianism, not a true humanism, which regrets that a capable and stalwart race of white men should replace a dark-skinned tribe..."*
+
+::::
+
+:::
+
+
+## Disease at the root, disease in the shoot
+
+::: columns
+
+:::: {.column width=0.3}
+
+![](../img/Karl_Pearson_1912.jpg)
+
+Karl Pearson
+
+- Racist
+- Eugenicist
+- Antisemite
+
+::::
+
+:::: {.column width=0.7}
+
+*"It is a false view of human solidarity, a weak humanitarianism, not a true humanism, which regrets that a capable and stalwart race of white men should replace a dark-skinned tribe which can neither utilize its land for the full benefit of mankind, nor contribute its quota to the common stock of human knowledge."*
+\vspace{1em}
+
+*"Taken on the average, and regarding both sexes, this alien Jewish population is somewhat inferior physically and mentally to the native population"* 
+\vspace{1em}
+
+::::
+
+:::
+
+
+
+## Disease at the root, disease in the shoot
+
+\Large
+\centering
+What do we do? Why learn "statistics"?
+
+## Disease at the root, disease in the shoot {.t}
+
+\Large
+What do we do? Why learn "statistics"?
+
+\normalsize
+
+- Why learn statistics?
+    - It holds a powerful position in science and society
+    - To undo harm, "beat them at their own game"
+    - Some methods (even $P$-values) not wrong, just poorly applied
+    - Those f@&%kers were **NOT** geniuses, others would have developed similar ideas and did (e.g. Anil Kumar Gain)
+    
+## Disease at the root, disease in the shoot {.t}
+
+\Large
+What do we do? Why learn "statistics"?
+
+\normalsize
+- Stop the spread
+    - Confront the history
+    - Remove its influence on the contemporary
+- Be intentional and self-reflective about how and why we use statistics
+
+## Disease at the root, disease in the shoot {.t}
+
+\Large
+What do we do? Why learn "statistics"?
+
+\normalsize
+- Seek and embrace alternative knowledge systems
+    - Reject the idea that western science is a superior knowledge system
+    - Do not be extractive in connection to other knowledge systems
+    - Check out Ethnomathematics here at UH
+    - Let's see if we can decolonize statistics
+    
+
+
