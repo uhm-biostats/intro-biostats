@@ -305,7 +305,7 @@ Example: **Uhu body sizes**
 
 [Statistical hypotheses]{.alert} are related, but specific about population parameters
 
-> The mean length of the contemporary uhu population is smaller than the historical baseline mean of 550 mm, i.e., $(\mu_\text{now} - \mu_\text{past}) < 0$
+> The mean length of the contemporary uhu population is smaller than the historic baseline mean of 550 mm, i.e., $(\mu_\text{now} - \mu_\text{past}) < 0$
 
 
 ## 2. Explain variables in your data
