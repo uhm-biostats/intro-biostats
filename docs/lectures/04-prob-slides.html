@@ -204,18 +204,14 @@
 <p><span class="alert">lūlū</span></p>
 </div>
 </section>
-<section id="learning-objectives" class="slide level2">
-<h2>Learning Objectives</h2>
+<section id="learning-goals" class="slide level2">
+<h2>Learning goals</h2>
 <ol type="1">
 <li>Define <span class="alert">random trial</span>, <span class="alert">event</span>, and <span class="alert">outcome</span></li>
 <li>Define <span class="alert">probability</span></li>
 <li>Describe discrete and continuous <span class="alert">probability distributions</span></li>
-</ol>
-<p>Next lecture:</p>
-<ol start="3" type="1">
-<li>More on discrete and continuous <span class="alert">probability distributions</span></li>
 <li>Determine if events are <span class="alert">mutually exclusive</span></li>
-<li>Determine if events are <span class="alert">indipendent</span></li>
+<li>Determine if events are <span class="alert">independent</span></li>
 </ol>
 </section>
 <section id="define-random-trial" class="slide level2">
@@ -232,8 +228,14 @@
 </section>
 <section id="define-random-trial-1" class="slide level2">
 <h2>Define <span class="alert">random trial</span></h2>
-<p><em>A <span class="alert">random trial</span> is a process or experiment that has two or more possible outcomes whose occurrence cannot be predicted with certainty</em></p>
-<p><img data-src="../img/die_roll.png"></p>
+<blockquote>
+<p>A <span class="alert">random trial</span> is a process or experiment that has two or more possible outcomes whose occurrence cannot be predicted with certainty</p>
+</blockquote>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../img/die_roll.png" class="quarto-figure quarto-figure-center" style="width:40.0%"></p>
+</figure>
+</div>
 </section>
 <section id="define-event-and-outcome" class="slide level2">
 <h2>Define <span class="alert">event</span> and <span class="alert">outcome</span></h2>
@@ -246,11 +248,11 @@
 <div class="column" style="width:34%;">
 <p>The <span class="alert">random trial:</span></p>
 <p>you roll the die</p>
-<p><img data-src="../img/die_roll.png" style="width:3cm"></p>
+<p><img data-src="../img/die_roll.png" style="width:6cm"></p>
 </div><div class="column" style="width:28%;">
 <p>An <span class="alert">event:</span></p>
 <p>you get a 5</p>
-<p><img data-src="../img/5_die.png" style="width:1.5cm"></p>
+<p><img data-src="../img/5_die.png" style="width:2.5cm"></p>
 </div><div class="column" style="width:38%;">
 <p>All possible <span class="alert">outcomes:</span></p>
 <p>all integers 1—6</p>
@@ -296,57 +298,49 @@
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a><span class="co"># all the ways to get 7 from 2 dice:</span></span>
 <span id="cb1-2"><a href=""></a><span class="co"># (1, 6); (6, 1); (2, 5); (5, 2)</span></span>
 <span id="cb1-3"><a href=""></a><span class="co"># (3, 4); (4, 3)</span></span>
-<span id="cb1-4"><a href=""></a><span class="dv">6</span></span>
-<span id="cb1-5"><a href=""></a></span>
-<span id="cb1-6"><a href=""></a><span class="co"># number of possible outcomes of 2 dice:</span></span>
-<span id="cb1-7"><a href=""></a><span class="dv">6</span> <span class="sc">*</span> <span class="dv">6</span></span>
-<span id="cb1-8"><a href=""></a></span>
-<span id="cb1-9"><a href=""></a><span class="co"># probability of rolling a 7:</span></span>
-<span id="cb1-10"><a href=""></a><span class="dv">6</span> <span class="sc">/</span> <span class="dv">36</span> <span class="co"># = 1/6</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href=""></a><span class="dv">6</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="co"># number of possible outcomes of 2 dice:</span></span>
+<span id="cb3-2"><a href=""></a><span class="dv">6</span> <span class="sc">*</span> <span class="dv">6</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 36</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a><span class="co"># probability of rolling a 7:</span></span>
+<span id="cb5-2"><a href=""></a><span class="dv">6</span> <span class="sc">/</span> <span class="dv">36</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1666667</code></pre>
+</div>
 </div>
 </section>
 <section id="define-probability-5" class="slide level2">
 <h2>Define <span class="alert">probability</span></h2>
 <p>Probability is all the ways you could get a specific event, divided by the number of possible outcomes</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a><span class="co"># simulate it</span></span>
-<span id="cb2-2"><a href=""></a>nroll <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
-<span id="cb2-3"><a href=""></a>crap <span class="ot">&lt;-</span> <span class="fu">replicate</span>(nroll, {</span>
-<span id="cb2-4"><a href=""></a>    d1 <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">6</span>, <span class="dv">1</span>)</span>
-<span id="cb2-5"><a href=""></a>    d2 <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">6</span>, <span class="dv">1</span>)</span>
-<span id="cb2-6"><a href=""></a></span>
-<span id="cb2-7"><a href=""></a>    d1 <span class="sc">+</span> d2</span>
-<span id="cb2-8"><a href=""></a>})</span>
-<span id="cb2-9"><a href=""></a></span>
-<span id="cb2-10"><a href=""></a><span class="fu">sum</span>(crap <span class="sc">==</span> <span class="dv">7</span>) <span class="sc">/</span> nroll <span class="co"># this should be about 1/6</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a><span class="co"># simulate it</span></span>
+<span id="cb7-2"><a href=""></a>nroll <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
+<span id="cb7-3"><a href=""></a>crap <span class="ot">&lt;-</span> <span class="fu">replicate</span>(nroll, {</span>
+<span id="cb7-4"><a href=""></a>    d1 <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">6</span>, <span class="dv">1</span>)</span>
+<span id="cb7-5"><a href=""></a>    d2 <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">6</span>, <span class="dv">1</span>)</span>
+<span id="cb7-6"><a href=""></a></span>
+<span id="cb7-7"><a href=""></a>    d1 <span class="sc">+</span> d2</span>
+<span id="cb7-8"><a href=""></a>})</span>
+<span id="cb7-9"><a href=""></a></span>
+<span id="cb7-10"><a href=""></a><span class="fu">sum</span>(crap <span class="sc">==</span> <span class="dv">7</span>) <span class="sc">/</span> nroll <span class="co"># this should be about 1/6</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.1653</code></pre>
 </div>
-</section>
-<section id="define-probability-6" class="slide level2">
-<h2>Define <span class="alert">probability</span></h2>
-<p>Probability is all the ways you could get a specific event, divided by the number of possible outcomes</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="co"># simulate it</span></span>
-<span id="cb3-2"><a href=""></a>nroll <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
-<span id="cb3-3"><a href=""></a>crap <span class="ot">&lt;-</span> <span class="fu">replicate</span>(nroll, {</span>
-<span id="cb3-4"><a href=""></a>    d1 <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">6</span>, <span class="dv">1</span>)</span>
-<span id="cb3-5"><a href=""></a>    d2 <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">6</span>, <span class="dv">1</span>)</span>
-<span id="cb3-6"><a href=""></a></span>
-<span id="cb3-7"><a href=""></a>    d1 <span class="sc">+</span> d2</span>
-<span id="cb3-8"><a href=""></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Instead of looking at one probability:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a><span class="fu">sum</span>(crap <span class="sc">==</span> <span class="dv">7</span>) <span class="sc">/</span> nroll <span class="co"># this should be about 1/6</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="define-probability-distribution" class="slide level2">
 <h2>Define <span class="alert">probability distribution</span></h2>
-<p>We could make a histogram-looking thing of all probabilities:</p>
-<div class="cell">
+<p>We could make a histogram-looking thing of probabilities of all the possible outcomes:</p>
+<div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/dicedist-1.png" width="384"></p>
+<p><img data-src="04-prob-slides_files/figure-revealjs/dicedist-1.png" class="quarto-figure quarto-figure-center" style="width:7in"></p>
 </figure>
 </div>
 </div>
@@ -355,28 +349,25 @@
 </section>
 <section id="define-probability-distribution-1" class="slide level2">
 <h2>Define <span class="alert">probability distribution</span></h2>
-<p><img data-src="../img/2_dice_hist.png"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../img/2_dice_hist.png" class="quarto-figure quarto-figure-center" style="width:70.0%"></p>
+</figure>
+</div>
 <p>This histogram-looking thing is called a <span class="alert">discrete probability distribution</span></p>
 </section>
 <section id="why-do-we-care" class="slide level2">
 <h2>Why do we care?</h2>
 <p>Probability is everywhere!</p>
-<p><a href="https://www.youtube.com/watch?v=zJN5W-EreVs&amp;ab" class="uri">https://www.youtube.com/watch?v=zJN5W-EreVs&amp;ab</a></p>
+<iframe width="1120" height="630" src="https://www.youtube.com/embed/zJN5W-EreVs?si=Uj8ZwwHzUeqI1X-u&amp;start=70&amp;end=89" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe>
 </section>
 <section id="why-do-we-care-1" class="slide level2">
 <h2>Why do we care?</h2>
 <div class="columns">
-<div class="column" style="width:50%;">
+<div class="column" style="width:60%;">
 <p>Probability is everywhere!</p>
 <p><em>If I conduct an insect survey, how many species will I find?</em></p>
-</div><div class="column" style="width:50%;">
-<p><img data-src="../img/hi_arth.png"></p>
-</div></div>
-</section>
-<section id="why-do-we-care-2" class="slide level2">
-<h2>Why do we care?</h2>
-<p>Probability is everywhere!</p>
-<p><em>If I conduct an insect survey, how many species will I find?</em> What are all the outcomes:</p>
+<div class="fragment" style="font-size: 70%">
 <table class="caption-top">
 <thead>
 <tr class="header">
@@ -419,272 +410,312 @@
 </tr>
 </tbody>
 </table>
-<p><em>Complex counting!</em></p>
+</div>
+<div class="fragment">
+<p><strong>Complex counting!</strong></p>
+</div>
+</div><div class="column" style="width:40%;">
+<p><img data-src="../img/hi_arth.png"></p>
+</div></div>
+</section>
+<section id="why-do-we-care-2" class="slide level2">
+<h2>Why do we care?</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p>Probability is everywhere!</p>
+<p><em>If I conduct an insect survey, how many species will I find?</em></p>
+<p>Different forces in nature, like speciation or species interactions, change the probability of different processes. In effect, those forces <strong>load the dice</strong> differently</p>
+</div><div class="column" style="width:40%;">
+<div class="r-stack">
+<div class="fragment fade-out">
+<p><img data-src="../img/hi_arth.png"></p>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-4-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
 </section>
 <section id="why-do-we-care-3" class="slide level2">
 <h2>Why do we care?</h2>
 <div class="columns">
-<div class="column" style="width:50%;">
-<p>Probability is everywhere!</p>
-<p><em>If I conduct an insect survey, how many species will I find?</em></p>
-<p>Different forces in nature, like speciation or species interactions, change the probability of different processes. In effect, those forces <em>load the dice</em> differently</p>
-</div><div class="column" style="width:50%;">
-<p><img data-src="../img/hi_arth.png"></p>
+<div class="column" style="width:60%;">
+<p><em>Remember noni?</em></p>
+<div class="r-stack">
+<div class="fragment fade-in-then-out">
+<p>Suppose we run a clinical study of the effect on noni juice on inflammatory arthritis. We randomly assign half the patients to receive 10mg noni extract and the other half to receive a placebo. We measure change in erythrocyte sedimentation rate (<em>sed rate</em>) in all patients before and after treatment (either 10mg noni or placebo)</p>
+</div>
+<div class="fragment fade-in-then-out">
+<p>Noni is a crop brought to Hawaiʻi by Kānaka ʻŌiwi. The ʻike of its use comes from inter-generational kilo.</p>
+<ul>
+<li>Who gets to decide whether/how to commodify noni?</li>
+<li>Any clinical trial should be led by lāʻau lapaʻau practitioners and benefits governed by ʻŌiwi communities</li>
+</ul>
+</div>
+</div>
+</div><div class="column" style="width:40%;">
+<p><img data-src="../img/noni.jpg" style="width:80.0%"></p>
 </div></div>
 </section>
 <section id="why-do-we-care-4" class="slide level2">
 <h2>Why do we care?</h2>
 <div class="columns">
-<div class="column" style="width:50%;">
-<p>Probability is everywhere!</p>
-<p><em>If I conduct an insect survey, how many species will I find?</em></p>
-<p>Different forces in nature, like speciation or species interactions, change the probability of different processes. In effect, those forces <em>load the dice</em> differently</p>
-</div><div class="column" style="width:50%;">
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-6-1.png" width="288"></p>
-</figure>
-</div>
-</div>
-</div>
-</div></div>
-</section>
-<section id="why-do-we-care-5" class="slide level2">
-<h2>Why do we care?</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><em>Remember noni?</em></p>
+<div class="column" style="width:60%;">
 <p>Suppose we run a clinical study of the effect of noni juice on inflammatory arthritis. We randomly assign half the patients to receive 10mg noni extract and the other half to receive a placebo. We measure change in erythrocyte sedimentation rate (<em>sed rate</em>) in all patients before and after treatment (either 10mg noni or placebo)</p>
-</div><div class="column" style="width:50%;">
-<p><img data-src="../img/noni.jpg" style="width:100.0%"></p>
-</div></div>
-</section>
-<section id="why-do-we-care-6" class="slide level2">
-<h2>Why do we care?</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><em>Remember noni?</em></p>
-<p>Noni is a crop brought to Hawaiʻi by Kānaka Moali. The ʻike of its use comes from inter-generational kilo.</p>
-<ul>
-<li>Who gets to decide whether/how to commodify noni?</li>
-<li>This clinical trial should be led by Native Hawaiian practitioners in collaboration with scholars who may or may not also be Native Hawaiian</li>
-</ul>
-</div><div class="column" style="width:50%;">
-<p><img data-src="../img/noni.jpg" style="width:100.0%"></p>
-</div></div>
-</section>
-<section id="why-do-we-care-7" class="slide level2">
-<h2>Why do we care?</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><em>Remember noni?</em></p>
-<p>Suppose we run a clinical study of the effect of noni juice on inflammatory arthritis. We randomly assign half the patients to receive 10mg noni extract and the other half to receive a placebo. We measure change in erythrocyte sedimentation rate (<em>sed rate</em>) in all patients before and after treatment (either 10mg noni or placebo)</p>
-</div><div class="column" style="width:50%;">
-<div class="cell">
+</div><div class="column" style="width:40%;">
+<div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-7-1.png" width="288"></p>
+<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
 </figure>
 </div>
 </div>
 </div>
 </div></div>
 </section>
-<section id="define-continuous-probability-distribution" class="slide level2">
-<h2>Define <span class="alert">continuous probability distribution</span></h2>
+<section id="continuous-probability-distributions" class="slide level2">
+<h2><span class="alert">Continuous probability distributions</span></h2>
+<div class="r-stack">
+<div class="fragment fade-in-then-out">
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/sedhist-1.png" width="384"></p>
+<p><img data-src="04-prob-slides_files/figure-revealjs/sedhist-1.png" style="width:5in"></p>
 </figure>
 </div>
 </div>
 </div>
-<p><em>Change in sed rate [mm/hr] is</em> <strong>not</strong> <em>an integer</em></p>
+<p><em>Change in sed rate [mm/hr] is</em> <strong><em>not</em></strong> <em>an integer</em></p>
 <p>What do we do?!</p>
-</section>
-<section id="define-continuous-probability-distribution-1" class="slide level2">
-<h2>Define <span class="alert">continuous probability distribution</span></h2>
-<p><img data-src="../img/sed_hist.png"></p>
-</section>
-<section id="define-continuous-probability-distribution-2" class="slide level2">
-<h2>Define <span class="alert">continuous probability distribution</span></h2>
-<p>Imagine we had millions of data points, and we could draw very narrow bins</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
+</div>
+<div class="fragment fade-in-then-out">
+<div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-8-1.png" width="384"></p>
+<p><img data-src="../img/sed_hist.png" class="quarto-figure quarto-figure-center" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+<div class="fragment fade-in-then-out">
+<p>Imagine we had millions of data points, and we could draw very narrow bins</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center" style="width:8in"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>We would get a very smooth looking distribution</p>
-</section>
-<section id="define-continuous-probability-distribution-3" class="slide level2">
-<h2>Define <span class="alert">continuous probability distribution</span></h2>
+</div>
+<div class="fragment fade-in-then-out">
 <p>Continuous probability distributions are typically visualized as smooth curves, <em>without bars</em></p>
-<div class="cell">
+<div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/seddens-1.png" width="384"></p>
+<p><img data-src="04-prob-slides_files/figure-revealjs/seddens-1.png" class="quarto-figure quarto-figure-center" style="width:8in"></p>
 </figure>
 </div>
 </div>
 </div>
-</section>
-<section id="define-continuous-probability-distribution-4" class="slide level2">
-<h2>Define <span class="alert">continuous probability distribution</span></h2>
+</div>
+<div class="fragment fade-in-then-out">
 <p>Continuous probability distributions are typically visualized as smooth curves, <em>without bars</em></p>
-<p><img data-src="../img/sed_den_area.png"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../img/sed_den_area.png" class="quarto-figure quarto-figure-center" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section>
 <section id="break" class="title-slide slide level1 center">
 <h1>Break!</h1>
 
 </section>
-<section id="learning-objectives-1" class="slide level2">
-<h2>Learning Objectives</h2>
-<p>Last lecture:</p>
+<section id="learning-goals-1" class="slide level2">
+<h2>Learning goals</h2>
 <ol type="1">
 <li>Define <span class="alert">random trial</span>, <span class="alert">event</span>, and <span class="alert">outcome</span> <span class="math inline">\(\checkmark\)</span></li>
 <li>Define <span class="alert">probability</span> <span class="math inline">\(\checkmark\)</span></li>
 <li>Describe discrete and continuous <span class="alert">probability distributions</span> <span class="math inline">\(\checkmark\)</span></li>
-</ol>
-<p>This lecture:</p>
-<ol start="3" type="1">
-<li>More on discrete and continuous <span class="alert">probability distributions</span></li>
 <li>Determine if events are <span class="alert">mutually exclusive</span></li>
-<li>Determine if events are <span class="alert">indipendent</span></li>
+<li>Determine if events are <span class="alert">independent</span></li>
 </ol>
 </section>
-<section id="define-random-trial-event-and-outcome-1" class="slide level2">
-<h2>Define <span class="alert">random trial</span>, <span class="alert">event</span>, and <span class="alert">outcome</span></h2>
+<section id="probability-recap" class="slide level2">
+<h2><span class="alert">Probability</span> recap</h2>
 <div class="columns">
 <div class="column" style="width:34%;">
 <p>The <span class="alert">random trial:</span></p>
 <p>you roll the die</p>
-<p><img data-src="../img/die_roll.png" style="width:3cm"></p>
+<p><img data-src="../img/die_roll.png" style="width:6cm"></p>
 </div><div class="column" style="width:28%;">
 <p>An <span class="alert">event:</span></p>
 <p>you get a 5</p>
-<p><img data-src="../img/5_die.png" style="width:1.5cm"></p>
+<p><img data-src="../img/5_die.png" style="width:2.5cm"></p>
 </div><div class="column" style="width:38%;">
 <p>All possible <span class="alert">outcomes:</span></p>
 <p>all integers 1—6</p>
 </div></div>
 </section>
-<section id="define-probability-7" class="slide level2">
-<h2>Define <span class="alert">probability</span></h2>
+<section id="probability-recap-1" class="slide level2">
+<h2><span class="alert">Probability</span> recap</h2>
 <p><em>The <span class="alert">probability</span> of an event is the proportion of times that event would occur if we repeated a random trial over and over again under the same conditions. Probability always ranges between 0 and 1</em></p>
 </section>
-<section id="define-probability-8" class="slide level2">
-<h2>Define <span class="alert">probability</span></h2>
+<section id="probability-recap-2" class="slide level2">
+<h2><span class="alert">Probability</span> recap</h2>
 <p>With a fair die, every outcome has equal probability:</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-9-1.png" width="960"></p>
+<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-7-1.png" width="960"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="why-do-we-care-8" class="slide level2">
-<h2>Why do we care?</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>Probability is everywhere!</p>
-<p><em>If I conduct an insect survey, how many species will I find?</em></p>
-<p>Different forces in nature, like speciation or species interactions, change the probability of different processes. In effect, those forces <em>load the dice</em> differently</p>
-</div><div class="column" style="width:50%;">
-<p><img data-src="../img/hi_arth.png"></p>
-</div></div>
-</section>
-<section id="why-do-we-care-9" class="slide level2">
-<h2>Why do we care?</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p>Probability is everywhere!</p>
-<p><em>If I conduct an insect survey, how many species will I find?</em></p>
-<p>Different forces in nature, like speciation or species interactions, change the probability of different processes. In effect, those forces <em>load the dice</em> differently</p>
-</div><div class="column" style="width:50%;">
-<div class="cell">
-<div class="cell-output-display">
-<div>
+<section id="discrete-probability-distribution" class="slide level2">
+<h2><span class="alert">Discrete probability distribution</span></h2>
+<div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-10-1.png" width="288"></p>
+<p><img data-src="../img/2_dice_hist.png" class="quarto-figure quarto-figure-center" style="width:70.0%"></p>
 </figure>
 </div>
-</div>
-</div>
-</div></div>
-</section>
-<section id="define-probability-distribution-2" class="slide level2">
-<h2>Define <span class="alert">probability distribution</span></h2>
-<p><img data-src="../img/2_dice_hist.png"></p>
 <p>This histogram-looking thing is called a <span class="alert">discrete probability distribution</span></p>
 </section>
-<section id="why-do-we-care-10" class="slide level2">
-<h2>Why do we care?</h2>
+<section id="continuous-probability-distribution" class="slide level2">
+<h2><span class="alert">Continuous probability distribution</span></h2>
 <div class="columns">
-<div class="column" style="width:50%;">
-<p><em>Remember noni?</em></p>
+<div class="column" style="width:60%;">
 <p>Suppose we run a clinical study of the effect of noni juice on inflammatory arthritis. We randomly assign half the patients to receive 10mg noni extract and the other half to receive a placebo. We measure change in erythrocyte sedimentation rate (<em>sed rate</em>) in all patients before and after treatment (either 10mg noni or placebo)</p>
-</div><div class="column" style="width:50%;">
-<p><img data-src="../img/noni.jpg" style="width:100.0%"></p>
-</div></div>
-</section>
-<section id="why-do-we-care-11" class="slide level2">
-<h2>Why do we care?</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><em>Remember noni?</em></p>
-<p>Noni is a crop brought to Hawaiʻi by Kānaka Moali. The ʻike of its use comes from inter-generational kilo.</p>
-<ul>
-<li>Who gets to decide whether/how to commodify noni?</li>
-<li>This clinical trial should be led by Native Hawaiian practitioners in collaboration with scholars who may or may not also be Native Hawaiian</li>
-</ul>
-</div><div class="column" style="width:50%;">
-<p><img data-src="../img/noni.jpg" style="width:100.0%"></p>
-</div></div>
-</section>
-<section id="why-do-we-care-12" class="slide level2">
-<h2>Why do we care?</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><em>Remember noni?</em></p>
-<p>Suppose we run a clinical study of the effect of noni juice on inflammatory arthritis. We randomly assign half the patients to receive 10mg noni extract and the other half to receive a placebo. We measure change in erythrocyte sedimentation rate (<em>sed rate</em>) in all patients before and after treatment (either 10mg noni or placebo)</p>
-</div><div class="column" style="width:50%;">
-<div class="cell">
+</div><div class="column" style="width:40%;">
+<div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-11-1.png" width="288"></p>
+<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
 </figure>
 </div>
 </div>
 </div>
 </div></div>
+<div class="fragment">
+<p><em>Change in sed rate [mm/hr] is</em> <strong><em>not</em></strong> <em>an integer</em></p>
+<p>What do we do?!</p>
+</div>
 </section>
-<section id="define-continuous-probability-distribution-5" class="slide level2">
-<h2>Define <span class="alert">continuous probability distribution</span></h2>
-<p><img data-src="../img/sed_hist.png"></p>
-</section>
-<section id="define-continuous-probability-distribution-6" class="slide level2">
-<h2>Define <span class="alert">continuous probability distribution</span></h2>
+<section id="continuous-probability-distribution-1" class="slide level2">
+<h2><span class="alert">Continuous probability distribution</span></h2>
+<div class="r-stack">
+<div class="fragment fade-in-then-out">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../img/sed_hist.png" class="quarto-figure quarto-figure-center" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+<div class="fragment">
 <p>Continuous probability distributions are typically visualized as smooth curves, <em>without bars</em></p>
-<p><img data-src="../img/sed_den_area.png"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../img/sed_den_area.png" class="quarto-figure quarto-figure-center" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section id="connecting-descriptions-of-data-to-probability" class="slide level2">
 <h2>Connecting descriptions of data to probability</h2>
-<p>Let’s calculate the mean and SD for these data</p>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p>Let’s plot the mean and SD for these data</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center" style="width:6in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:40%;">
+<div class="fragment">
+<div class="pause-think">
+<p>We say that 95% of the data fall within <span class="math inline">\(\bar{y} \pm 2 s\)</span>, what does that mean in terms of probability?</p>
+</div>
+</div>
+</div></div>
+</section>
+<section id="connecting-descriptions-of-data-to-probability-1" class="slide level2">
+<h2>Connecting descriptions of data to probability</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p>There is a 0.95 probability a randomly selected data point will be greater than <span class="math inline">\(\bar{y} - 2 s\)</span> and less than <span class="math inline">\(\bar{y} + 2 s\)</span></p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="../img/brown_bag.png" class="quarto-figure quarto-figure-center" style="width:30.0%"></p>
+</figure>
+</div>
+<p>“Put the data in a bag and shake it…”</p>
+</div><div class="column" style="width:40%;">
+<div class="pause-think">
+<p>We say that 95% of the data fall within <span class="math inline">\(\bar{y} \pm 2 s\)</span>, what does that mean in terms of probability?</p>
+</div>
+</div></div>
+</section>
+<section id="connecting-descriptions-of-data-to-probability-2" class="slide level2">
+<h2>Connecting descriptions of data to probability</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p>Now let’s calculate the SE of the mean</p>
+<div class="r-stack">
+<div class="fragment fade-out">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center" style="width:6in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div class="fragment fade-in">
+<p>foo</p>
+</div>
+</div>
+</div></div>
+</section>
+<section id="connecting-descriptions-of-data-to-probability-3" class="slide level2">
+<h2>Connecting descriptions of data to probability</h2>
+<p>Now let’s calculate the SE of the mean</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center" style="width:6in"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="connecting-descriptions-of-data-to-probability-4" class="slide level2">
+<h2>Connecting descriptions of data to probability</h2>
+<p><span class="alert">Pause &amp; Think:</span> What does the interval from <span class="math inline">\(\bar{y} - 2 SE\)</span> to <span class="math inline">\(\bar{y} + 2 SE\)</span> mean in terms of probability?</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -695,9 +726,9 @@
 </div>
 </div>
 </section>
-<section id="connecting-descriptions-of-data-to-probability-1" class="slide level2">
+<section id="connecting-descriptions-of-data-to-probability-5" class="slide level2">
 <h2>Connecting descriptions of data to probability</h2>
-<p><span class="alert">Pause &amp; Think:</span> we say that 95% of the data fall within <span class="math inline">\(\bar{y} \pm 2 s\)</span>, what does that mean in terms of probability?</p>
+<p><span class="alert">Pause &amp; Think:</span> What does the interval from <span class="math inline">\(\bar{y} - 2 SE\)</span> to <span class="math inline">\(\bar{y} + 2 SE\)</span> mean in terms of probability? <em>Hint:</em> it contains 0.95 probability, but of <strong>which</strong> distribution?</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -708,75 +739,14 @@
 </div>
 </div>
 </section>
-<section id="connecting-descriptions-of-data-to-probability-2" class="slide level2">
-<h2>Connecting descriptions of data to probability</h2>
-<p><span class="alert">Pause &amp; Think:</span> we say that 95% of the data fall within <span class="math inline">\(\bar{y} \pm 2 s\)</span>, what does that mean in terms of probability?</p>
-<p>There is a 0.95 probability a randomly selected data point will be greater than <span class="math inline">\(\bar{y} - 2 s\)</span> and less than <span class="math inline">\(\bar{y} + 2 s\)</span></p>
-<div style="text-align: center;">
-<p><img data-src="../img/brown_bag.png" style="height:50.0%"></p>
-</div>
-<p>“Put the data in a bag and shake it…”</p>
-</section>
-<section id="connecting-descriptions-of-data-to-probability-3" class="slide level2">
-<h2>Connecting descriptions of data to probability</h2>
-<p>Now let’s calculate the SE of the mean</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-14-1.png" width="384"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="connecting-descriptions-of-data-to-probability-4" class="slide level2">
-<h2>Connecting descriptions of data to probability</h2>
-<p>Now let’s calculate the SE of the mean</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-15-1.png" width="384"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="connecting-descriptions-of-data-to-probability-5" class="slide level2">
-<h2>Connecting descriptions of data to probability</h2>
-<p><span class="alert">Pause &amp; Think:</span> What does the interval from <span class="math inline">\(\bar{y} - 2 SE\)</span> to <span class="math inline">\(\bar{y} + 2 SE\)</span> mean in terms of probability?</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-16-1.png" width="384"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
 <section id="connecting-descriptions-of-data-to-probability-6" class="slide level2">
-<h2>Connecting descriptions of data to probability</h2>
-<p><span class="alert">Pause &amp; Think:</span> What does the interval from <span class="math inline">\(\bar{y} - 2 SE\)</span> to <span class="math inline">\(\bar{y} + 2 SE\)</span> mean in terms of probability? <em>Hint:</em> it contains 0.95 probability, but of <strong>which</strong> distribution?</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-17-1.png" width="384"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="connecting-descriptions-of-data-to-probability-7" class="slide level2">
 <h2>Connecting descriptions of data to probability</h2>
 <p><span class="alert">Pause &amp; Think:</span> What does the interval from <span class="math inline">\(\bar{y} - 2 SE\)</span> to <span class="math inline">\(\bar{y} + 2 SE\)</span> mean in terms of probability? <em>Hint:</em> it contains 0.95 probability, but of <strong>which</strong> distribution?</p>
 <div style="text-align: center;">
 <p>It contains the 0.95 probability of the <span class="alert">sampling distribution</span> of the mean!!!</p>
 </div>
 </section>
-<section id="connecting-descriptions-of-data-to-probability-8" class="slide level2">
+<section id="connecting-descriptions-of-data-to-probability-7" class="slide level2">
 <h2>Connecting descriptions of data to probability</h2>
 <p><span class="alert">Pause &amp; Think:</span> What does it mean to say “It contains the 0.95 probability of the <span class="alert">sampling distribution</span> of the mean!!!”???</p>
 <div class="columns">
@@ -787,7 +757,7 @@
 <p>&nbsp;</p>
 </div></div>
 </section>
-<section id="connecting-descriptions-of-data-to-probability-9" class="slide level2">
+<section id="connecting-descriptions-of-data-to-probability-8" class="slide level2">
 <h2>Connecting descriptions of data to probability</h2>
 <p><span class="alert">Pause &amp; Think:</span> What does it mean to say “It contains the 0.95 probability of the <span class="alert">sampling distribution</span> of the mean!!!”???</p>
 <div class="columns">
@@ -801,7 +771,7 @@
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-18-1.png" width="288"></p>
+<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-14-1.png" width="288"></p>
 </figure>
 </div>
 </div>
@@ -809,13 +779,12 @@
 </div></div>
 </section>
 <section id="rest-your-brain" class="slide level2">
-<h2>Rest your brain!</h2>
+<h2>Rest your brain</h2>
 <p><img data-src="../img/molokai.jpg"></p>
 </section>
-<section id="learning-objectives-2" class="slide level2">
-<h2>Learning Objectives</h2>
-<ol start="3" type="1">
-<li>More on discrete and continuous <span class="alert">probability distributions</span> <span class="math inline">\(\checkmark\)</span></li>
+<section id="learning-goals-2" class="slide level2">
+<h2>Learning goals</h2>
+<ol start="4" type="1">
 <li>Determine if events are <span class="alert">mutually exclusive</span></li>
 <li>Determine if events are <span class="alert">indipendent</span></li>
 </ol>
@@ -827,7 +796,7 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center" width="288"></p>
+<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center" width="288"></p>
 </figure>
 </div>
 </div>
@@ -867,7 +836,7 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-20-1.png" class="quarto-figure quarto-figure-center" width="288"></p>
+<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center" width="288"></p>
 </figure>
 </div>
 </div>
@@ -947,14 +916,14 @@
 <h1>Break!</h1>
 
 </section>
-<section id="learning-objectives-3" class="slide level2">
+<section id="learning-objectives" class="slide level2">
 <h2>Learning Objectives</h2>
 <ol type="1">
 <li>Determine if events are <span class="alert">mutually exclusive</span></li>
 <li>Determine if events are <span class="alert">indipendent</span></li>
 </ol>
 </section>
-<section id="define-probability-9" class="slide level2">
+<section id="define-probability-6" class="slide level2">
 <h2>Define <span class="alert">probability</span></h2>
 <p><em>The <span class="alert">probability</span> of an event is the proportion of times that event would occur if we repeated a random trial over and over again under the same conditions. Probability always ranges between 0 and 1</em></p>
 </section>
@@ -994,19 +963,19 @@
 <h2>Estimating <span class="alert">probability</span></h2>
 <p>What’s the <span class="alert">probability</span> I go to the beach and see a honu?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a><span class="co"># probability is (number of events) / (number of trials)</span></span>
-<span id="cb5-2"><a href=""></a>dec_prob <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="sc">/</span> <span class="dv">11</span></span>
-<span id="cb5-3"><a href=""></a>dec_prob</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a><span class="co"># probability is (number of events) / (number of trials)</span></span>
+<span id="cb9-2"><a href=""></a>dec_prob <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="sc">/</span> <span class="dv">11</span></span>
+<span id="cb9-3"><a href=""></a>dec_prob</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.3636364</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a>jan_prob <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">/</span> <span class="dv">7</span></span>
-<span id="cb7-2"><a href=""></a>jan_prob</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a>jan_prob <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">/</span> <span class="dv">7</span></span>
+<span id="cb11-2"><a href=""></a>jan_prob</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.2857143</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a><span class="co"># combine info using mean</span></span>
-<span id="cb9-2"><a href=""></a><span class="fu">mean</span>(dec_prob, jan_prob)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a><span class="co"># combine info using mean</span></span>
+<span id="cb13-2"><a href=""></a><span class="fu">mean</span>(dec_prob, jan_prob)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.3636364</code></pre>
 </div>
@@ -1120,7 +1089,7 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-23-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -1134,7 +1103,7 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-24-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-20-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -1155,7 +1124,7 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-25-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-21-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -1164,7 +1133,7 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-26-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-22-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -1185,7 +1154,7 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-27-1.png" class="quarto-figure quarto-figure-center" width="192"></p>
+<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-23-1.png" class="quarto-figure quarto-figure-center" width="192"></p>
 </figure>
 </div>
 </div>
@@ -1208,7 +1177,7 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-28-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+<p><img data-src="04-prob-slides_files/figure-revealjs/unnamed-chunk-24-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
