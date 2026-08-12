@@ -13,9 +13,16 @@ library(tidyr)
 library(grid)
 library(magick)
 library(socorro)
+library(knitr)
 ```
 
-## Learning Objectives
+## Ka hua ʻōlelo o ka lā
+
+::: {style="text-align: center;"}
+[momona]{.alert}
+:::
+
+## Learning goals
 
 1. Describe the [sampling distribution]{.alert} of an estimate
 2. Describe how the size and bias of a sample affects the [sampling distribution]{.alert}
@@ -28,10 +35,13 @@ library(socorro)
 
 Back to our uhu example
 
-```{r fig.align='center', fig.width=8, fig.height=3.25, cache=TRUE, eval=FALSE}
-# NOTE: this figure needs the image /img/uhu4measure.png, which is not
-# currently in the project. Restore that asset and set eval=TRUE to render.
-uhu <- image_read("/img/uhu4measure.png") |>
+```{r} 
+#| fig-align: center
+#| fig-width: 8
+#| fig-height: 3.25
+#| cache: true
+
+uhu <- image_read("../img/uhu4measure.png") |>
     image_flop() |>
     image_resize(geometry = geometry_size_percent(50)) |>
     image_transparent("white")
@@ -58,11 +68,20 @@ uhuloa <- function(loa = 1) {
 uhuloa(0.8)
 ```
 
-## Describe the [sampling distribution]{.alert} of an estimate
+## Describe the [sampling distribution]{.alert} of an estimate {.top-align}
+
+::: {.r-stack}
+
+::: {.fragment .fade-in-then-out}
 
 5 sections produced 5 [samples]{.alert} from an unknown [population]{.alert}
 
-```{r fig.align='center', fig.width=5, fig.height=3}
+```{r}
+#| fig-align: center
+#| fig-width: 5
+#| fig-height: 3
+#| out-width: "8in"
+
 uhu <- read.csv("../data/section_sample_uhu.csv")
 uhu <- uhu[uhu$length_cm > 18, ]
 uhu$Section <- sprintf("%02d", uhu$Section)
@@ -77,22 +96,58 @@ uhu_p <- ggplot(uhu, aes(x = Section, y = length_cm, color = Section)) +
 uhu_p
 ```
 
-## Describe the [sampling distribution]{.alert} of an estimate
+:::
+
+::: {.fragment .fade-in-then-out}
 
 We can calculate the [estimate]{.alert} of the means for each [samples]{.alert}
 
-```{r fig.align='center', fig.width=5, fig.height=3}
+```{r}
+#| fig-align: center
+#| fig-width: 5
+#| fig-height: 3
+#| out-width: "8in"
+
+
 uhu_pm <- uhu_p + stat_summary(fun = mean, geom = "crossbar",
                                width = 0.75, color = viridis::viridis(5))
 
 uhu_pm
 ```
 
-## Describe the [sampling distribution]{.alert} of an estimate
+:::
+
+::: {.fragment}
 
 Look at the collection of all [estimates]{.alert} of the means
 
-```{r fig.align='center', fig.width=5, fig.height=3}
+```{r}
+#| fig-align: center
+#| fig-width: 5
+#| fig-height: 3
+#| out-width: "8.5in"
+
+include_graphics("../img/uhu_arrows.png")
+```
+
+:::
+
+:::
+
+## Describe the [sampling distribution]{.alert} of an estimate {.top-align}
+
+Now imagine we could collect many **many** ***MANY*** samples and look at the collection of all their mean [estimates]{.alert}
+
+::: {.r-stack}
+
+::: {.fragment .fade-in-then-out}
+
+```{r}
+#| fig-align: center
+#| fig-width: 5
+#| fig-height: 3
+#| out-width: "7in"
+
 uhu_m <- group_by(uhu, Section) |>
     summarize(m = mean(length_cm)) |>
     ungroup() |>
@@ -107,39 +162,70 @@ uhu_m <- group_by(uhu, Section) |>
     ylab("") +
     scale_y_continuous(limits = c(0, 3)) +
     scale_x_continuous(limits = c(28.5, 32))
-```
 
-![](/img/uhu_arrows.png)
-
-## Describe the [sampling distribution]{.alert} of an estimate
-
-Now imagine we could collect many **many** **MANY** samples and look at the collection of all their mean [estimates]{.alert}
-
-```{r fig.align='center', fig.width=3, fig.height=3}
 uhu_s <- uhu_m +
     geom_point(data = data.frame(x = rnorm(20, 30.4),
                                  y = 0, Section = "06"),
                mapping = aes(x = x, y = y),
                shape = 18, size = 5,
-               color = "gray", alpha = 0.5)
+               color = "gray50", alpha = 0.5)
+
+# put gray points *behind*
+uhu_s$layers <- rev(uhu_s$layers)
 
 uhu_s
 ```
 
-## Describe the [sampling distribution]{.alert} of an estimate
+:::
 
-The [estimated]{.alert} means of those many **many** **MANY** [samples]{.alert} come from the [sampling distribution]{.alert}
+::: {.fragment}
 
-```{r fig.align='center', fig.width=3.5, fig.height=2.5}
+```{r}
+#| fig-align: center
+#| fig-width: 5
+#| fig-height: 3
+#| out-width: "7in"
+
 uhu_s + stat_function(fun = \(x) 4 * dnorm(x, 30.25, sd = 0.75),
                       color = "black") +
     ylab("\"Probability\"") +
     theme(axis.line.y = element_line())
 ```
 
-## Describe the [sampling distribution]{.alert} of an estimate
+:::
+
+:::
+
+
+## Describe the [sampling distribution]{.alert} of an estimate {.top-align}
+
+Now imagine we could collect many **many** ***MANY*** samples and look at the collection of all their mean [estimates]{.alert}
+
+::: {.columns}
+
+::: {.column}
+
+```{r}
+#| fig-align: center
+#| fig-width: 3.5
+#| fig-height: 3
+#| out-width: "4in"
+
+uhu_s + stat_function(fun = \(x) 4 * dnorm(x, 30.25, sd = 0.75),
+                      color = "black") +
+    ylab("\"Probability\"") +
+    theme(axis.line.y = element_line())
+```
+
+:::
+
+::: {.column}
 
 The [sampling distribution]{.alert} describes all the possible outcomes (and how likely or unlikely those outcomes are) of taking infinite hypothetical [samples]{.alert} from the same [population]{.alert} and calculating an [estimate]{.alert} (like the mean) for each.
+
+:::
+
+:::
 
 ## Describe how the size and bias of a sample affects the [sampling distribution]{.alert}
 
@@ -233,10 +319,11 @@ sampdp +
 Read in the uhu data you all generated
 
 ```{r eval = FALSE, echo = TRUE}
-uhu <- read.csv("../data/section_sample_uhu.csv")
+uhu <- read.csv("data/section_sample_uhu.csv")
+head(uhu, n = 3)
 ```
 
-```{r echo = TRUE}
+```{r}
 head(uhu, n = 3)
 ```
 
@@ -260,13 +347,52 @@ se <- s / sqrt(length(uhu_01))
 se
 ```
 
+
+## Thinking about the [sampling distribution]{.alert} and [standard error]{.alert}
+
+::: {.pause-think}
+
+Suppose 5 different research teams each sample $n = 100$ random and independent uhu from the same reef and calculate 5 different mean lengths. How do these 5 different means relate to the sampling distribution? 
+
+What does the sampling distribution describe that these 5 individual means do not?
+
+:::
+
+## Thinking about the [sampling distribution]{.alert} and [standard error]{.alert}
+
+::: {.pause-think}
+
+Can increasing sample size fix a biased sampling method? Why or why not?
+
+:::
+
+## Thinking about the [sampling distribution]{.alert} and [standard error]{.alert}
+
+::: {.pause-think}
+
+Can increasing sample size fix a biased sampling method? Why or why not?
+
+:::
+
+## Thinking about the [sampling distribution]{.alert} and [standard error]{.alert}
+
+::: {.pause-think}
+
+If you double your sample size, does your standard error get cut in half? Use the formula to justify your answer.
+
+$$
+SE = \frac{s}{\sqrt{n}}
+$$
+where $s$ is the sample standard deviation
+
+:::
+
+
+
+
 # Break!
 
-## Ka hua ʻōlelo o ka lā
 
-::: {style="text-align: center;"}
-[momona]{.alert}
-:::
 
 ## Learning Objectives
 
@@ -310,34 +436,48 @@ But how certain are we in that [estimate]{.alert} of the [sample mean]{.alert}??
 
 If we went out again and collected a different sample of 20 individuals, would we get roughly the same estimate or not?
 
-## Review of [standard error]{.alert} and [sampling distribution]{.alert}
+## Review of [standard error]{.alert} and [sampling distribution]{.alert} 
 
 If we went out again and collected a different sample of 20 individuals, would we get roughly the same estimate or not?
 
 Answering that question is the job of the [sampling distribution]{.alert} and the [standard error]{.alert}
 
-## Review of [standard error]{.alert} and [sampling distribution]{.alert}
+## Review of [standard error]{.alert} and [sampling distribution]{.alert} {.top-align}
 
-If we went out again and collected a different sample of 20 individuals (*many* **many** times)
+::: {.r-stack}
 
-![](/img/uhu_samp_dist-1.png)
+::: {.fragment .fade-in-then-out}
+If we went out again and collected a different sample of 20 individuals (*many* ***many*** times) [would we get roughly the same estimate or not? <br>
+**SE tells us!**]{style="color:white;"}
+:::
 
-## Review of [standard error]{.alert} and [sampling distribution]{.alert}
+::: {.fragment}
+If we went out again and collected a different sample of 20 individuals (*many* ***many*** times) would we get roughly the same estimate or not? <br>
+**[SE]{.alert} tells us!**
+:::
 
-If we went out again and collected a different sample of 20 individuals (*many* **many** times) would we get roughly the same estimate or not? **SE tells us!**
+:::
 
-![](/img/uhu_samp_dist-2.png)
+```{r}
+#| out-width: "7.5in"
+#| fig-align: center
 
-## Review of [standard error]{.alert} and [sampling distribution]{.alert}
+include_graphics("../img/uhu_samp_dist-1.png")
+```
 
-If we went out again and collected a different sample of 20 individuals (*many* **many** times) would we get roughly the same estimate or not? **SE tells us!**
+
+
+## Review of [standard error]{.alert} and [sampling distribution]{.alert} {.top-align}
+
+If we went out again and collected a different sample of 20 individuals (*many* ***many*** times) would we get roughly the same estimate or not? <br>
+**[SE]{.alert} tells us!**
 
 - The wider the sampling distribution, the bigger the SE
 - (The SE is the SD of the sampling distribution)
 - The bigger the SE, the less likely we are to get similar estimates across repeated samples
 - The less likely we are to get similar estimates across samples, the less [confident]{.alert} we are in the accuracy of any one sample
 
-# Why do we care?
+## Why do we care?
 
 We collect a sample of [$n = 20$]{.alert} measurements, here it is:
 
@@ -350,35 +490,87 @@ We collect a sample of [$n = 20$]{.alert} measurements, here it is:
 
 The mean is `30.548` cm
 
-But the *historic* mean length of uhu was 42 cm.  So do our data give us confidence they are really smaller today?
+The *historic* mean length of uhu was 55 cm.  So do our data give us confidence they are really smaller today?
 
 # Confidence Intervals
 
-## 4. Calculate [confidence intervals]{.alert} using the [standard error of the mean]{.alert}
-
-Note: We can calculate CIs for any parameter, but for now we'll focus on the CIs of the mean
 
 ## 4. Calculate [confidence intervals]{.alert} using the [standard error of the mean]{.alert}
 
+::: {.r-stack}
+
+::: {.fragment .fade-in-then-out}
 Recall that the mean $\pm$ 2 standard deviations covers roughly 95% of the probability of different values
+:::
 
-```{r, fig.width=3, fig.height=2.5, fig.align='center'}
+::: {.fragment}
+The 95% [confidence interval]{.alert} is a range of values surrounding the sample estimate that is 95% ***likely*** to contain the true population parameter
+
+The 95% confidence interval is simply the mean $\pm$ 2 [standard errors]{.alert}
+:::
+
+:::
+
+```{r}
+#| fig-width: 5
+#| fig-height: 3
+#| fig-align: center
+#| out-width: "6in"
+
 par(mar = c(2, 1, 2, 0) + 0.5)
-denFill(rnorm(10000000), main = "mean = 0, sd = 1", xlim = c(-4, 4), yaxt = "n")
-mtext("Probability density", 2)
+denFill(rnorm(10000000), main = "mean = 0, sd = 1", 
+        xlim = c(-4, 4), yaxt = "n")
+mtext("Probability density", 2, line = 0.5)
 text(0, 0.1, "95% of\nprobability")
 ```
 
+::: {.fragment}
+Note: We can calculate CIs for any parameter, but for now we'll focus on the CIs of the mean
+:::
+
 ## 4. Calculate [confidence intervals]{.alert} using the [standard error of the mean]{.alert}
 
-The [confidence interval]{.alert} is a range of values surrounding the sample estimate that is
-likely to contain the true population parameter
+The 95% [confidence interval]{.alert} is a range of values surrounding the sample estimate that is 95% ***likely*** to contain the true population parameter
 
-It is simply the mean $\pm$ 2 [standard errors]{.alert}
+The 95% confidence interval is simply the mean $\pm$ 2 [standard errors]{.alert}
+
+::: {.columns}
+
+::: {.column width="65%"}
+
+```{r}
+#| fig-width: 5
+#| fig-height: 3
+#| fig-align: center
+#| out-width: "6in"
+
+par(mar = c(2, 1, 2, 0) + 0.5)
+denFill(rnorm(10000000), main = "mean = 0, sd = 1", 
+        xlim = c(-4, 4), yaxt = "n")
+mtext("Probability density", 2, line = 0.5)
+text(0, 0.1, "95% of\nprobability")
+```
+:::
+
+::: {.column width="35%"}
+
+<br>
+
+Note: We can calculate CIs for any parameter, but for now we'll focus on the CIs of the mean
+:::
+
+:::
+
+
 
 ## Are uhu smaller now than in the past?
 
-```{r, fig.align='center', fig.width=5, fig.height=3}
+```{r}
+#| fig-align: center
+#| fig-width: 5
+#| fig-height: 3
+#| out-width: "9in"
+
 x <- c(35.16, 23.81, 32.65, 22.94, 32.35,
        33.57, 37.94, 33.08, 22.13, 32.05,
        25.24, 36.67, 28.64, 33.49, 27.11,
@@ -420,32 +612,35 @@ The 95% confidence interval for the mean is $\bar{Y} \pm 2 \times \text{SE}$
 
 ## Confidence interval of the mean
 
-```{r, fig.align='center', out.height="50%"}
+```{r}
+#| fig-align: center
+
 df <- tibble(
-  x = 0.1,
-  y = 0,
-  ymin = 0, ymax = 0,
-  xmin = -0.9, xmax = 1.1
+    x = 0.1,
+    y = 0,
+    ymin = 0, ymax = 0,
+    xmin = -0.9, xmax = 1.1
 )
 
 ggplot(df, aes(x, y)) +
-  geom_point(size = 10) +
-  geom_vline(xintercept = 0) +
-  geom_errorbarh(aes(xmin = xmin, xmax = xmax), height = 0,
-                 show.legend = FALSE, size = 2) +
-  annotate("text", -0.9, 0, label = "lower\nlimit", vjust = -0.25, size = 18) +
-  annotate("text", 1.1, 0, label = "upper\nlimit", vjust = -0.25, size = 18) +
-  annotate("text", 0.1, 0, label = expression(italic(bar(Y))), vjust = -0.5, size = 18) +
-  annotate("label", 0, 0.05, label = expression(mu), size = 18) +
-  theme_cowplot() +
-  scale_x_continuous(limits = c(-1.5, 1.5)) +
-  scale_y_continuous(limits = c(-0.1, 0.1)) +
-  theme(
-    axis.title = element_blank(),
-    axis.text = element_blank(),
-    axis.line.y = element_blank(),
-    axis.ticks = element_blank()
-  )
+    geom_point(size = 10) +
+    geom_vline(xintercept = 0) +
+    geom_errorbarh(aes(xmin = xmin, xmax = xmax), height = 0,
+                   show.legend = FALSE, size = 2) +
+    annotate("text", -0.9, 0, label = "lower\nlimit", vjust = -0.25, size = 18) +
+    annotate("text", 1.1, 0, label = "upper\nlimit", vjust = -0.25, size = 18) +
+    annotate("text", 0.1, 0, label = expression(italic(bar(Y))), 
+             vjust = -0.5, size = 18) +
+    annotate("label", 0, 0.08, label = expression(mu), size = 18) +
+    theme_cowplot() +
+    scale_x_continuous(limits = c(-1.5, 1.5)) +
+    scale_y_continuous(limits = c(-0.1, 0.1)) +
+    theme(
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.line.y = element_blank(),
+        axis.ticks = element_blank()
+    )
 ```
 
 ## Confidence interval of the mean
@@ -454,37 +649,40 @@ Sometimes the confidence interval will not include the population parameter
 
 The confidence interval in red does not include $\mu$
 
-```{r, fig.align='center', out.height="50%"}
+```{r}
+#| fig-align: center
+#| out-width: "45%"
+
 df <- tibble(
-  x = c(0.1, 1.1),
-  y = c(-0.5, 0.5),
-  ymin = y, ymax = y,
-  xmin = x - 1, xmax = x + 1,
-  color = LETTERS[1:2]
+    x = c(0.1, 1.1),
+    y = c(-0.5, 0.5),
+    ymin = y, ymax = y,
+    xmin = x - 1, xmax = x + 1,
+    color = LETTERS[1:2]
 )
 
 ggplot(df, aes(x, y, color = color)) +
-  scale_color_manual(values = c("black", "red")) +
-  geom_point(size = 10, show.legend = FALSE) +
-  geom_vline(xintercept = 0) +
-  geom_errorbarh(aes(xmin = xmin, xmax = xmax), height = 0,
-                 show.legend = FALSE, size = 2) +
-  annotate("label", 0, 0.05, label = expression(mu), size = 18) +
-  theme_cowplot() +
-  scale_y_continuous(limits = c(-1, 1)) +
-  theme(
-    axis.title = element_blank(),
-    axis.text = element_blank(),
-    axis.line.y = element_blank(),
-    axis.ticks = element_blank()
-  )
+    scale_color_manual(values = c("black", "red")) +
+    geom_point(size = 10, show.legend = FALSE) +
+    geom_vline(xintercept = 0) +
+    geom_errorbarh(aes(xmin = xmin, xmax = xmax), height = 0,
+                   show.legend = FALSE, size = 2) +
+    annotate("label", 0, 0.05, label = expression(mu), size = 18) +
+    theme_cowplot() +
+    scale_y_continuous(limits = c(-1, 1)) +
+    theme(
+        axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.line.y = element_blank(),
+        axis.ticks = element_blank()
+    )
 ```
 
 ## 95% confidence intervals
 
 On average, 19 of 20 CIs will include the population parameter
 
-```{r, fig.align="center", out.height="70%", warning=FALSE, message=FALSE}
+```{r}
 ci_rand <- function(nrep, size, bias = 0, seed = 123) {
     mu <- 0
     sig <- 1
@@ -533,7 +731,7 @@ ci_show(df)
 
 ## Different levels of confidence
 
-95% Confidence Intervals ara a common choice, but we could choose any percent
+95% Confidence Intervals are a a common choice, but we could choose any percent
 
 ::: {.pause-think}
 Will 90% confidence intervals be wider or narrower than 95% confidence intervals?
@@ -545,7 +743,10 @@ Will 90% confidence intervals be wider or narrower than 95% confidence intervals
 
 Less stringent CIs are narrower because they do not have to include the population parameter as often
 
-```{r, fig.align="center", out.height="70%"}
+```{r}
+#| fig-align: center
+#| out-width: "80%"
+
 df1 <- mutate(df, lwr = ybar - 1.8 * se, upr = ybar + 1.8 * se) |>
     mutate(overlap = (lwr <= 0 & upr >= 0))
 
@@ -587,7 +788,7 @@ ggplot(df3, aes(ybar, r, color = overlap)) +
 
 ## Pseudoreplication leads to overconfidence
 
-Pseudoreplication occurs when two sampled units are not independent
+Pseudoreplication occurs when two sampling units are not independent
 
 * Multiple measurements from the same patient
 * Genetic variation of related individuals
@@ -626,9 +827,13 @@ ggplot(df4, aes(ybar, r, color = overlap)) +
     )
 ```
 
-## [Pause & Think]{.alert}
+## [Confidence intervals]{.alert} and sample size
 
-Compared to the 95% confidence interval of a sample of size $n = 10$, would the 95% confidence interval of a sample of size $n = 20$ be wider or narrower?
+::: {.pause-think}
+
+You have two samples from the same population: once sample of size $n = 10$ and one of size $n = 20$. Which sample would have a more narrow 95% confidence interval?
+
+:::
 
 ## [Error bars]{.alert}
 
@@ -638,11 +843,20 @@ Compared to the 95% confidence interval of a sample of size $n = 10$, would the 
 
 ## [Error bars]{.alert}
 
-- Think carefully about what you are trying to *show*
+Think carefully about what you are trying to *show*
 
-If the spread of the data, show standard deviation (or just use a box plot which shows inner quartile range)
+::: {.r-stack}
 
-```{r fig.align='center', fig.width=5.5, fig.height=2.5}
+::: {.fragment .fade-in-then-out}
+
+If the [spread]{.alert} of the data, show [standard deviation]{.alert} (or just use a box plot which shows [inner quartile range]{.alert})
+
+```{r}
+#| fig-width: 5.5
+#| fig-height: 2.5
+#| fig-align: center
+#| out-width: "8in"
+
 set.seed(123)
 dat <- data.frame(group = rep(LETTERS[1:2], 20),
                   y = rnorm(40))
@@ -669,13 +883,18 @@ gd2 <- ggplot(dat, aes(x = group, y = y, color = group)) +
 plot_grid(gd1, gd2)
 ```
 
-## [Error bars]{.alert}
+:::
 
-- Think carefully about what you are trying to *show*
+::: {.fragment}
 
-If the estimate of the mean and its uncertainty, show standard error or confidence intervals
+If the [estimate]{.alert} of the mean and its uncertainty, show [standard error]{.alert} or [confidence intervals]{.alert}
 
-```{r fig.align='center', fig.width=5.5, fig.height=2.5}
+```{r}
+#| fig-width: 5.5
+#| fig-height: 2.5
+#| fig-align: center
+#| out-width: "8in"
+
 gm <- ggplot(dat, aes(x = group, y = y, color = group)) +
     geom_jitter(width = 0.1, color = "gray") +
     theme_cowplot() +
@@ -701,3 +920,7 @@ gm2 <- gm +
 
 plot_grid(gm1, gm2)
 ```
+
+:::
+
+:::
