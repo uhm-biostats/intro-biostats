@@ -34,43 +34,46 @@ bd$full_name[bd$species == "wrsh"] <- "white-rumped shama"
 [ʻokana]{.alert}
 :::
 
-## The Moku System: Managing Biocultural Resources for Abundance within Social-Ecological Regions in Hawaiʻi
+## The Moku System: 
 
-![](/img/winter_moku.png)
+**Managing Biocultural Resources for Abundance within Social-Ecological Regions in Hawaiʻi**
 
-# How do we describe [data]{.alert}?
+![](/img/winter_moku.png){width=60% fig-align="center"}
+
 
 ## How do we describe [data]{.alert}?
 
 - Why do we make the choices we make in describing data?
-- These choices get bundled into knowledge system
+- These choices get bundled into knowledge systems
 - Whose knowledge system(s) do we learn and why?
 
-## Learning Objectives
+## Learning goals
 
 1. Describe the *location* of numerical variables using the [mean]{.alert} and [median]{.alert}
 2. Describe the *spread* of numerical variables using the [standard deviation]{.alert}, [variance]{.alert}, [coefficient of variation]{.alert}, and [interquartile range]{.alert}
 3. Describe categorical variables using the [proportion]{.alert}
 4. Know when to use different descriptive statistics
 
-## Describing location and spread of numerical data
+## Location and spread of numerical data
 
-```{r fig.width=4, fig.height=2.75, fig.align='center'}
+```{r}
+#| fig-align: center
+
 bd$y <- 1
 
 gp <- ggplot(bd, aes(x = nares_to_tip, y = y,
                      color = full_name)) +
     facet_grid(rows = vars(full_name),
                labeller = label_wrap_gen(width = 10)) +
-    geom_jitter(width = 0, height = 0.15) +
+    geom_jitter(width = 0, height = 0.15, size = 4) +
     scale_color_viridis_d(alpha = 0.25) +
     scale_y_continuous(limits = c(0.5, 1.5)) +
     xlab("Beak length (mm)") +
     ggtitle("How do bird beaks differ?") +
     theme_cowplot() +
-     theme(axis.text = element_text(size = 10),
-          axis.title = element_text(size = 12),
-          strip.text = element_text(size = 6),
+    theme(axis.text = element_text(size = 20),
+          axis.title = element_text(size = 22),
+          strip.text = element_text(size = 12),
           legend.position = "none",
           axis.text.y = element_blank(),
           axis.title.y = element_blank(),
@@ -80,9 +83,11 @@ gp <- ggplot(bd, aes(x = nares_to_tip, y = y,
 gp
 ```
 
+::: {style="font-size: 50%;"}
 Data from Gleditsch, J. M., & Sperry, J. H. (2020). *Ecology and Evolution*, 10(21), 12157-12169.
+:::
 
-## Describing location and spread of numerical data
+## Location and spread of numerical data
 
 ::: columns
 ::: {.column width="33%"}
@@ -106,7 +111,7 @@ white-rumped shama
 
 Images from Wikipedia
 
-## Describing location and spread of numerical data
+## Location and spread of numerical data
 
 **the Mean describes location**
 
@@ -139,7 +144,7 @@ A subset of 8 white-rumped shama beak length measurements
 
 ::: columns
 ::: {.column width="60%"}
-![](/img/wrshama.jpg){width="65%"}
+![](/img/wrshama.jpg){width="55%"}
 :::
 
 ::: {.column width="40%"}
@@ -170,7 +175,7 @@ kable(data.frame(1:8, wrsh[1:8]),
 :::
 :::
 
-## Describing location and spread of numerical data
+## Location and spread of numerical data
 
 **the Standard Deviation describes spread**
 
@@ -235,7 +240,7 @@ A subset of 8 white-rumped shama beak length measurements
 
 ::: columns
 ::: {.column width="60%"}
-![](/img/wrshama.jpg){width="65%"}
+![](/img/wrshama.jpg){width="55%"}
 :::
 
 ::: {.column width="40%"}
@@ -245,7 +250,7 @@ kable(as.data.frame(wrsh[1:8]), col.names = "Beak lengths in mm")
 :::
 :::
 
-Data from Gleditsch, J. M., & Sperry, J. H. (2020). *Ecology and Evolution*, 10(21), 12157-12169.
+
 
 ## [Sample standard deviation]{.alert}
 
@@ -313,7 +318,7 @@ The standard deviation has the same units as the measurements (mm in this case),
 
 "Almost 95% of data typically fall within two standard deviations of the mean"
 
-## Describing location and spread of numerical data
+## Location and spread of numerical data
 
 **Coefficient of Variation is standard deviation as a percentage of the mean**
 
@@ -321,12 +326,10 @@ The standard deviation has the same units as the measurements (mm in this case),
 |------------|-----------|----------|-------|
 | mean | $\mu$ | $\bar{Y}$ | measurement unit |
 | standard deviation | $\sigma$ | $s$ | measurement unit |
-| variance | $\sigma^2$ | $s$ | measurement unit$^2$ |
+| variance | $\sigma^2$ | $s^2$ | measurement unit$^2$ |
 | coefficient of variation | $\sigma/\mu \times 100\%$ | CV | percent (%) |
 
-Notes:
-
-- CV is useful for comparing data with different measurement units
+Note: CV is useful for comparing data with different measurement units
 
 ## [Coefficient of variation]{.alert}
 
@@ -360,19 +363,37 @@ Data from Gleditsch, J. M., & Sperry, J. H. (2020). *Ecology and Evolution*, 10(
 
 $$\mathrm{CV} = \frac{s}{\bar{Y}} \times 100\% = \frac{`r wrsh_s`}{`r m`} \times 100\% = `r round(wrsh_s / m * 100, 2)` \%$$
 
-## Describing location and spread of numerical data
+## Location and spread of numerical data
+
+::: {.columns}
+
+::: {.column width=35%}
+
+::: {.pause-think}
 
 - Rank species by mean beak length by eye
 - Rank species by standard deviation beak length by eye
 
-```{r fig.width=4, fig.height=2.75, fig.align='center'}
+:::
+
+:::
+
+::: {.column width=65%}
+
+::: {.r-stack}
+
+::: {.fragment .fade-out}
+
+```{r}
+#| fig-width: 7.5
+#| fig-height: 5
+
 gp
 ```
 
-## Describing location and spread of numerical data
+:::
 
-- Rank species by mean beak length by eye
-- Rank species by standard deviation beak length by eye
+::: {.fragment}
 
 ```{r}
 bd |>
@@ -383,11 +404,24 @@ bd |>
         digits = c(0, 2, 2, 0))
 ```
 
-Note: statistics for larger data set (not subset of 8)
+Note: statistics for all data (not subset of 8)
+
+:::
+
+:::
+
+:::
+
+:::
+
+::: {.fragment}
 
 The mean and the spread increase together. This is common for morphological data.
 
-## Describing location and spread of numerical data
+:::
+
+
+## Location and spread of numerical data
 
  Descriptor | Parameter | Estimate | Units
 ------------|-----------|----------|-------
@@ -401,45 +435,69 @@ Notes:
 
 If $n$ is *odd*:
 
-$$\text{Median} = Y_{([n+1]/2)}$$
+$$\text{Median} = Y_{\left(\frac{n+1}{2}\right)}$$
 If $n$ is *even*:
 
-$$\text{Median} = [Y_{(n/2)} + Y_{(n/2+1)}]/2$$
+$$\text{Median} = \frac{Y_{\left(\frac{n}{2}\right)} + Y_{\left(\frac{n}{2} + 1\right)}}{2}$$
 
 ## Median
 
 ```{r}
+#| fig-width: 12
+#| fig-height: 2.5
+#| fig-align: center
 
 X <- data.frame(wrsh = sort(wrsh[1:8]),
                 label = sort(wrsh[1:8]), i = 1:8)
 
+# Data frame to ensure calculations below are correct and easily portable
+df <- rename(X, Y = wrsh) |>
+  arrange(Y)
+Y <- df$Y
+n <- nrow(df)
+
 gp <- ggplot(X, aes(x = i, y = 0, label = label)) +
-    geom_text(vjust = -0.5, size = 6) +
+    geom_text(vjust = -0.5, 
+              size = 8) +
     geom_path(data = data.frame(i = range(X$i) + c(-0.5, 0.5),
                                 y = 0, label = NA),
-              color = "tomato", size = 2) +
-  annotate("line", x = rep(nrow(X) / 2 + 0.5, 2), y = c(3, 1),
-           arrow = arrow(length = unit(0.5, "cm")), color = "tomato", size = 2) +
-  annotate("text", x = nrow(X) / 2 + 0.5, y = 3, vjust = -0.5,
-           label = "Median", size = 12) +
-  ylim(0, 4) +
-  coord_equal() +
-  theme_void()
+              color = "tomato", linewidth = 2) +
+    annotate("line", 
+             x = rep(nrow(X) / 2 + 0.5, 2), 
+             y = c(3, 1),
+             arrow = arrow(length = unit(0.5, "cm")), 
+             color = "tomato", 
+             linewidth = 2) +
+    annotate("text", 
+             x = nrow(X) / 2 + 0.5, 
+             y = 3, 
+             vjust = -0.5,
+             label = "Median", 
+             size = 12) +
+    annotate("text", 
+             x = X$i, 
+             y = 0, 
+             label = X$i, 
+             vjust = 2, 
+             size = 6,
+             fontface = "italic") +
+    ylim(-0.5, 4.5) +
+    theme_void() 
+    
 
 gp
-
-# Data frame to ensure calculations below are correct and easily portable
-df = rename(X, Y = wrsh) |>
-  arrange(Y)
-Y = df$Y
-n = nrow(df)
 ```
 
-$$n = `r nrow(X)`$$
+$$
+\begin{align}
+n &= `r nrow(X)` \text{ (even)} \\
+\text{Median} = \frac{Y_4 + Y_5}{2} &= \frac{`r Y[n/2]` + `r Y[n/2+1]`}{2} = `r sprintf("%.2f", round(median(Y), 2))`~\text{mm}
+\end{align}
+$$
 
-$$\text{Median} = \frac{Y_4 + Y_5}{2} = \frac{`r Y[n/2]` + `r Y[n/2+1]`}{2} = `r sprintf("%.2f", round(median(Y), 2))`~\text{mm}$$
 
-## Describing location and spread of numerical data
+
+## Location and spread of numerical data
 
  Descriptor | Parameter | Estimate | Units
 ------------|-----------|----------|-------
@@ -452,41 +510,70 @@ Notes:
 
 ## Interquartile range
 
-```{r, warning=FALSE,message=FALSE}
+```{r}
+#| fig-width: 12
+#| fig-height: 2.5
+#| fig-align: center
 
-gp +
-  annotate("line", x = rep(nrow(X) / 4 + 0.5, 2), y = c(3, 1),
-           arrow = arrow(length = unit(0.5, "cm")), color = "tomato", size = 2) +
-  annotate("text", x = nrow(X) / 4 + 0.5, y = 3, vjust = -0.1,
-           label = "First\nquartile", size = 12) +
-  ylim(0, 5)
+gp2 <- gp +
+    annotate("line", 
+             x = rep(nrow(X) / 4 + 0.5, 2), 
+             y = c(2.25, 1),
+             arrow = arrow(length = unit(0.5, "cm")), 
+             color = "tomato", 
+             linewidth = 2) +
+    annotate("text", 
+             x = nrow(X) / 4 + 0.5, 
+             y = 2.25, 
+             vjust = -0.1,
+             label = "First\nquartile", 
+             size = 12) 
 
+gp2
 ```
 
-$$j = 0.25 n = 0.25 \times `r n` = `r ceiling(0.25 * n)`$$
+$$
+\begin{align}
+j &= 0.25 n = 0.25 \times `r n` \\
+&= `r ceiling(0.25 * n)` \\
+\text{First quartile} &= \frac{Y_`r ceiling(n / 4)` + Y_`r ceiling(n / 4) + 1`}{2} = \frac{`r Y[ceiling(n / 4)]` + `r Y[ceiling(n / 4)+1]`}{2} = `r sprintf("%.2f", round( (Y[ceiling(n / 4)] + Y[ceiling(n / 4)+1]) / 2, 2))`~\text{mm}
+\end{align}
+$$
 
-$$\text{First quartile} = \frac{Y_`r ceiling(n / 4)` + Y_`r ceiling(n / 4) + 1`}{2} = \frac{`r Y[ceiling(n / 4)]` + `r Y[ceiling(n / 4)+1]`}{2} = `r sprintf("%.2f", round( (Y[ceiling(n / 4)] + Y[ceiling(n / 4)+1]) / 2, 2))`~\text{mm}$$
+
 
 ## Interquartile range
 
-```{r, warning=FALSE,message=FALSE}
+```{r}
+#| fig-width: 12
+#| fig-height: 2.5
+#| fig-align: center
 
-gp +
-  annotate("line", x = rep(nrow(X) / 4 + 0.5, 2), y = c(3, 1),
-           arrow = arrow(length = unit(0.5, "cm")), color = "tomato", size = 2) +
-  annotate("text", x = nrow(X) / 4 + 0.5, y = 3, vjust = -0.1,
-           label = "First\nquartile", size = 12) +
-  annotate("line", x = rep(nrow(X) * 0.75 + 0.5, 2), y = c(3, 1),
-           arrow = arrow(length = unit(0.5, "cm")), color = "tomato", size = 2) +
-  annotate("text", x = nrow(X) * 0.75 + 0.5, y = 3, vjust = -0.1,
-           label = "Third\nquartile", size = 12) +
-  ylim(0, 5)
+gp2 +
+    annotate("line", 
+             x = rep(nrow(X) * 0.75 + 0.5, 2), 
+             y = c(2.25, 1),
+             arrow = arrow(length = unit(0.5, "cm")), 
+             color = "tomato", 
+             linewidth = 2) +
+    annotate("text", 
+             x = nrow(X) * 0.75 + 0.5, 
+             y = 2.25, 
+             vjust = -0.1,
+             label = "Third\nquartile", 
+             size = 12) 
 
 ```
 
-$$k = 0.75 n = 0.75 \times `r n` = `r ceiling(0.75 * n)`$$
+$$
+\begin{align}
+k &= 0.75 n = 0.75 \times `r n` \\
+&= `r ceiling(0.75 * n)` \\
+\text{Third quartile} &= \frac{Y_{`r ceiling(n * 0.75)`} + Y_{`r ceiling(n * 0.75) + 1`}}{2} = \frac{`r Y[ceiling(n * 0.75)]` + `r Y[ceiling(n * 0.75)+1]`}{2} = `r sprintf("%.2f", round( (Y[ceiling(n * 0.75)] + Y[ceiling(n * 0.75)+1]) / 2, 2))`~\text{mm}
+\end{align}
+$$
 
-$$\text{Third quartile} = \frac{Y_{`r ceiling(n * 0.75)`} + Y_{`r ceiling(n * 0.75) + 1`}}{2} = \frac{`r Y[ceiling(n * 0.75)]` + `r Y[ceiling(n * 0.75)+1]`}{2} = `r sprintf("%.2f", round( (Y[ceiling(n * 0.75)] + Y[ceiling(n * 0.75)+1]) / 2, 2))`~\text{mm}$$
+
 
 ## Interquartile range
 
@@ -505,9 +592,7 @@ $$\mathit{IQR} = `r sprintf("%.2f", round(third_quartile, 2))` - `r sprintf("%.2
 ------------|-----------|----------|-------
  proportion     | proportion    | $\hat{p}$      | probability
 
-Notes:
 
-- the [sample proportion]{.alert} is similar to the [sample mean]{.alert}
 
 ## [Sample proportion]{.alert}
 
@@ -521,19 +606,26 @@ $$
 \hat{p} = \frac{N_{[Y = \text{category}]}}{n}
 $$
 
-## [Sample proportion]{.alert}
-
-Heads or tails?
-
-`H T T T H H T H T T`
-
-![](/img/2023-american-women-quarters-coin-edith-kanakaole-uncirculated-reverse-768x768.jpg)
+Note: the [sample proportion]{.alert} is similar to the [sample mean]{.alert}
 
 ## [Sample proportion]{.alert}
 
 Heads or tails?
 
+::: {.columns}
+
+::: {.column}
+
 `H T T T H H T H T T`
+
+![](/img/2023-american-women-quarters-coin-edith-kanakaole-uncirculated-reverse-768x768.jpg){width="60%"}
+
+:::
+
+::: {.column}
+
+
+::: {.fragment}
 
 $$
 N_{[Y = \text{tails}]} = 6
@@ -545,6 +637,12 @@ $$
 $$
 \hat{p}_\text{tails} = 0.6
 $$
+
+:::
+
+:::
+
+:::
 
 ## Edith Kanakaʻole
 
@@ -582,4 +680,4 @@ When data are skewed and/or there are many extreme values
 ## Rounding
 
 * No standard rules
-* For this class, round to 2 decimal places
+* For this class, round to 2 decimal places, unless otherwise noted
