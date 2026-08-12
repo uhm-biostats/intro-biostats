@@ -1,0 +1,57 @@
+---
+format:
+  pdf:
+    fig-pos: H
+    include-in-header:
+      - text: |
+          \pagenumbering{gobble}
+          
+geometry:
+  - top=0.25in
+  - left=0.25in
+  - bottom=0.25in
+  - right=0.25in
+---
+
+```{r}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 3.25
+#| message: false
+#| warning: false
+
+library(magick)
+library(grid)
+
+uhu <- image_read("uhu4measure.png") |> 
+    image_flop() |> 
+    image_resize(geometry = geometry_size_percent(50)) |> 
+    image_transparent("white")
+
+uhuloa <- function(loa = 1) {
+    par(mar = rep(0, 4))
+    plot(0:50, type = "n")
+    rect(-0.5, 6, 50.5, 13, col = "gray")
+    text(0.5, 7, labels = "cm", cex = 0.75)
+    
+    segments(x0 = 0, y0 = 12, x1 = 50, lwd = 0.5)
+    segments(x0 = 0:50, y0 = 10, y1 = 12, lwd = 0.5)
+    segments(x0 = (0:49) + 0.5, y0 = 10.75, y1 = 12, lwd = 0.5)
+    segments(x0 = seq(0.1, 49.9, by = 0.1), y0 = 11.25, y1 = 12, lwd = 0.25)
+    
+    text(0:50, rep(11, 51), labels = 0:50, cex = 0.5, pos = 1)
+    
+    
+    xr <- par("usr")[1:2]
+    p <- 1
+    grid.raster(uhu, x = (0 - xr[1]) / diff(xr), 
+                hjust = 0, width = loa * 50 / diff(xr)) 
+}
+
+set.seed(123)
+ll <- runif(300, min = 0.4, max = 0.8)
+
+for(i in ll) {
+    uhuloa(i)
+}
+```
