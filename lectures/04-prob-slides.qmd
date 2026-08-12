@@ -20,17 +20,13 @@ library(viridis)
 [lūlū]{.alert}
 :::
 
-## Learning Objectives
+## Learning goals
 
 1. Define [random trial]{.alert}, [event]{.alert}, and [outcome]{.alert}
 2. Define [probability]{.alert}
 3. Describe discrete and continuous [probability distributions]{.alert}
-
-Next lecture:
-
-3. More on discrete and continuous [probability distributions]{.alert}
 4. Determine if events are [mutually exclusive]{.alert}
-5. Determine if events are [indipendent]{.alert}
+5. Determine if events are [independent]{.alert}
 
 ## Define [random trial]{.alert}
 
@@ -45,9 +41,9 @@ These are all [random trials]{.alert}
 
 ## Define [random trial]{.alert}
 
-*A [random trial]{.alert} is a process or experiment that has two or more possible outcomes whose occurrence cannot be predicted with certainty*
+> A [random trial]{.alert} is a process or experiment that has two or more possible outcomes whose occurrence cannot be predicted with certainty
 
-![](/img/die_roll.png)
+![](/img/die_roll.png){width="40%" fig-align="center"}
 
 ## Define [event]{.alert} and [outcome]{.alert}
 
@@ -63,7 +59,7 @@ The [random trial:]{.alert}
 
 you roll the die
 
-![](/img/die_roll.png){width="3cm"}
+![](/img/die_roll.png){width="6cm"}
 :::
 
 ::: {.column width="28%"}
@@ -71,7 +67,7 @@ An [event:]{.alert}
 
 you get a 5
 
-![](/img/5_die.png){width="1.5cm"}
+![](/img/5_die.png){width="2.5cm"}
 :::
 
 ::: {.column width="38%"}
@@ -145,7 +141,9 @@ Why is 7 a lucky number in many cultures?
 
 Probability is all the ways you could get a specific event, divided by the number of possible outcomes
 
-```{r eval = FALSE, echo = TRUE}
+```{r}
+#| echo: true
+
 # all the ways to get 7 from 2 dice:
 # (1, 6); (6, 1); (2, 5); (5, 2)
 # (3, 4); (4, 3)
@@ -155,14 +153,18 @@ Probability is all the ways you could get a specific event, divided by the numbe
 6 * 6
 
 # probability of rolling a 7:
-6 / 36 # = 1/6
+6 / 36 
 ```
+
 
 ## Define [probability]{.alert}
 
 Probability is all the ways you could get a specific event, divided by the number of possible outcomes
 
-```{r echo = TRUE, eval = FALSE}
+
+```{r}
+#| echo: true
+
 # simulate it
 nroll <- 10000
 crap <- replicate(nroll, {
@@ -175,32 +177,20 @@ crap <- replicate(nroll, {
 sum(crap == 7) / nroll # this should be about 1/6
 ```
 
-## Define [probability]{.alert}
 
-Probability is all the ways you could get a specific event, divided by the number of possible outcomes
-
-```{r echo = TRUE, eval = TRUE}
-# simulate it
-nroll <- 10000
-crap <- replicate(nroll, {
-    d1 <- sample(6, 1)
-    d2 <- sample(6, 1)
-
-    d1 + d2
-})
-```
-
-Instead of looking at one probability:
-
-```{r echo = TRUE, eval = FALSE}
-sum(crap == 7) / nroll # this should be about 1/6
-```
 
 ## Define [probability distribution]{.alert}
 
-We could make a histogram-looking thing of all probabilities:
+We could make a histogram-looking thing of probabilities of all the possible outcomes:
 
-```{r dicedist, echo = FALSE, eval = TRUE, fig.width=4, fig.height=2, cache=TRUE}
+```{r}
+#| label: dicedist
+#| fig-width: 4
+#| fig-height: 2
+#| fig-align: center
+#| out-width: "7in"
+#| cache: true
+
 ggplot(data.frame(sum_of_2_dice = crap), aes(x = sum_of_2_dice)) +
     geom_histogram(aes(y = after_stat(density)),
                    binwidth = 1, color = "black") +
@@ -212,7 +202,7 @@ This histogram-looking thing is called a [probability distribution]{.alert}
 
 ## Define [probability distribution]{.alert}
 
-![](/img/2_dice_hist.png)
+![](/img/2_dice_hist.png){width="70%" fig-align="center"}
 
 This histogram-looking thing is called a [discrete probability distribution]{.alert}
 
@@ -220,27 +210,19 @@ This histogram-looking thing is called a [discrete probability distribution]{.al
 
 Probability is everywhere!
 
-<https://www.youtube.com/watch?v=zJN5W-EreVs&ab>
+```{=html}
+<iframe width="1120" height="630" src="https://www.youtube.com/embed/zJN5W-EreVs?si=Uj8ZwwHzUeqI1X-u&start=70&end=89" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+```
 
 ## Why do we care?
 
 ::: columns
-::: {.column width="50%"}
+::: {.column width="60%"}
 Probability is everywhere!
 
 *If I conduct an insect survey, how many species will I find?*
-:::
 
-::: {.column width="50%"}
-![](/img/hi_arth.png)
-:::
-:::
-
-## Why do we care?
-
-Probability is everywhere!
-
-*If I conduct an insect survey, how many species will I find?* What are all the outcomes:
+::: {.fragment style="font-size: 70%"}
 
 | Process | Event |
 |---------|-------|
@@ -253,37 +235,49 @@ Probability is everywhere!
 | N populations establish, none go extinct | $S = N$ |
 | $\cdots$ | $\cdots$ |
 
-*Complex counting!*
-
-## Why do we care?
-
-::: columns
-::: {.column width="50%"}
-Probability is everywhere!
-
-*If I conduct an insect survey, how many species will I find?*
-
-Different forces in nature, like speciation or species interactions, change the probability of different processes.  In effect, those forces *load the dice* differently
 :::
 
-::: {.column width="50%"}
+::: {.fragment}
+
+**Complex counting!**
+
+:::
+:::
+
+::: {.column width="40%"}
 ![](/img/hi_arth.png)
 :::
 :::
 
+
+
 ## Why do we care?
 
 ::: columns
-::: {.column width="50%"}
+::: {.column width="60%"}
 Probability is everywhere!
 
 *If I conduct an insect survey, how many species will I find?*
 
-Different forces in nature, like speciation or species interactions, change the probability of different processes.  In effect, those forces *load the dice* differently
+Different forces in nature, like speciation or species interactions, change the probability of different processes.  In effect, those forces **load the dice** differently
 :::
 
-::: {.column width="50%"}
-```{r echo = FALSE, eval = TRUE, fig.width=3, fig.height=4}
+::: {.column width="40%"}
+
+:::: {.r-stack}
+
+::::: {.fragment .fade-out}
+![](/img/hi_arth.png)
+:::::
+
+::::: {.fragment}
+
+```{r}
+#| fig-width: 3
+#| fig-height: 4
+#| fig-align: center
+#| out-width: "5in"
+
 dat <- data.frame(y = c(rpois(100, 50), rpois(100, 80)),
                   speciation = c(rep("less speciation", 100),
                                  rep("more speciation", 100)))
@@ -292,61 +286,75 @@ ggplot(dat, aes(x = y, fill = speciation)) +
     geom_histogram(aes(y = after_stat(density)), bins = 20) +
     facet_grid(rows = vars(speciation)) +
     theme_cowplot() +
+    scale_fill_viridis_d(option = "A", direction = -1, 
+                         begin = 0.2, end = 0.8) +
     theme(legend.position = "none") +
     xlab("Number of species")
 ```
+
+:::::
+
+
+
+::::
 :::
 :::
+
+
+
 
 ## Why do we care?
 
 ::: columns
-::: {.column width="50%"}
+::: {.column width="60%"}
 *Remember noni?*
 
-Suppose we run a clinical study of the effect of noni juice on inflammatory arthritis. We randomly assign half the patients to receive 10mg noni extract and the other half to receive a placebo. We measure change in erythrocyte sedimentation rate (*sed rate*) in all patients before and after treatment (either 10mg noni or placebo)
+::: {.r-stack}
+
+::: {.fragment .fade-in-then-out}
+Suppose we run a clinical study of the effect on noni juice on inflammatory arthritis. We randomly assign half the patients to receive 10mg noni extract and the other half to receive a placebo. We measure change in erythrocyte sedimentation rate (*sed rate*) in all patients before and after treatment (either 10mg noni or placebo)
 :::
 
-::: {.column width="50%"}
-![](/img/noni.jpg){width="100%"}
-:::
-:::
-
-## Why do we care?
-
-::: columns
-::: {.column width="50%"}
-*Remember noni?*
-
-Noni is a crop brought to Hawaiʻi by Kānaka Moali. The ʻike of its use comes from inter-generational kilo.
+::: {.fragment .fade-in-then-out}
+Noni is a crop brought to Hawaiʻi by Kānaka ʻŌiwi. The ʻike of its use comes from inter-generational kilo.
 
 - Who gets to decide whether/how to commodify noni?
-- This clinical trial should be led by Native Hawaiian practitioners in collaboration with scholars who may or may not also be Native Hawaiian
+- Any clinical trial should be led by lāʻau lapaʻau practitioners and benefits governed by ʻŌiwi communities
 :::
 
-::: {.column width="50%"}
-![](/img/noni.jpg){width="100%"}
+:::
+
+:::
+
+::: {.column width="40%"}
+![](/img/noni.jpg){width="80%"}
 :::
 :::
+
+
 
 ## Why do we care?
 
 ::: columns
-::: {.column width="50%"}
-*Remember noni?*
+::: {.column width="60%"}
 
 Suppose we run a clinical study of the effect of noni juice on inflammatory arthritis. We randomly assign half the patients to receive 10mg noni extract and the other half to receive a placebo. We measure change in erythrocyte sedimentation rate (*sed rate*) in all patients before and after treatment (either 10mg noni or placebo)
 :::
 
-::: {.column width="50%"}
-```{r, fig.width=3, fig.height=4}
+::: {.column width="40%"}
+```{r}
+#| fig-width: 4
+#| fig-height: 4
+#| fig-align: center
+#| out-width: "5in"
+
 set.seed(1)
 dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)),
                   group = c(rep("10mg noni", 100),
                             rep("placebo", 100)))
 
 ggplot(dat, aes(x = sed, fill = group)) +
-    geom_histogram(aes(y = after_stat(density)), bins = 20) +
+    geom_histogram(aes(y = after_stat(density)), bins = 24) +
     facet_grid(rows = vars(group)) +
     theme_cowplot() +
     theme(legend.position = "none") +
@@ -355,30 +363,47 @@ ggplot(dat, aes(x = sed, fill = group)) +
 :::
 :::
 
-## Define [continuous probability distribution]{.alert}
 
-```{r sedhist, echo = FALSE, eval = TRUE, fig.width=4, fig.height=2, cache=TRUE}
+## [Continuous probability distributions]{.alert}
+
+::: {.r-stack}
+
+::: {.fragment .fade-in-then-out}
+```{r}
+#| label: sedhist
+#| fig-width: 4
+#| fig-height: 2
+#| out-width: "5in"
+#| cache: true
+
 ggplot(dat[dat$group != "placebo", ], aes(x = sed, fill = group)) +
-    geom_histogram(aes(y = after_stat(density)), bins = 20) +
+    geom_histogram(aes(y = after_stat(density)), bins = 23) +
     facet_grid(rows = vars(group)) +
     theme_cowplot() +
     theme(legend.position = "none") +
     xlab("Change in sed rate [mm/hr]\n(after - before)")
 ```
 
-*Change in sed rate [mm/hr] is* **not** *an integer*
+*Change in sed rate [mm/hr] is* ***not*** *an integer*
 
 What do we do?!
+:::
 
-## Define [continuous probability distribution]{.alert}
 
-![](/img/sed_hist.png)
+::: {.fragment .fade-in-then-out}
+![](/img/sed_hist.png){width="80%" fig-align="center"}
+:::
 
-## Define [continuous probability distribution]{.alert}
+::: {.fragment .fade-in-then-out}
 
 Imagine we had millions of data points, and we could draw very narrow bins
 
-```{r echo = FALSE, eval = TRUE, fig.width=4, fig.height=2}
+```{r}
+#| fig-width: 4
+#| fig-height: 2
+#| out-width: "8in"
+#| fig-align: center
+
 dat <- data.frame(sed = rnorm(1000000, -2), group = "10mg noni")
 
 ggplot(dat, aes(x = sed, fill = group)) +
@@ -391,11 +416,20 @@ ggplot(dat, aes(x = sed, fill = group)) +
 
 We would get a very smooth looking distribution
 
-## Define [continuous probability distribution]{.alert}
+:::
+
+::: {.fragment .fade-in-then-out}
 
 Continuous probability distributions are typically visualized as smooth curves, *without bars*
 
-```{r seddens, echo = FALSE, eval = TRUE, fig.width=4, fig.height=2, cache=TRUE}
+```{r}
+#| label: seddens
+#| fig-width: 4
+#| fig-height: 2
+#| out-width: "8in"
+#| fig-align: center
+#| cache: true
+
 ggplot(dat, aes(x = sed, fill = group)) +
     geom_density() +
     facet_grid(rows = vars(group)) +
@@ -404,29 +438,29 @@ ggplot(dat, aes(x = sed, fill = group)) +
     xlab("Change in sed rate [mm/hr]\n(after - before)")
 ```
 
-## Define [continuous probability distribution]{.alert}
+:::
+
+::: {.fragment .fade-in-then-out}
 
 Continuous probability distributions are typically visualized as smooth curves, *without bars*
 
-![](/img/sed_den_area.png)
+![](/img/sed_den_area.png){width="80%" fig-align="center"}
+:::
+
+:::
 
 # Break!
 
-## Learning Objectives
+## Learning goals
 
-Last lecture:
 
 1. Define [random trial]{.alert}, [event]{.alert}, and [outcome]{.alert} $\checkmark$
 2. Define [probability]{.alert} $\checkmark$
 3. Describe discrete and continuous [probability distributions]{.alert} $\checkmark$
-
-This lecture:
-
-3. More on discrete and continuous [probability distributions]{.alert}
 4. Determine if events are [mutually exclusive]{.alert}
-5. Determine if events are [indipendent]{.alert}
+5. Determine if events are [independent]{.alert}
 
-## Define [random trial]{.alert}, [event]{.alert}, and [outcome]{.alert}
+## [Probability]{.alert} recap
 
 ::: columns
 ::: {.column width="34%"}
@@ -434,7 +468,7 @@ The [random trial:]{.alert}
 
 you roll the die
 
-![](/img/die_roll.png){width="3cm"}
+![](/img/die_roll.png){width="6cm"}
 :::
 
 ::: {.column width="28%"}
@@ -442,7 +476,7 @@ An [event:]{.alert}
 
 you get a 5
 
-![](/img/5_die.png){width="1.5cm"}
+![](/img/5_die.png){width="2.5cm"}
 :::
 
 ::: {.column width="38%"}
@@ -452,11 +486,11 @@ all integers 1---6
 :::
 :::
 
-## Define [probability]{.alert}
+## [Probability]{.alert} recap
 
 *The [probability]{.alert} of an event is the proportion of times that event would occur if we repeated a random trial over and over again under the same conditions. Probability always ranges between 0 and 1*
 
-## Define [probability]{.alert}
+## [Probability]{.alert} recap
 
 With a fair die, every outcome has equal probability:
 
@@ -490,127 +524,82 @@ grid.arrange(d1, tableGrob(pr[1, ], theme = ttheme_default(base_size = 32)),
              ncol = 2)
 ```
 
-## Why do we care?
 
-::: columns
-::: {.column width="50%"}
-Probability is everywhere!
+## [Discrete probability distribution]{.alert}
 
-*If I conduct an insect survey, how many species will I find?*
-
-Different forces in nature, like speciation or species interactions, change the probability of different processes.  In effect, those forces *load the dice* differently
-:::
-
-::: {.column width="50%"}
-![](/img/hi_arth.png)
-:::
-:::
-
-## Why do we care?
-
-::: columns
-::: {.column width="50%"}
-Probability is everywhere!
-
-*If I conduct an insect survey, how many species will I find?*
-
-Different forces in nature, like speciation or species interactions, change the probability of different processes.  In effect, those forces *load the dice* differently
-:::
-
-::: {.column width="50%"}
-```{r echo = FALSE, eval = TRUE, fig.width=3, fig.height=4}
-dat <- data.frame(y = c(rpois(100, 50), rpois(100, 80)),
-                  speciation = c(rep("less speciation", 100),
-                                 rep("more speciation", 100)))
-
-ggplot(dat, aes(x = y, fill = speciation)) +
-    geom_histogram(aes(y = after_stat(density)), bins = 20) +
-    facet_grid(rows = vars(speciation)) +
-    theme_cowplot() +
-    theme(legend.position = "none") +
-    xlab("Number of species")
-```
-:::
-:::
-
-## Define [probability distribution]{.alert}
-
-![](/img/2_dice_hist.png)
+![](/img/2_dice_hist.png){width="70%" fig-align="center"}
 
 This histogram-looking thing is called a [discrete probability distribution]{.alert}
 
-## Why do we care?
+## [Continuous probability distribution]{.alert}
 
 ::: columns
-::: {.column width="50%"}
-*Remember noni?*
+::: {.column width="60%"}
 
 Suppose we run a clinical study of the effect of noni juice on inflammatory arthritis. We randomly assign half the patients to receive 10mg noni extract and the other half to receive a placebo. We measure change in erythrocyte sedimentation rate (*sed rate*) in all patients before and after treatment (either 10mg noni or placebo)
 :::
 
-::: {.column width="50%"}
-![](/img/noni.jpg){width="100%"}
-:::
-:::
+::: {.column width="40%"}
+```{r}
+#| fig-width: 4
+#| fig-height: 4
+#| fig-align: center
+#| out-width: "5in"
 
-## Why do we care?
-
-::: columns
-::: {.column width="50%"}
-*Remember noni?*
-
-Noni is a crop brought to Hawaiʻi by Kānaka Moali. The ʻike of its use comes from inter-generational kilo.
-
-- Who gets to decide whether/how to commodify noni?
-- This clinical trial should be led by Native Hawaiian practitioners in collaboration with scholars who may or may not also be Native Hawaiian
-:::
-
-::: {.column width="50%"}
-![](/img/noni.jpg){width="100%"}
-:::
-:::
-
-## Why do we care?
-
-::: columns
-::: {.column width="50%"}
-*Remember noni?*
-
-Suppose we run a clinical study of the effect of noni juice on inflammatory arthritis. We randomly assign half the patients to receive 10mg noni extract and the other half to receive a placebo. We measure change in erythrocyte sedimentation rate (*sed rate*) in all patients before and after treatment (either 10mg noni or placebo)
-:::
-
-::: {.column width="50%"}
-```{r, fig.width=3, fig.height=4}
 set.seed(1)
 dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)),
                   group = c(rep("10mg noni", 100),
                             rep("placebo", 100)))
 
 ggplot(dat, aes(x = sed, fill = group)) +
-    geom_histogram(aes(y = after_stat(density)), bins = 20) +
+    geom_histogram(aes(y = after_stat(density)), bins = 24) +
     facet_grid(rows = vars(group)) +
     theme_cowplot() +
     theme(legend.position = "none") +
     xlab("Change in sed rate [mm/hr]\n(after - before)")
 ```
+
 :::
 :::
 
-## Define [continuous probability distribution]{.alert}
+::: {.fragment}
+*Change in sed rate [mm/hr] is* ***not*** *an integer*
 
-![](/img/sed_hist.png)
+What do we do?!
+:::
 
-## Define [continuous probability distribution]{.alert}
+## [Continuous probability distribution]{.alert}
 
+::: {.r-stack}
+
+::: {.fragment .fade-in-then-out}
+![](/img/sed_hist.png){width="80%" fig-align="center"}
+:::
+
+::: {.fragment}
 Continuous probability distributions are typically visualized as smooth curves, *without bars*
 
-![](/img/sed_den_area.png)
+![](/img/sed_den_area.png){width="80%" fig-align="center"}
+:::
+
+:::
+
+
 
 ## Connecting descriptions of data to probability
 
-Let's calculate the mean and SD for these data
+::: {.columns}
 
-```{r echo = FALSE, eval = TRUE, fig.width=4, fig.height=2.75}
+::: {.column width="60%"}
+
+Let's plot the mean and SD for these data
+
+```{r}
+#| fig-width: 4
+#| fig-height: 2.75
+#| fig-align: center
+#| out-width: "6in"
+
 set.seed(1)
 dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)),
                   group = c(rep("10mg noni", 100),
@@ -637,41 +626,95 @@ p + geom_label(data = ann, aes(x = x, y = y, label = labels),
                inherit.aes = FALSE, parse = TRUE)
 ```
 
+:::
+
+::: {.column width="40%"}
+
+::: {.fragment}
+
+::: {.pause-think}
+We say that 95% of the data fall within $\bar{y} \pm 2 s$, what does that mean in terms of probability?
+:::
+
+:::
+
+:::
+
+:::
+
+
 ## Connecting descriptions of data to probability
 
-[Pause & Think:]{.alert} we say that 95% of the data fall within $\bar{y} \pm 2 s$, what does that mean in terms of probability?
 
-```{r echo = FALSE, eval = TRUE, fig.width=4, fig.height=2.75}
-p + geom_label(data = ann, aes(x = x, y = y, label = labels),
-              nudge_x = c(-0.25, 0, 0), inherit.aes = FALSE, parse = TRUE)
-```
 
-## Connecting descriptions of data to probability
+::: {.columns}
 
-[Pause & Think:]{.alert} we say that 95% of the data fall within $\bar{y} \pm 2 s$, what does that mean in terms of probability?
+::: {.column width="60%"}
 
 There is a 0.95 probability a randomly selected data point will be greater than $\bar{y} - 2 s$ and less than $\bar{y} + 2 s$
 
-::: {style="text-align: center;"}
-![](/img/brown_bag.png){height="50%"}
-:::
+![](/img/brown_bag.png){width="30%" fig-align="center"}
 
 "Put the data in a bag and shake it..."
 
+:::
+
+::: {.column width="40%"}
+
+::: {.pause-think}
+We say that 95% of the data fall within $\bar{y} \pm 2 s$, what does that mean in terms of probability?
+:::
+
+
+:::
+
+:::
+
+
+
 ## Connecting descriptions of data to probability
+
+::: {.columns}
+
+::: {.column width="60%"}
 
 Now let's calculate the SE of the mean
 
-```{r echo = FALSE, eval = TRUE, fig.width=4, fig.height=2.75}
+::: {.r-stack}
+
+::: {.fragment .fade-out}
+```{r}
+#| fig-width: 4
+#| fig-height: 2.75
+#| fig-align: center
+#| out-width: "6in"
+
 p + geom_label(data = ann, aes(x = x, y = y, label = labels),
               nudge_x = c(-0.25, 0, 0), inherit.aes = FALSE, parse = TRUE)
 ```
+:::
+
+::: {.fragment .fade-in}
+foo
+:::
+
+:::
+
+:::
+
+:::
+
 
 ## Connecting descriptions of data to probability
 
 Now let's calculate the SE of the mean
 
-```{r echo = FALSE, eval = TRUE, fig.width=4, fig.height=2.75}
+```{r}
+#| fig-width: 4
+#| fig-height: 2.75
+#| fig-align: center
+#| out-width: "6in"
+
 se <- s / sqrt(nrow(noni))
 
 ann$color <- "black"
@@ -783,13 +826,12 @@ ggplot(data.frame(x = ybar + 3.75 * c(-se, se)), aes(x)) +
 :::
 :::
 
-## Rest your brain!
+## Rest your brain
 
 ![](/img/molokai.jpg)
 
-## Learning Objectives
+## Learning goals
 
-3. More on discrete and continuous [probability distributions]{.alert} $\checkmark$
 4. Determine if events are [mutually exclusive]{.alert}
 5. Determine if events are [indipendent]{.alert}
 
