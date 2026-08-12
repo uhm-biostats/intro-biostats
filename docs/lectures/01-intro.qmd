@@ -1,5 +1,0 @@
----
-title: "Lecture: Intro"
----
-
-stub
