@@ -48,7 +48,7 @@ $alert-color: #eb811b;
 .reveal div.pause-think > *:first-child { padding-top: .5em; }
 .reveal div.pause-think > *:last-child { padding-bottom: .5em; margin-bottom: 0; }
 
-
+// center content but not title
 .reveal .slides section {
   height: 100% !important;
   display: flex !important;
@@ -69,4 +69,11 @@ $alert-color: #eb811b;
 .reveal .slides section.top-align > :last-child {
   margin-top: 0;
   margin-bottom: 0;
+}
+
+
+// that messes with block quotes, so fix them
+.reveal .slides blockquote {
+  margin-left: 0;
+  margin-right: 0;
 }
