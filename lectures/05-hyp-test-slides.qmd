@@ -90,6 +90,7 @@ set.seed(1)
 dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)),
                   group = c(rep("10mg noni", 100),
                             rep("placebo", 100)))
+noni_dat <- dat
 
 gnoni <- ggplot(dat, aes(x = sed, fill = group)) +
     geom_histogram(aes(y = after_stat(density)), bins = 20) +
@@ -194,7 +195,7 @@ A [statistical hypothesis]{.alert} has two parts, first:
 
 The proportion of a times a fair coin lands on heads is $\mathbf{p = 0.5}$
 
-There is **no difference** in the proportion of red M&Ms in bags sold in Sams versus those sold at Costco
+There is **no difference** in the proportion of red M&Ms in bags sold at Sams versus those sold at Costco
 
 Patients in the treatment group have the **same probability** of contracting a disease as patients in the control group
 
@@ -342,23 +343,12 @@ $H_\mathrm{A}$:is the convention for the [alternative hypothesis]{.alert}
 ::: columns
 ::: {.column width="50%"}
 ```{r}
-#| fig-align: center
 #| fig-width: 3
 #| fig-height: 4
-#| out-width: "100%"
+#| fig-align: center
+#| out-width: "4in"
 
-set.seed(1)
-dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)),
-                  group = c(rep("10mg noni", 100),
-                            rep("placebo", 100)))
-noni_dat <- dat
-
-ggplot(dat, aes(x = sed, fill = group)) +
-    geom_histogram(aes(y = after_stat(density)), bins = 20) +
-    facet_grid(rows = vars(group)) +
-    theme_cowplot() +
-    theme(legend.position = "none") +
-    xlab("Change in sed rate [mm/hr]\n(after - before)")
+gnoni
 ```
 :::
 
@@ -377,23 +367,23 @@ ggplot(dat, aes(x = sed, fill = group)) +
 
 What is [Null Hypothesis Significance Testing]{.alert}?
 
-## [Null Hypothesis Significance Testing]{.alert}
+::: {.fragment}
 
-What is [Null Hypothesis Significance Testing]{.alert}?  It asks the question:
-
-> What would be the probability of observing the sample estimate, or a more extreme estimate, if the [null hypothesis]{.alert} were true?
-
-> If that probability is small, we say "we reject the null hypothesis"
-
-> If that probability is not small, we say "we fail to reject the null hypothesis"
-
-## [Null Hypothesis Significance Testing]{.alert}
-
-What is [Null Hypothesis Significance Testing]{.alert}?  It asks the question:
+It asks the question:
 
 > What would be the probability of observing the sample estimate, or a more extreme estimate, if the [null hypothesis]{.alert} were true?
 
+::: {.incremental}
+- If that probability is small, we say "we reject the null hypothesis"
+- If that probability is not small, we say "we fail to reject the null hypothesis"
+:::
+
+:::
+
+::: {.fragment}
 The sample estimate of interest depends on the scientific and null hypotheses
+:::
+
 
 ## [Null Hypothesis Significance Testing]{.alert}
 
@@ -405,14 +395,12 @@ The sample estimate of interest depends on the scientific and null hypotheses
 #| fig-align: center
 #| fig-width: 3
 #| fig-height: 4
-#| out-width: "100%"
+#| out-width: "4in"
 
-p <- ggplot(dat, aes(x = sed, fill = group, alpha = 0.5)) +
-    geom_histogram(aes(y = after_stat(density)), bins = 20) +
-    facet_grid(rows = vars(group)) +
-    theme_cowplot() +
-    theme(legend.position = "none") +
-    xlab("Change in sed rate [mm/hr]\n(after - before)")
+
+p <- gnoni
+p$layers[[1]]$aes_params$alpha <- 0.5
+
 
 est <- group_by(dat, group) |>
     summarize(ybar = mean(sed))
@@ -420,7 +408,9 @@ ann <- data.frame(x = est$ybar, y = 0.5, group = est$group,
                   lab = c("bar(Y)['yes noni']",
                           "bar(Y)['no noni']"))
 
-p + geom_vline(est, mapping = aes(xintercept = ybar, color = group), size = 1.5) +
+ydiff <- p + 
+    geom_vline(est, mapping = aes(xintercept = ybar, color = group), 
+               size = 1.5) +
     geom_label(data = ann,
                mapping = aes(x = x, y = y, label = lab),
                parse = TRUE, hjust = "left", nudge_x = 0.1,
@@ -434,37 +424,64 @@ p + geom_vline(est, mapping = aes(xintercept = ybar, color = group), size = 1.5)
                x = -2, y = 0.45, label = expression(bar(Y)["diff"]),
                fill = "white", size = 5) +
     coord_cartesian(xlim = c(-4.5, 2.75), ylim = c(0, 0.55), clip = "off")
+
+ydiff
 ```
 :::
 
 ::: {.column width="50%"}
 - $H_0$: The mean of *change in sedimentation rate* is the same across the two groups
 - $H_A$: The mean is not the same
-- **The estimate of interest:**
+
+:::: {.r-stack}
+
+::: {.fragment .fade-in-then-out}
+::: {.pause-think}
+What is the estimate of interest?
+:::
+:::
+
+::: {.fragment}
+**The estimate of interest:**
 
 $\bar{Y}_\text{diff} = \bar{Y}_\text{yes noni} - \bar{Y}_\text{no noni}$
 :::
+
+::::
+
+:::
 :::
 
 ## [Null Hypothesis Significance Testing]{.alert}
 
 > What would be the probability of observing the sample estimate, or a more extreme estimate, if the [null hypothesis]{.alert} were true?
 
+::: {.fragment}
 When doing [Null Hypothesis Significance Testing]{.alert}, the specific sample estimate we use is called a [test statistic]{.alert}
+:::
 
+::: {.fragment}
 Here we decided the [test statistic]{.alert} is $\bar{Y}_\text{diff}$
+:::
+
+::: {.fragment}
+How do we get the probability distribution of the [test statistic]{.alert} $\bar{Y}_\text{diff}$?
+:::
 
 ## [Null Hypothesis Significance Testing]{.alert}
 
-> What would be the probability of observing the sample estimate, or a more extreme estimate, if the [null hypothesis]{.alert} were true?
+How do we get the probability distribution of the [test statistic]{.alert} $\bar{Y}_\text{diff}$?
 
-How do we get the probability distribution of the [test statistic]{.alert}?
+> In many *many* ***many*** hypothetical repeated studies, where the [null hypothesis]{.alert} is TRUE, what would be the distribution of [test statistics]{.alert}?
 
-## [Null Hypothesis Significance Testing]{.alert}
 
-> In many many **many** hypothetical repeated studies, where the [null hypothesis]{.alert} is TRUE, what would be the distribution of [test statistics]{.alert}?
+::: {.fragment}
+many *many* ***many*** hypothetical repeated studies where the null is TRUE gives us the [sampling distribution]{.alert} of test statistics "under the null"
+:::
 
-From that [sampling distribution]{.alert} of test statistics, we can calculate the probability of observing the test statistic, or a more extreme value
+::: {.fragment style="text-align: center;"}
+"The Null Distribution"
+:::
 
 ## Simulating a sampling distribution of the test statistic under the null hypothesis
 
@@ -472,7 +489,7 @@ From that [sampling distribution]{.alert} of test statistics, we can calculate t
 "The Null Distribution"
 :::
 
-## Simulating the null distribution
+## Simulating the null distribution {.top-align}
 
 ```{r}
 #| label: null-dist
@@ -491,7 +508,7 @@ all_null <- replicate(1000, {
 })
 ```
 
-## Simulating the null distribution
+## Simulating the null distribution {.top-align}
 
 ```{r}
 #| echo: true
@@ -506,7 +523,10 @@ ggplot(null_dist, aes(x = test_stat_null)) +
     geom_histogram(aes(y = after_stat(density)))
 ```
 
-## Simulating the null distribution
+## Simulating the null distribution {.top-align}
+
+TO-DO: go back to the bag example and think about putting all data in the bag and scrambling it
+
 
 ```{r}
 #| echo: true
@@ -551,33 +571,37 @@ mean(null_dist$test_stat_null > test_stat |
          null_dist$test_stat_null < -test_stat)
 ```
 
-This probability has a special name: the [p-value]{.alert}
+This probability has a special name: the [P-value]{.alert}
 
 ## [Null Hypothesis Significance Testing]{.alert}
 
 Null Hypothesis Significance Testing asks the question:
 
-> What would be the probability (the [p-value]{.alert}) of observing the test statistic, or a more extreme value, if the [null hypothesis]{.alert} were true?
+> What would be the probability (the [P-value]{.alert}) of observing the test statistic, or a more extreme value, if the [null hypothesis]{.alert} were true?
 
-> If the [p-value]{.alert} is small, we say "we reject the null hypothesis"
-
-> If the [p-value]{.alert} is not small, we say "we fail to reject the null hypothesis"
-
-::: {style="text-align: center;"}
-How small is small enough?
+::: {.incremental}
+- If the [P-value]{.alert} is small, we say "we reject the null hypothesis"
+- If the [P-value]{.alert} is not small, we say "we fail to reject the null hypothesis"
+- How small is small enough?
 :::
 
 ## [Null Hypothesis Significance Testing]{.alert}
 
 ::: {style="text-align: center;"}
-How small of a [p-value]{.alert} is small enough?
+**How small of a [P-value]{.alert} is small enough?**
 :::
 
-Answer: depends on the desired [significance level]{.alert}
+<br>
 
+::: {.fragment}
+Answer: depends on the desired [significance level]{.alert}
+:::
+
+::: {.incremental}
 - we write the significance level as $\alpha$
 - in biology, $\alpha$ is often 0.05
 - remember 95% Confidence Intervals? Same thing as $\alpha = 0.05$
+:::
 
 ## Can we reject the null?
 
@@ -587,35 +611,9 @@ Answer: depends on the desired [significance level]{.alert}
 #| fig-align: center
 #| fig-width: 3
 #| fig-height: 4
-#| out-width: "100%"
+#| out-width: "4in"
 
-p <- ggplot(dat, aes(x = sed, fill = group, alpha = 0.5)) +
-    geom_histogram(aes(y = after_stat(density)), bins = 20) +
-    facet_grid(rows = vars(group)) +
-    theme_cowplot() +
-    theme(legend.position = "none") +
-    xlab("Change in sed rate [mm/hr]\n(after - before)")
-
-est <- group_by(dat, group) |>
-    summarize(ybar = mean(sed))
-ann <- data.frame(x = est$ybar, y = 0.5, group = est$group,
-                  lab = c("bar(Y)['yes noni']",
-                          "bar(Y)['no noni']"))
-
-p + geom_vline(est, mapping = aes(xintercept = ybar, color = group), size = 1.5) +
-    geom_label(data = ann,
-               mapping = aes(x = x, y = y, label = lab),
-               parse = TRUE, hjust = "left", nudge_x = 0.1,
-               size = 5) +
-    geom_segment(data = data.frame(group = "placebo"),
-                 mapping = aes(x = ann$x[1], xend = ann$x[2],
-                               y = 0.6, yend = 0.6),
-                 arrow = arrow(length = unit(0.1, "npc"), ends = "both"),
-                 size = 1.5) +
-    geom_label(data = data.frame(group = "placebo"),
-               x = -2, y = 0.45, label = expression(bar(Y)["diff"]),
-               fill = "white", size = 5) +
-    coord_cartesian(xlim = c(-4.5, 2.75), ylim = c(0, 0.55), clip = "off")
+ydiff
 ```
 :::
 
@@ -634,10 +632,10 @@ Yes!  At significance level $\alpha = 0.05$, we reject the null that noni has no
 1. State $H_0$ and $H_A$
 2. Calculate the test statistic
 3. Generate the null distribution
-5. Calculate the p-value
+5. Calculate the P-value
 6. Decide:
-    - Reject $H_0$ if the p-value is less than or equal to $\alpha$ ($p \le \alpha$)
-    - Fail to reject $H_0$ if p-value is greater than $\alpha$ ($p > \alpha$)
+    - Reject $H_0$ if the P-value is less than or equal to $\alpha$ ($p \le \alpha$)
+    - Fail to reject $H_0$ if P-value is greater than $\alpha$ ($p > \alpha$)
 
 ## [Null Hypothesis Significance Testing]{.alert}: frequent questions
 
@@ -645,8 +643,8 @@ Here is a more typical null distribution and test statistic:
 
 ```{r}
 #| fig-align: center
-#| fig-width: 3
-#| fig-height: 2
+#| fig-width: 3.5
+#| fig-height: 2.75
 #| out-width: "5in"
 
 ybar <- 0
@@ -670,7 +668,9 @@ p <- ggplot(data.frame(x = ybar + 3.75 * c(-se, se)), aes(x)) +
                   geom = "area", fill = "orange") +
     stat_function(fun = dnorm, args = list(mean = ybar, sd = se)) +
     geom_vline(xintercept = ybar + 2.2 * se, size = 1) +
-    annotate("label", 4, 0.45, label = "Observed test stat = 2.2", hjust = "right")
+    annotate("label", 4, 0.45, label = "Observed test stat = 2.2", 
+             hjust = "right") +
+    scale_y_continuous(limits = c(0, 0.47))
 
 p
 ```
@@ -681,112 +681,72 @@ p
 ::: {.column width="50%"}
 ```{r}
 #| fig-align: center
-#| fig-width: 3
-#| fig-height: 2
-#| out-width: "100%"
+#| fig-width: 3.5
+#| fig-height: 2.25
+#| out-width: "5in"
 
 p
 ```
 
-The [p-value]{.alert} is the sum of the probabilities in the two [orange]{style="color: orange;"} regions
+The [P-value]{.alert} is the sum of the probabilities in the two [orange]{style="color: orange;"} regions
 :::
 
 ::: {.column width="50%"}
-**Question:** If the test statistic = -2.2, why is the p-value the sum of both [orange]{style="color: orange;"} regions"
 
-- Because $H_0$ is no difference, and $H_A$ is *any* difference, not distinguishing between positive or negative differences
+::: {.r-stack}
+
+:::: {.fragment .fade-out fragment-index="2"}
+
+::::: {.fragment fragment-index="0"}
+**Question:** If the test statistic = -2.2, why is the P-value the sum of both [orange]{style="color: orange;"} regions?
+:::::
+
+::::: {.fragment fragment-index="1"}
+- Because $H_0$ is no difference, and $H_A$ is *any* difference
 - This type of alternative hypothesis is called a "two tailed" test
-:::
-:::
+:::::
 
-## [Null Hypothesis Significance Testing]{.alert}: frequent questions
+::::
 
-::: columns
-::: {.column width="50%"}
-```{r}
-#| fig-align: center
-#| fig-width: 3
-#| fig-height: 2
-#| out-width: "100%"
+:::: {.fragment .fade-out fragment-index="4"}
 
-p
-```
+::::: {.fragment .fade-in fragment-index="2"}
+**Question:** Why is the P-value the probability of "the test statistic ***or a more extreme value***"?
+:::::
 
-The [p-value]{.alert} is the sum of the probabilities in the two [orange]{style="color: orange;"} regions
-:::
-
-::: {.column width="50%"}
-**Question:** Why is the p-value the probability of "the test statistic or a more extreme value"?
-:::
-:::
-
-## [Null Hypothesis Significance Testing]{.alert}: frequent questions
-
-::: columns
-::: {.column width="50%"}
-```{r}
-#| fig-align: center
-#| fig-width: 3
-#| fig-height: 2
-#| out-width: "100%"
-
-p
-```
-
-The [p-value]{.alert} is the sum of the probabilities in the two [orange]{style="color: orange;"} regions
-:::
-
-::: {.column width="50%"}
-**Question:** Why is the p-value the probability of "the test statistic or a more extreme value"?
-
+::::: {.fragment fragment-index="3"}
 - Because if the null distribution is [continuous]{.alert}, the probability of the exact test statistic will be 0!
-:::
-:::
+- We need an *area under the curve* for a non-zero probability
+:::::
 
-## [Null Hypothesis Significance Testing]{.alert}: frequent questions
+::::
 
-::: columns
-::: {.column width="50%"}
-```{r}
-#| fig-align: center
-#| fig-width: 3
-#| fig-height: 2
-#| out-width: "100%"
+:::: {.fragment .fade-out fragment-index="6"}
 
-p
-```
+::::: {.fragment .fade-in fragment-index="4"}
+**Question:** If we reject $H_0$ at significance level $\alpha = 0.05$ does that mean our [scientific hypothesis]{.alert} was correct?
+:::::
 
-The [p-value]{.alert} is the sum of the probabilities in the two [orange]{style="color: orange;"} regions
-:::
-
-::: {.column width="50%"}
-**Question:** If we reject $H_0$ at significance level $\alpha = 0.05$? Does that mean our alternative hypothesis is true?
-:::
-:::
-
-## [Null Hypothesis Significance Testing]{.alert}: frequent questions
-
-::: columns
-::: {.column width="50%"}
-```{r}
-#| fig-align: center
-#| fig-width: 3
-#| fig-height: 2
-#| out-width: "100%"
-
-p
-```
-
-The [p-value]{.alert} is the sum of the probabilities in the two [orange]{style="color: orange;"} regions
-:::
-
-::: {.column width="50%"}
-**Question:** If we reject $H_0$ at significance level $\alpha = 0.05$? Does that mean our alternative hypothesis is true?
-
-- NO! Just that we reject the null at $\alpha = 0.05$
+::::: {.fragment fragment-index="5"}
+- No, causation is not proven, we just rejected the null at $\alpha = 0.05$
 - Also we might have **incorrectly** rejected the null!
+:::::
+
+::::
+
+
+:::: {.fragment .fade-in fragment-index="6"}
+
+**incorrectly** how?
+
+::::
+
+:::
+
 :::
 :::
+
+
 
 ## Errors in hypothesis testing
 
@@ -796,39 +756,45 @@ There are two types of errors in hypothesis testing
 
 2. Not rejecting the null hypothesis when it's false ([false negative]{.alert})
 
-## [False positive]{.alert}
+## [False positive]{.alert}: Rejecting a true null
 
-False positive: Rejecting a true null
-
+::: {.incremental}
 * This happens with probability $\alpha$
 * Pr[False Positive] is independent of sample size
-* Called a "Type I error"
+* Called a "[Type I error]{.alert}"
+* You can decrease your false positive rate by decreasing $\alpha$
+:::
 
-You can decrease your false positive rate by decreasing $\alpha$
+## [False negative]{.alert}: Failing to reject a false null
 
-## [False negative]{.alert}
-
-False negative: Failing to reject a false null
-
+::: {.incremental}
 * Pr[False Negative] depends on sample size, effect size, and precision
-* Also called a "Type II error"
+* Also called a "[Type II error]{.alert}"
+* Increases with decreasing $\alpha$
+:::
 
-Pr[False Negative] = 1 - statistical power
+::: {.fragment}
+[Statistical power]{.alert} = 1 - Pr[False Negative]
 
-You can decrease your false negative rate by increasing $\alpha$
-
-You can increase statistical power by increasing your sample size and measurement precision
+:::: {.incremental}
+- You can increase statistical power by increasing your sample size and measurement precision
+::::
+:::
 
 ## Errors
 
- Decision         | $H_0$ True  | $H_0$ False
+ Null Hypothesis Test Decision  | $H_0$ True  | $H_0$ False
 ------------------|----------|----------
- Reject $H_0$        | Type I   | no error
- Do not reject $H_0$ | no error | Type II
+ Reject $H_0$        | [Type I]{.alert}   | no error
+ Do not reject $H_0$ | no error | [Type II]{.alert}
 
- lower $\alpha$ reduces Type I error rate, but raises Type II error rate
+::: {.fragment}
+lower $\alpha$ reduces Type I error rate, but raises Type II error rate
+:::
 
- both are errors! many methods today choose $\alpha$ to minimize all error, but this is complex.
+::: {.fragment}
+both are errors! many methods today choose $\alpha$ to minimize all error, but this is complex.
+:::
 
 ## Effects of sample size
 
@@ -846,19 +812,22 @@ power <- pwr.t.test(n = 2:512, d = 0.5, sig.level = 0.05, power = NULL,
 
 df <- tibble(n = rep(2:512, 2), power = c(rep(0.05, 511), power$power),
              group = rep(c("H0 True", "H0 False"), each = 511)) |>
-    mutate(group = factor(group,
-                          levels = c("H0 True", "H0 False"),
-                          labels = c(expression(H[0]~True), expression(H[0]~False)))
-           )
+    mutate(
+        group = factor(
+            group,
+            levels = c("H0 True", "H0 False"),
+            labels = c(expression(H[0]~True), expression(H[0]~False))
+        )
+    )
 
 ggplot(df, aes(n, power, color = group)) +
-    facet_grid(. ~ group, labeller = label_parsed) +
+    facet_grid(cols = vars(group), labeller = label_parsed) +
     geom_line(show.legend = FALSE, size = 4) +
     scale_x_log10(breaks = c(8, 64, 512)) +
     scale_y_continuous(limits = c(0, 1)) +
     xlab("Sample size") +
     ylab(expression(
-        paste("Probability of rejecting ", italic(H)[0], " (", alpha == 0.05, ")"))) +
+        paste("Probability of rejecting ", italic(H)[0]))) +
     theme_cowplot() +
     theme(
         axis.text = element_text(size = 18),
