@@ -4,4 +4,9 @@
 .Ruserdata
 .DS_Store
 
+*slides_cache/
+*slides_files/
+/docs/
+/_freeze/
+
 /.quarto/
