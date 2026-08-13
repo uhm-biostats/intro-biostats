@@ -12,7 +12,7 @@ library(dplyr)
 library(viridis)
 ```
 
-## Ka hua ʻōlelo o ka lā
+## Ka hua ʻōlelo o ka haʻawina
 
 ::: {style="text-align: center;"}
 [kilo]{.alert}
@@ -20,65 +20,72 @@ library(viridis)
 
 ## Kilo
 
-::: {style="text-align: center;"}
-**Jerry Konanui on Kalo, Biodiversity, Ancient Wisdom, and Modern Science**
+***Unle Jerry Konanui***
 
-<https://www.youtube.com/watch?v=bE7K3NXFU1I&ab_channel=HawaiiSEED>
-:::
+```{=html}
+<iframe width="1120" height="630" src="https://www.youtube.com/embed/bE7K3NXFU1I?si=nHK8-x4-B1VUAcMc&amp;start=6;end=177" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+```
 
-## Learning Objectives
 
-This lecture:
+## Learning goals
+
 
 1. Identify an appropriate [scientific hypothesis]{.alert} that addresses a biological question
 3. Identify an appropriate [Null Hypothesis]{.alert} that tests a scientific hypothesis
 4. Identify an [Alternative Hypothesis]{.alert}
-
-Next lecture:
-
 4. Understand the practice of [Null Hypothesis Significance Testing]{.alert} (NHST)
 5. Explain the meaning of a [$P$-value]{.alert}
 7. Explain the concepts of [false positives]{.alert} and [false negatives]{.alert} and why they happen
 
-## Biology is motivated by questions about nature
 
-Why are leaves mostly green?
+## Scientific hypotheses posit testable explanations
 
-How do birds fly?
+Why are leaves green? [*Green pigments evolved to maximize photosynthetic rates.*]{style="color: white;"}
 
-What causes AIDS?
+How does the immune system tell self from non-self? [*Immune cells that react to the body's own molecules are eliminated during development.*]{style="color: white;"}
 
-What management intervention will allow an endangered species to recover?
+What causes type 2 diabetes? [*A food environment that is calorie-dense but low in accessible healthy options drives chronic caloric excess, leading to insulin resistance.*]{style="color: white;"}
+
+What is causing accelerating extinction of Hawaiian honeycreepers? [*Avian malaria, spread by introduced mosquitoes now reaching high-elevation forests as climate warms.*]{style="color: white;"}
 
 ## Scientific hypotheses posit testable explanations
 
 Why are leaves green? *Green pigments evolved to maximize photosynthetic rates.*
 
-How do birds fly? *They rotate their wings to generate lift and minimize drag.*
+How does the immune system tell self from non-self? *Immune cells that react to the body's own molecules are eliminated during development.*
 
-What causes AIDS? *An RNA virus closely related to the chimpanzee immunodeficiency virus.*
+What causes type 2 diabetes? *A food environment that is calorie-dense but low in accessible healthy options drives chronic caloric excess, leading to insulin resistance.*
 
-What management intervention will allow an endangered species to recover? *Habitat is limiting, so habitat restoration is needed.*
+What is causing accelerating extinction of Hawaiian honeycreepers? *Avian malaria, spread by introduced mosquitoes now reaching high-elevation forests as climate warms.*
+
 
 ## We test hypotheses by making predictions
 
 If $X$, then $Y$
 
+::: {.fragment}
 *If* green pigments maximize photosynthesis, *then* substituting other pigments will reduce photosynthetic rate.
+:::
 
-*If* the habitat restoration was successful, *then* the endangered species will reach its historic baseline in 10 years based on its observed growth rate in captivity.
+::: {.fragment}
+*If* Incompatible Insect Technique reduces mosquito populations, *then* endangered honeycreeper populations will rebound.
+:::
 
-# Scientific versus statistical hypotheses
 
 ## Scientific versus statistical hypotheses
 
-Scientific and statistical hypotheses are related, but for statistical hypotheses to be useful, they must be more precise
+Scientific and statistical hypotheses are related, but for [statistical hypotheses]{.alert} to be useful, they must be more ***precise***
 
 ## Example: does noni help with management of inflamatory disease?
 
 ::: columns
 ::: {.column width="50%"}
-```{r, fig.width=3, fig.height=4}
+```{r}
+#| fig-width: 3
+#| fig-height: 4
+#| fig-align: center
+#| out-width: "4in"
+
 set.seed(1)
 dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)),
                   group = c(rep("10mg noni", 100),
@@ -96,13 +103,13 @@ gnoni
 :::
 
 ::: {.column width="50%"}
-![](/img/noni.jpg)
+![](/img/noni.jpg){width="60%"}
 :::
 :::
 
-## Example: does noni help with management of inflamatory disease?
+## {background-image="/img/Liliuokalani_overthrow.jpg" background-size="cover"}
 
-![](/img/Liliuokalani_overthrow.jpg)
+
 
 ## Who governs data and products of research in Hawaiʻi?
 
@@ -130,96 +137,112 @@ What a 45-ish minute lecture by kumu Keolu Fox and write a response
 
 ::: columns
 ::: {.column width="50%"}
-```{r, fig.width=3, fig.height=4}
+```{r}
+#| fig-width: 3
+#| fig-height: 4
+#| fig-align: center
+#| out-width: "4in"
+
 gnoni
 ```
 :::
 
 ::: {.column width="50%"}
-*Scientific hypothesis*: noni extract reduces inflammation
 
-*Statistical hypothesis*: ???
+::: {.r-stack}
+
+:::: {.fragment .fade-in-then-out}
+[Scientific hypothesis]{.alert}: noni extract reduces inflammation
 
 - the scientific hypothesis seems supported
 - but could the result just be [sampling error]{.alert}?
-:::
-:::
+- we need a [Statistical hypothesis]{.alert}
 
-## Example: does noni help with management of inflamatory disease?
+::::
 
-::: columns
-::: {.column width="50%"}
-```{r, fig.width=3, fig.height=4}
-gnoni
-```
-:::
-
-::: {.column width="50%"}
-::: {.pause-think}
+:::: {.fragment .fade-in-then-out}
+::::: {.pause-think}
 - What is the explanatory variable? Is it numerical or categorical?
 - What is the response variable? Is it numerical or categorical?
-:::
-:::
-:::
+:::::
+::::
 
-## Example: does noni help with management of inflamatory disease?
 
-::: columns
-::: {.column width="50%"}
-```{r, fig.width=3, fig.height=4}
-gnoni
-```
-:::
-
-::: {.column width="50%"}
-*Scientific hypothesis*: noni extract reduces inflammation
-
-*Statistical hypothesis*: ???
+:::: {.fragment}
+[Scientific hypothesis]{.alert}: noni extract reduces inflammation
 
 - the scientific hypothesis seems supported
 - but could the result just be [sampling error]{.alert}?
 
-*We need a more precises [statistical hypothesis]{.alert} to test whether noni is effective at reducing inflammation*
+*We need a more precises [statistical hypothesis]{.alert} to* ***test*** *whether noni is effective at reducing inflammation*
+::::
+
+:::
+
 :::
 :::
+
+
 
 ## Identify a [Null Hypothesis]{.alert}
 
+A [statistical hypothesis]{.alert} has two parts, first:
+
 > A [null hypothesis]{.alert} is a specific statement about a population parameter made for the purposes of argument. A good [null hypothesis]{.alert} is a statement that would be interesting to reject
 
-## A null hypothesis must be specific
+## A [null hypothesis]{.alert} must be specific
 
 The proportion of a times a fair coin lands on heads is $\mathbf{p = 0.5}$
 
-There is **no difference** in the proportion of red M&Ms in bags sold in Safeway versus those sold at Costco
+There is **no difference** in the proportion of red M&Ms in bags sold in Sams versus those sold at Costco
 
 Patients in the treatment group have the **same probability** of contracting a disease as patients in the control group
 
-## A null hypothesis should be "interesting" to reject
+## A [null hypothesis]{.alert} should be "interesting" to reject
 
-This is somewhat subjective, but there are lots of trivial null hypotheses that aren't worth studying:
 
-For example: There are 0 trees in Hawaiʻi
+::: {.r-stack}
+
+::: {.fragment .fade-in-then-out}
+
+This is somewhat subjective, but there are lots of trivial null hypotheses that aren't worth studying.
+
+<br>
+
+For example: There are 0 trees in Hawaiʻi<br>
+[foo]{style="color: white;"}
+
+<br>
 
 This is specific, but trivially easy and uninteresting to reject
+:::
 
-## A null hypothesis should be "interesting" to reject
+::: {.fragment}
 
-This is somewhat subjective, but there are lots of trivial null hypotheses that aren't worth studying:
+This is somewhat subjective, but there are lots of trivial null hypotheses that aren't worth studying.
+
+<br>
 
 For example: The growth rate of native trees in Hawaiʻi are the same as their con-generic relatives from continents
 
+<br>
+
 This is specific, *and* interesting to reject
+:::
+
+:::
 
 ## Identify an [Alternative Hypothesis]{.alert}
 
-> The [alternative hypothesis]{.alert} includes all other feasible values for the population parameter besides the value stated in the null hypothesis
+Part two of the [statistical hypothesis]{.alert} is:
 
-## An alternative hypothesis is not specific
+> The [alternative hypothesis]{.alert} includes all other feasible values for the population parameter besides the value stated in the [null hypothesis]{.alert}
+
+## An [alternative hypothesis]{.alert} is not specific
 
 The proportion of a times a fair coin lands on heads is not $p = 0.5$
 
-There is a difference in the proportion of red M&Ms in bags sold in Safeway versus those sold at Costco
+There is a difference in the proportion of red M&Ms in bags sold at Sams versus those sold at Costco
 
 Patients in the treatment group have a different probability of contracting a disease as patients in the control group
 
@@ -229,7 +252,12 @@ Patients in the treatment group have a different probability of contracting a di
 
 ::: columns
 ::: {.column width="50%"}
-```{r, fig.width=3, fig.height=4}
+```{r}
+#| fig-width: 3
+#| fig-height: 4
+#| fig-align: center
+#| out-width: "4in"
+
 gnoni
 ```
 :::
@@ -242,11 +270,15 @@ gnoni
 :::
 :::
 
-## Naming conventions
+## Identifying [null]{.alert} and [alternative]{.alert} hypothesis
+
+First a note on naming conventions
 
 $H_0$: pronounced "H-naught" or "H-zero" is the convention for the [null hypothesis]{.alert}
 
 $H_\mathrm{A}$:is the convention for the [alternative hypothesis]{.alert}
+
+::: {.fragment}
 
 So...
 
@@ -254,24 +286,15 @@ $H_0$: Mean difference (after - before) in sedimentation rate for the group rece
 
 $H_\mathrm{A}$: Mean difference (after - before) in sedimentation rate for the group receiving noni and the placebo group will be **different**
 
-## Naming conventions
-
-$H_0$: Mean difference (after - before) in sedimentation rate for the group receiving noni and the placebo group will be **identical**
-
-$H_\mathrm{A}$: Mean difference (after - before) in sedimentation rate for the group receiving noni and the placebo group will be **different**
+:::
 
 # Break!
 
-## Learning Objectives
+## Learning goals
 
-Last lecture:
-
-1. Identify an appropriate [scientific hypothesis]{.alert} that addresses a biological question
-3. Identify an appropriate [Null Hypothesis]{.alert} that tests a scientific hypothesis
-4. Identify an [Alternative Hypothesis]{.alert}
-
-This lecture:
-
+1. Identify an appropriate [scientific hypothesis]{.alert} that addresses a biological question $\checkmark$
+3. Identify an appropriate [Null Hypothesis]{.alert} that tests a scientific hypothesis $\checkmark$
+4. Identify an [Alternative Hypothesis]{.alert} $\checkmark$
 4. Understand the practice of [Null Hypothesis Significance Testing]{.alert} (NHST)
 5. Explain the meaning of a [$P$-value]{.alert}
 7. Explain the concepts of [false positives]{.alert} and [false negatives]{.alert} and why they happen
@@ -318,7 +341,12 @@ $H_\mathrm{A}$:is the convention for the [alternative hypothesis]{.alert}
 
 ::: columns
 ::: {.column width="50%"}
-```{r, fig.width=3, fig.height=4}
+```{r}
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 4
+#| out-width: "100%"
+
 set.seed(1)
 dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)),
                   group = c(rep("10mg noni", 100),
@@ -373,7 +401,12 @@ The sample estimate of interest depends on the scientific and null hypotheses
 
 ::: columns
 ::: {.column width="50%"}
-```{r, fig.width=3, fig.height=4}
+```{r}
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 4
+#| out-width: "100%"
+
 p <- ggplot(dat, aes(x = sed, fill = group, alpha = 0.5)) +
     geom_histogram(aes(y = after_stat(density)), bins = 20) +
     facet_grid(rows = vars(group)) +
@@ -441,7 +474,11 @@ From that [sampling distribution]{.alert} of test statistics, we can calculate t
 
 ## Simulating the null distribution
 
-```{r null-dist, cache=TRUE, echo=TRUE}
+```{r}
+#| label: null-dist
+#| cache: true
+#| echo: true
+
 # repeatedly shuffle the groups to make a null distribution
 all_null <- replicate(1000, {
     noni_null <- noni_dat
@@ -456,7 +493,13 @@ all_null <- replicate(1000, {
 
 ## Simulating the null distribution
 
-```{r echo = TRUE, fig.align='center', fig.width=3, fig.height=2}
+```{r}
+#| echo: true
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 2
+#| out-width: "5in"
+
 null_dist <- data.frame(test_stat_null = all_null)
 
 ggplot(null_dist, aes(x = test_stat_null)) +
@@ -465,7 +508,13 @@ ggplot(null_dist, aes(x = test_stat_null)) +
 
 ## Simulating the null distribution
 
-```{r echo = TRUE, fig.align='center', fig.width=3, fig.height=2}
+```{r}
+#| echo: true
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 2
+#| out-width: "5in"
+
 # add the observed test statistic
 ybars <- group_by(noni_dat, group)
 ybars <- summarize(ybars, ybar = mean(sed))
@@ -474,7 +523,13 @@ test_stat <- diff(ybars$ybar)
 
 ## Simulating the null distribution
 
-```{r echo = TRUE, fig.align='center', fig.width=3, fig.height=2}
+```{r}
+#| echo: true
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 2
+#| out-width: "5in"
+
 ggplot(null_dist, aes(x = test_stat_null)) +
     geom_histogram(aes(y = after_stat(density))) +
     geom_vline(xintercept = test_stat,
@@ -489,7 +544,9 @@ From that [sampling distribution]{.alert} of test statistics, we can calculate t
 
 That probability is:
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 mean(null_dist$test_stat_null > test_stat |
          null_dist$test_stat_null < -test_stat)
 ```
@@ -526,7 +583,12 @@ Answer: depends on the desired [significance level]{.alert}
 
 ::: columns
 ::: {.column width="50%"}
-```{r, fig.width=3, fig.height=4}
+```{r}
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 4
+#| out-width: "100%"
+
 p <- ggplot(dat, aes(x = sed, fill = group, alpha = 0.5)) +
     geom_histogram(aes(y = after_stat(density)), bins = 20) +
     facet_grid(rows = vars(group)) +
@@ -581,7 +643,12 @@ Yes!  At significance level $\alpha = 0.05$, we reject the null that noni has no
 
 Here is a more typical null distribution and test statistic:
 
-```{r fig.width=3, fig.height=2, fig.align='center'}
+```{r}
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 2
+#| out-width: "5in"
+
 ybar <- 0
 se <- 1
 
@@ -612,7 +679,12 @@ p
 
 ::: columns
 ::: {.column width="50%"}
-```{r fig.width=3, fig.height=2, fig.align='center'}
+```{r}
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 2
+#| out-width: "100%"
+
 p
 ```
 
@@ -631,7 +703,12 @@ The [p-value]{.alert} is the sum of the probabilities in the two [orange]{style=
 
 ::: columns
 ::: {.column width="50%"}
-```{r fig.width=3, fig.height=2, fig.align='center'}
+```{r}
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 2
+#| out-width: "100%"
+
 p
 ```
 
@@ -647,7 +724,12 @@ The [p-value]{.alert} is the sum of the probabilities in the two [orange]{style=
 
 ::: columns
 ::: {.column width="50%"}
-```{r fig.width=3, fig.height=2, fig.align='center'}
+```{r}
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 2
+#| out-width: "100%"
+
 p
 ```
 
@@ -665,7 +747,12 @@ The [p-value]{.alert} is the sum of the probabilities in the two [orange]{style=
 
 ::: columns
 ::: {.column width="50%"}
-```{r fig.width=3, fig.height=2, fig.align='center'}
+```{r}
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 2
+#| out-width: "100%"
+
 p
 ```
 
@@ -681,7 +768,12 @@ The [p-value]{.alert} is the sum of the probabilities in the two [orange]{style=
 
 ::: columns
 ::: {.column width="50%"}
-```{r fig.width=3, fig.height=2, fig.align='center'}
+```{r}
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 2
+#| out-width: "100%"
+
 p
 ```
 
@@ -744,7 +836,10 @@ If $H_0$ is true, sample size has no effect
 
 If $H_0$ is false, statistical power increases with sample size
 
-```{r, fig.align="center", out.width="70%"}
+```{r}
+#| fig-align: center
+#| out-width: "70%"
+
 library(pwr)
 power <- pwr.t.test(n = 2:512, d = 0.5, sig.level = 0.05, power = NULL,
                     type = "two.sample", alternative = "two.sided")
