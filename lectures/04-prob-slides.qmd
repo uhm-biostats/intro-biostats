@@ -86,6 +86,11 @@ all integers 1---6
 With a fair die, every outcome has equal probability:
 
 ```{r}
+#| fig-align: center
+#| fig-width: 8
+#| fig-height: 8
+#| out-width: "5in"
+
 library(tidydice)
 library(gridExtra)
 
@@ -495,25 +500,10 @@ all integers 1---6
 With a fair die, every outcome has equal probability:
 
 ```{r}
-library(tidydice)
-library(gridExtra)
-
-d1 <- roll_dice(times = 1, prob = c(1, 0, 0, 0, 0, 0)) |>
-    plot_dice(detailed = FALSE) + labs(title = NULL)
-d2 <- roll_dice(times = 1, prob = c(0, 1, 0, 0, 0, 0)) |>
-    plot_dice(detailed = FALSE) + labs(title = NULL)
-d3 <- roll_dice(times = 1, prob = c(0, 0, 1, 0, 0, 0)) |>
-    plot_dice(detailed = FALSE) + labs(title = NULL)
-d4 <- roll_dice(times = 1, prob = c(0, 0, 0, 1, 0, 0)) |>
-    plot_dice(detailed = FALSE) + labs(title = NULL)
-d5 <- roll_dice(times = 1, prob = c(0, 0, 0, 0, 1, 0)) |>
-    plot_dice(detailed = FALSE) + labs(title = NULL)
-d6 <- roll_dice(times = 1, prob = c(0, 0, 0, 0, 0, 1), success = 1) |>
-    plot_dice(detailed = FALSE) + labs(title = NULL)
-
-pr <- data.frame(rep("= 1/6", 6))
-names(pr) <- NULL
-rownames(pr) <- paste0("Pr(rolling a ", 1:6, ")")
+#| fig-align: center
+#| fig-width: 8
+#| fig-height: 8
+#| out-width: "5in"
 
 grid.arrange(d1, tableGrob(pr[1, ], theme = ttheme_default(base_size = 32)),
              d2, tableGrob(pr[2, ], theme = ttheme_default(base_size = 32)),
@@ -863,7 +853,12 @@ If 0.95 probability is contained in the [blue]{style="color: blue;"} region, how
 
 :::
 
-```{r fig.width=3, fig.height=2, fig.align='center'}
+```{r}
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 2
+#| out-width: "5in"
+
 normArea <- ggplot(data.frame(x = ybar + 3.75 * c(-se, se)), aes(x)) +
     theme_cowplot() +
     xlab("MEAN change in sed rate") +
@@ -898,11 +893,18 @@ normArea
 :::
 
 ::: {.fragment}
-```{r fig.width=3, fig.height=2, fig.align='center'}
+```{r}
+#| fig-align: center
+#| fig-width: 3.5
+#| fig-height: 2
+#| out-width: "5in"
+#| fig-cap: |
+#|     the [orange]{style="color: orange;"} and [red]{style="color: red;"} 
+#|     regions are [mutually exclusive]{.alert}
+
 normArea
 ```
 
-the [orange]{style="color: orange;"} and [red]{style="color: red;"} regions are [mutually exclusive]{.alert}
 :::
 
 ## Rules of probability {.top-align}
@@ -1201,6 +1203,7 @@ $$
 #| fig-align: center
 #| fig-width: 2
 #| fig-height: 2
+#| out-width: "2.5in"
 
 prA
 ```
@@ -1294,7 +1297,6 @@ $$Pr(A \mid B)  = \frac{Pr(B \mid A) Pr(A)}{Pr(B)}$$
 ::: {.fragment}
 **This is Bayes' Theorem** and it is super useful
 :::
-
 ## Rules of probability
 
 1. Probability is always between 0 and 1
