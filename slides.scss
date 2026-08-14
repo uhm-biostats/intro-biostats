@@ -77,3 +77,26 @@ $alert-color: #eb811b;
   margin-left: 0;
   margin-right: 0;
 }
+
+
+// option to make tables with normal text headers
+.no-bold-header th {
+  font-weight: normal !important;
+}
+
+
+// table layout without table format
+.no-header-table thead {
+  display: none;
+}
+
+.reveal .no-header-table table,
+.reveal .no-header-table th,
+.reveal .no-header-table td {
+  border: none !important;
+  border-collapse: collapse !important;
+}
+.reveal .no-header-table thead {
+  display: none !important;
+}
+

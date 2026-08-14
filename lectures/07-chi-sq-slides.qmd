@@ -217,9 +217,10 @@ chi$chi_sq[7] <- sum(chi$chi_sq_raw) |>
     round(2) |> 
     as.character()
 
-O <- round(as.numeric(chi$Observed))
-E <- round(as.numeric(chi$Expected), 1)
+O <- round(as.numeric(chi$Observed))[-nrow(chi)]
+E <- round(as.numeric(chi$Expected), 1)[-nrow(chi)]
 
+mm_test_stat <- sum((O - E) ^ 2 / E)
 
 chi_tab <- select(chi, c(Color:Observed, o_min_e, chi_sq)) |> 
     rename(`$O - E$` = o_min_e, 
@@ -286,15 +287,9 @@ $$\chi^2 = \sum_{i=1}^n \chi^2_i= \sum_{i=1}^n \frac{(O_i - E_i) ^ 2}{E_i}$$
 
 ## M&M colors
 
- Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
---------|:----------:|:--------:|:--------:|:---------------:
- Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
- Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
- Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
- Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
- Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
- Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
- **Total**  | 1.00   | 210      | 210      | `r round(sum((O - E) ^ 2 / E), 2)`
+```{r}
+chi_tab
+```
 
 ::: {.pause-think}
 What is the test statistic?
@@ -302,15 +297,9 @@ What is the test statistic?
 
 ## M&M colors
 
- Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
---------|:----------:|:--------:|:--------:|:---------------:
- Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
- Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
- Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
- Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
- Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
- Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
- **Total**  | 1.00   | 210      | 210      | `r round(sum((O - E) ^ 2 / E), 2)`
+```{r}
+chi_tab
+```
 
 ::: {.pause-think}
 What is the test statistic?
@@ -318,7 +307,7 @@ What is the test statistic?
 
 ## 
 
-How often would we expect a discrepancy of $\ge `r round(sum((O - E) ^ 2 / E), 2)`$ under $H_0$?
+How often would we expect a discrepancy of $\ge `r round(mm_test_stat, 2)`$ under $H_0$?
 
 ## [Null Hypothesis Significance Testing]{.alert}
 
@@ -562,8 +551,6 @@ Recall we calculated for the M&Ms: $\chi^2 = `r chi[7, 8]`$
 #| fig-align: center
 #| out-width: "9.5in"
 
-mm_test_stat <- sum((O - E) ^ 2 / E)
-
 gp +
     geom_area(data = filter(df, x < mm_test_stat), fill = "white",
               size = 2, color = "tomato") +
@@ -602,7 +589,7 @@ Because $\chi_\mathit{df}^2$ is an approximation of the "true" sampling distribu
 
 ## [$P$-value]{.alert}
 
-$\chi^2~\text{statistic} = `r sum((O - E) ^ 2 / E)`$, $\mathit{df} = 5$
+$\chi^2~\text{statistic} = `r mm_test_stat`$, $\mathit{df} = 5$
 
 ```{r}
 #| echo: false
@@ -721,11 +708,6 @@ It is an approximate test, but works well when sample size are large that assump
 
 # Break!
 
-## Ka hua ʻōlelo o ka lā
-
-::: {style="text-align: center;"}
-[hānau]{.alert}
-:::
 
 ## Learning Objectives
 
@@ -749,23 +731,14 @@ It is an approximate test, but works well when sample size are large that assump
 ## M&M colors
 
 ```{r}
-E <- 210 * c(0.24, 0.20, 0.16, 0.14, 0.13, 0.13)
-O <- c(43, 40, 37, 37, 33, 20)
+chi_tab
 ```
 
- Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
---------|------------|----------|----------|-----------------
- Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
- Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
- Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
- Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
- Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
- Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
- **Total**  | 1.00   | 210      | 210
+
 
 $$\chi^2_i = \frac{(Observed_i - Expected_i) ^ 2}{\mathit{Expected}_i}$$
 
-$\chi^2_i$ measures discrepancy between observed and expected frequency
+
 
 ## [$\chi^2$ statistic]{.alert}
 
@@ -775,33 +748,30 @@ $\chi^2_i$ measures discrepancy between observed and expected frequency
 
 $$\chi^2 = \sum_{i=1}^n \chi^2_i= \sum_{i=1}^n \frac{(O_i - E_i) ^ 2}{E_i}$$
 
+it measures discrepancy between observed and expected frequency
+
 ## M&M colors
 
- Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
---------|:----------:|:--------:|:--------:|:---------------:
- Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
- Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
- Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
- Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
- Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
- Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
- **Total**  | 1.00   | 210      | 210      | `r round(sum((O - E) ^ 2 / E), 2)`
+```{r}
+chi_tab
 
-::: {.pause-think}
-What is the test statistic?
+```
 
-$$\chi^2= \sum_{i=1}^n \frac{(O_i - E_i) ^ 2}{E_i} = `r round(sum((O - E) ^ 2 / E), 2)`$$
-:::
 
-## &nbsp;
+$$\chi^2= \sum_{i=1}^n \frac{(O_i - E_i) ^ 2}{E_i} = `r round(mm_test_stat, 2)`$$
 
-How often would we expect a discrepancy of $\ge `r round(sum((O - E) ^ 2 / E), 2)`$ under $H_0$?
+
+## 
+
+$H_0$: The frequency of M&Ms with each color in the bag is proportional to their proportion specified by the manufacturer
+
+How often would we expect a discrepancy of $\ge `r round(mm_test_stat, 2)`$ under $H_0$?
 
 ## [Null Hypothesis Significance Testing]{.alert}
 
-1. State $H_0$ and $H_\mathrm{A}$
-2. Calculate the test statistic
-3. **Generate the null distribution**
+1. State $H_0$ and $H_\mathrm{A}$ $\checkmark$
+2. Calculate the test statistic $\checkmark$
+3. **Generate the null distribution** $\leftarrow$
 4. Calculate the $P$-value
 6. Decide:
     - Reject $H_0$ if test statistic is $\ge$ critical value ($P \le \alpha$)
@@ -813,8 +783,8 @@ How often would we expect a discrepancy of $\ge `r round(sum((O - E) ^ 2 / E), 2
 
 **Assumptions**
 
-* None of the categories should have an expected frequency of less than 1
-* No more than 20% of the categories should have expected frequencies less than 5
+* None of the categories have an expected frequency of less than 1
+* No more than 20% of the categories have expected frequencies less than 5
 
 ## [$\chi^2$ distribution]{.alert}
 
@@ -826,6 +796,7 @@ Under the null hypothesis, the more categories, the larger the test statistic
 ::: {.column width="50%"}
 **3 categories**
 
+::: {style="font-size: 60%;"}
 $$
 \begin{aligned}
 \chi^2 &= \sum_{i=1}^3 \frac{(O_i - E_i) ^ 2}{E_i} \\
@@ -834,16 +805,20 @@ $$
 $$
 :::
 
+:::
+
 ::: {.column width="50%"}
 **6 categories**
 
+::: {style="font-size: 60%;"}
 $$
 \begin{aligned}
-\chi^2 = &\sum_{i=1}^3 \frac{(O_i - E_i) ^ 2}{E_i} \\
+\chi^2 = &\sum_{i=1}^6 \frac{(O_i - E_i) ^ 2}{E_i} \\
 = &\frac{(O_1 - E_1) ^ 2}{E_1} + \frac{(O_2 - E_2) ^ 2}{E_2} + \frac{(O_3 - E_3) ^ 2}{E_3} + \\
 &\frac{(O_4 - E_4) ^ 2}{E_4} + \frac{(O_5 - E_5) ^ 2}{E_5} + \frac{(O_6 - E_6) ^ 2}{E_6}
 \end{aligned}
 $$
+:::
 :::
 :::
 
@@ -855,46 +830,25 @@ $$df = \mathrm{(Number~of~categories)} - 1$$
 
 ## M&M colors
 
- Color  | Proportion | Expected | Observed | $(O - E)^2 / E$
---------|:----------:|:--------:|:--------:|:---------------:
- Blue   | 0.24       | 50.4     | 43       | `r round((O[1] - E[1]) ^ 2 / E[1], 2)`
- Orange | 0.20       | 42.0     | 40       | `r round((O[2] - E[2]) ^ 2 / E[2], 2)`
- Green  | 0.16       | 33.6     | 37       | `r round((O[3] - E[3]) ^ 2 / E[3], 2)`
- Yellow | 0.14       | 29.4     | 37       | `r round((O[4] - E[4]) ^ 2 / E[4], 2)`
- Red    | 0.13       | 27.3     | 33       | `r round((O[5] - E[5]) ^ 2 / E[5], 2)`
- Brown  | 0.13       | 27.3     | 20       | `r round((O[6] - E[6]) ^ 2 / E[6], 2)`
- **Total**  | 1.00   | 210      | 210      | `r round(sum((O - E) ^ 2 / E), 2)`
+```{r}
+chi_tab
 
-$$df =  \mathrm{(Number~of~categories)} - 1 $$
+```
 
-$$\mathit{df} = 6 - 1 = 5$$
+$$
+\begin{align}
+df &= \mathrm{(Number~of~categories)} - 1 \\
+&= 6 - 1 = 5
+\end{align}
+$$
 
 ## $\chi_5^2$ distribution with test statistic
 
-Recall we calculated for the M&Ms: $\chi^2 = 6.63$
+Recall we calculated for the M&Ms: $\chi^2 = `r round(mm_test_stat, 2)`$
 
 ```{r}
 #| fig-align: center
 #| out-width: "9.5in"
-
-mm_test_stat <- sum((O - E) ^ 2 / E)
-
-df <- tibble(
-  x = seq(0, 20, 0.01),
-  y = dchisq(x, 5)
-)
-
-gp <- ggplot(df, aes(x, y)) +
-  geom_area(fill = "tomato") +
-  xlab(expression(chi^2~statistic)) +
-  ylab("Probability density") +
-  theme_cowplot() +
-  theme(
-    strip.text = element_text(size = 18),
-    axis.text = element_text(size = 18),
-    axis.title = element_text(size = 24),
-    title = element_text(size = 24)
-  )
 
 gp +
   geom_area(data = filter(df, x < mm_test_stat), fill = "white",
@@ -914,17 +868,53 @@ $$\frac{(O_i - E_i)^2}{E_i}$$
 
 Higher test statistics = more discrepancy between *Expected* and *Observed*
 
+
+## $\chi_\mathit{df}^2$ distribution
+
+Why is the $\chi_\mathit{df}^2$ distribution *continuous* even though we are working with a categorical variable with discrete frequencies?
+
+Because $\chi_\mathit{df}^2$ is an approximation of the "true" sampling distribution
+
+
+
 ## [$P$-value]{.alert}
 
-$\chi^2~\text{statistic} = `r sum((O - E) ^ 2 / E)`$, $\mathit{df} = 5$
+$\chi^2~\text{statistic} = `r mm_test_stat`$, $\mathit{df} = 5$
 
 ```{r}
-#| echo: true
+#| echo: false
+#| results: asis
 
-pchisq(q = 6.632544,
+cat(sprintf("```r\npchisq(q = %s,\n       df = 5,\n       lower.tail = FALSE)\n```", 
+            round(mm_test_stat, 7)))
+```
+
+```{r}
+pchisq(q = mm_test_stat,
        df = 5,
        lower.tail = FALSE)
 ```
+
+<br>
+
+::: {.fragment}
+or the quick way in *R*
+
+```{r}
+#| echo: false
+#| results: asis
+
+cat(sprintf("```r\nchisq.test(x = c(%s),\n           p = c(0.24, 0.20, 0.16, 0.14, 0.13, 0.13))\n```", 
+            paste(O[-length(O)], collapse = ", ")))
+```
+
+
+
+```{r}
+chisq.test(x = O,
+           p = c(0.24, 0.20, 0.16, 0.14, 0.13, 0.13))
+```
+:::
 
 ## Contingency analysis: from 1 variable to **2**!
 
@@ -965,14 +955,19 @@ Contingency Analysis
 :::
 :::
 
-## Contingency analysis: this is a [contigency table]{.alert}
+## Contingency analysis: this is a [contigency table]{.alert} {.top-align}
 
 ::: columns
-::: {.column width="50%"}
+::: {.column width="30%"}
+
+<br>
+<br>
+<br>
 We will put the [response variable]{.alert} across rows
+
 :::
 
-::: {.column width="50%"}
+::: {.column width="70%"}
 We will put the [explanatory variable]{.alert} across columns
 
 |            | category A | category B |
@@ -985,10 +980,12 @@ We will put the [explanatory variable]{.alert} across columns
 
 ## Example: birth outcomes for non-English and English speakers in Hawaiʻi
 
+::: {.no-bold-header}
 |                            | non-English speaker | English speaker |
 |---------------------------:|:--------------------|:----------------|
 | Primary Caesarean delivery | 127                 | 934             |
 | Primary vaginal delivery   | `r 1149-127`        | `r 10270 - 934` |
+:::
 
 > Are non-English speakers more likely to undergo C-section in their first delivery?
 
@@ -998,40 +995,40 @@ data from: Sentell et al. (2016). Maternal language and adverse birth outcomes i
 
 **Context**
 
-![](/img/csection-fridays.png){width="75%" fig-align="center"}
+![](/img/csection-fridays.png){width="60%" fig-align="center"}
 
-C-section rates have increased due to physician choices that disregard maternal/parental choice and health for parent and baby
+C-section can be life saving, but rates have increased due to physician choices, some of which disregard health of parent and baby
 
-## Example: birth outcomes for non-English and English speakers in Hawaiʻi
+## Example: birth outcomes for non-English and English speakers in Hawaiʻi {.top-align}
 
-**Context**
+**Context:** There's a breakdown in trust, ethics, and real healthcare
 
 ![](/img/healthcare_women.png)
 
-There's a breakdown in trust, ethics, and real healthcare
 
-## Example: birth outcomes for non-English and English speakers in Hawaiʻi
 
-**Context**
+## Example: birth outcomes for non-English and English speakers in Hawaiʻi {.top-align}
+
+**Context:** The breakdown intersects with race
 
 ![](/img/healthcare_race.png)
 
-The breakdown intersects with race
+## Example: birth outcomes for non-English and English speakers in Hawaiʻi {.top-align}
 
-## Example: birth outcomes for non-English and English speakers in Hawaiʻi
-
-**Context**
+**Context:** The breakdown intersects with gender identity
 
 ![](/img/healthcare_trans.png){width="70%" fig-align="center"}
 
-The breakdown intersects with gender identity
+
 
 ## Example: birth outcomes for non-English and English speakers in Hawaiʻi
 
+::: {.no-bold-header}
 |  | non-English speaker | English speaker |
 |--:|:--:|:--:|
 | Primary Caesarean delivery | 127 | 934 |
 | Primary vaginal delivery | 1022 | 9336 |
+:::
 
 > Are non-English speakers more likely to undergo C-section in their first delivery?
 
@@ -1049,155 +1046,219 @@ The breakdown intersects with gender identity
 
 Contingency analysis uses the $\chi^2$ test statistic, so we need *observed* and *expected* frequencies
 
+::: {.no-bold-header}
 |  | non-English $O$ | non-English $E$ | English $O$ | English $E$ |
 |--:|:--:|:--:|:--:|:--:|
 | Primary Caesarean delivery | 127 | ?? | 934 | ?? |
 | Primary vaginal delivery | 1022 | ?? | 9336 | ?? |
+:::
 
-## Example: simpler numbers
+## Example: simpler numbers {.top-align}
 
 Contingency analysis uses the $\chi^2$ test statistic, so we need *observed* and *expected* frequencies
 
-|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ |
-|--:|:--:|:--:|:--:|:--:|
-| Primary Caesarean delivery | 1 | ?? | 2 | ?? |
-| Primary vaginal delivery | 5 | ?? | 16 | ?? |
+```{r}
+# a markdown formatted table strings for repeated use
+tbl <- "::: {.no-bold-header style=\"font-size: 80%;\"} \n|  | non-English<br>$O$ | non-English<br>$E$ | English<br>$O$ | English<br>$E$ | \n|--:|:--:|:--:|:--:|:--:| \n| Primary&nbsp;Caesarean delivery | 1 | <<non_e_c>> | 2 | <<e_c>> | \n| Primary&nbsp;vaginal delivery | 5 | <<non_e_v>> | 16 | <<e_v>> | \n:::"
 
+tbl_mar <- "::: {.no-bold-header style=\"font-size: 80%;\"} \n|  | non-English<br>$O$ | non-English<br>$E$ | <br>English<br>$O$ | <br>English<br>$E$ | **<br><br>Totals** | \n|--:|:--:|:--:|:--:|:--:|:--:| \n| Primary&nbsp;Caesarean delivery | 1 | <<non_e_c>> | 2 | <<e_c>> | **3** | \n| Primary&nbsp;vaginal delivery | 5 | <<non_e_v>> | 16 | <<e_v>> | **21** | \n| **Totals** | **6** |  | **18** |  | **24** | \n:::"
+
+
+```
+
+
+
+::: {.r-stack}
+
+:::: {.fragment .fade-out fragment-index="0"}
+
+```{r}
+#| echo: false
+#| results: asis
+
+non_e_c <- e_c <- non_e_v <- e_v <- "??"
+glue(tbl, .open = "<<", .close = ">>")
+```
+
+::::
+
+:::: {.fragment .fade-in-then-out fragment-index="0"}
+
+```{r}
+#| echo: false
+#| results: asis
+
+non_e_c <- e_c <- 1.5
+non_e_v <- e_v <- 10
+glue(tbl, .open = "<<", .close = ">>")
+```
+
+::::
+
+:::: {.fragment .fade-in-then-out fragment-index="1"}
+
+```{r}
+#| echo: false
+#| results: asis
+
+non_e_c <- e_c <- non_e_v <- e_v <- "??"
+glue(tbl, .open = "<<", .close = ">>")
+```
+
+::::
+
+:::: {.fragment .fade-in-then-out fragment-index="2"}
+
+```{r}
+#| echo: false
+#| results: asis
+
+non_e_c <- e_c <- non_e_v <- e_v <- "??"
+glue(tbl_mar, .open = "<<", .close = ">>")
+```
+
+::::
+
+:::: {.fragment .fade-in-then-out fragment-index="3"}
+
+```{r}
+#| echo: false
+#| results: asis
+
+glue(tbl_mar, .open = "<<", .close = ">>")
+```
+
+::::
+
+
+:::: {.fragment fragment-index="4"}
+
+```{r}
+#| echo: false
+#| results: asis
+
+non_e_c <- "$\\frac{3}{4}$"
+e_c <- "$2 \\frac{1}{4}$"
+non_e_v <- "$5 \\frac{1}{4}$"
+e_v <- "$15 \\frac{3}{4}$"
+glue(tbl_mar, .open = "<<", .close = ">>")
+```
+
+::::
+
+:::
+
+
+
+::: {.r-stack}
+
+
+:::: {.fragment .fade-out fragment-index="0" style="width: 100%;"}
 ::: {.pause-think}
 What should the expected frequencies be?
 :::
+::::
 
-## Example: simpler numbers
 
-Contingency analysis uses the $\chi^2$ test statistic, so we need *observed* and *expected* frequencies
-
-|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ |
-|--:|:--:|:--:|:--:|:--:|
-| Primary Caesarean delivery | 1 | 1.5 | 2 | 1.5 |
-| Primary vaginal delivery | 5 | 10 | 16 | 10 |
-
+:::: {.fragment .fade-in-then-out fragment-index="0" style="width: 100%;"}
 ::: {.pause-think}
-Is that right?...No...
+Is this right? ...No... 
 :::
+::::
 
-## Example: simpler numbers
 
-Contingency analysis uses the $\chi^2$ test statistic, so we need *observed* and *expected* frequencies
-
-|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ |
-|--:|:--:|:--:|:--:|:--:|
-| Primary Caesarean delivery | 1 | ?? | 2 | ?? |
-| Primary vaginal delivery | 5 | ?? | 16 | ?? |
-
+:::: {.fragment .fade-in-then-out fragment-index="1" style="width: 100%;"}
 ::: {.pause-think}
-Expected frequencies come from the null hypothesis. What is the null hypothesis?
+Expected frequencies come from the null hypothesis. ***What is the null hypothesis?***
 :::
+::::
 
-## Example: simpler numbers
 
-Contingency analysis uses the $\chi^2$ test statistic, so we need *observed* and *expected* frequencies
 
-|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ |
-|--:|:--:|:--:|:--:|:--:|
-| Primary Caesarean delivery | 1 | ?? | 2 | ?? |
-| Primary vaginal delivery | 5 | ?? | 16 | ?? |
-
+:::: {.fragment .fade-in-then-out fragment-index="2" style="width: 100%;"}
 ::: {.pause-think}
-Expected frequencies come from the null hypothesis. What is the null hypothesis? **equal proportions across explanatory groups**
+Expected frequencies come from the null hypothesis. $H_0$: *equal proportions across explanatory* ***and*** *response groups*
 :::
+::::
 
-## Example: simpler numbers
-
-Contingency analysis uses the $\chi^2$ test statistic, so we need *observed* and *expected* frequencies
-
-|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ | **Totals** |
-|--:|:--:|:--:|:--:|:--:|:--:|
-| Primary C-section | 1 | ?? | 2 | ?? | **3** |
-| Primary vaginal | 5 | ?? | 16 | ?? | **21** |
-| **Totals** | **6** |  | **18** |  | **24** |
-
-::: {.pause-think}
-Expected frequencies come from the null hypothesis. What is the null hypothesis? **equal proportions across explanatory groups**
-:::
-
-## Example: simpler numbers
-
-|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ | **Totals** |
-|--:|:--:|:--:|:--:|:--:|:--:|
-| Primary C-section | 1 | ?? | 2 | ?? | **3** |
-| Primary vaginal | 5 | ?? | 16 | ?? | **21** |
-| **Totals** | **6** |  | **18** |  | **24** |
-
-$\hat{\text{Pr}}(\text{non-English speaker}) = \frac{1}{4}$
+::: {.fragment fragment-index="3"}
+$\hat{\text{Pr}}(\text{non-English speaker}) = \frac{1}{4}$ and 
 $\hat{\text{Pr}}(\text{English speaker}) = \frac{3}{4}$
 
-So expected frequencies assuming equal proportions across groups would be
+So expected frequencies assuming equal proportions be
 
+::: {.columns}
+::: {.column}
 $E_{\text{C-section, non-English}} = \frac{1}{4} \times 3 = \frac{3}{4}$
-$E_{\text{C-section, English}} = \frac{3}{4} \times 3 = 2\frac{1}{4}$
 $E_{\text{VB, non-English}} = \frac{1}{4} \times 21 = 5 \frac{1}{4}$
-$E_{\text{C-section, English}} = \frac{3}{4} \times 21 = 15 \frac{3}{4}$
-
-## Example: simpler numbers
-
-|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ | **Totals** |
-|--:|:--:|:--:|:--:|:--:|:--:|
-| Primary C-section | 1 | $\frac{3}{4}$ | 2 | $2\frac{1}{4}$ | **3** |
-| Primary vaginal | 5 | $5 \frac{1}{4}$ | 16 | $15 \frac{3}{4}$ | **21** |
-| **Totals** | **6** |  | **18** |  | **24** |
-
-$\hat{\text{Pr}}(\text{non-English speaker}) = \frac{1}{4}$
-$\hat{\text{Pr}}(\text{English speaker}) = \frac{3}{4}$
-
-So expected frequencies assuming equal proportions across groups would be
-
-$E_{\text{C-section, non-English}} = \frac{1}{4} \times 3 = \frac{3}{4}$
+:::
+::: {.column}
 $E_{\text{C-section, English}} = \frac{3}{4} \times 3 = 2\frac{1}{4}$
-$E_{\text{VB, non-English}} = \frac{1}{4} \times 21 = 5 \frac{1}{4}$
-$E_{\text{C-section, English}} = \frac{3}{4} \times 21 = 15 \frac{3}{4}$
+$E_{\text{VB, English}} = \frac{3}{4} \times 21 = 15 \frac{3}{4}$
+:::
 
-## Example: simpler numbers
+:::
 
-$\chi^2$ test statistic is
+:::
 
-$$\chi^2 = \sum_{i=1}^n \frac{(O_i - E_i) ^ 2}{E_i}$$
+:::
 
-|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ | **Totals** |
-|--:|:--:|:--:|:--:|:--:|:--:|
-| Primary C-section | 1 | $\frac{3}{4}$ | 2 | $2\frac{1}{4}$ | **3** |
-| Primary vaginal | 5 | $5 \frac{1}{4}$ | 16 | $15 \frac{3}{4}$ | **21** |
-| **Totals** | **6** |  | **18** |  | **24** |
 
-$\chi^2 = \frac{0.25^2}{0.75} + \frac{-0.25^2}{5.25} + \frac{-0.25^2}{2.25} + \frac{0.25^2}{15.75}$
 
-$\chi^2 = 0.127$
 
-## Example: simpler numbers
 
-$\chi^2$ test statistic is $\chi^2 = 0.127$
+## Example: simpler numbers {.top-align}
 
-|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ | **Totals** |
-|--:|:--:|:--:|:--:|:--:|:--:|
-| Primary C-section | 1 | $\frac{3}{4}$ | 2 | $2\frac{1}{4}$ | **3** |
-| Primary vaginal | 5 | $5 \frac{1}{4}$ | 16 | $15 \frac{3}{4}$ | **21** |
-| **Totals** | **6** |  | **18** |  | **24** |
+::: {.r-stack}
 
-What about degrees of freedom?
+::: {.fragment .fade-out fragment-index="0" style="width: 100%;"}
+Test statistic is $\chi^2 = \sum_{i=1}^n \frac{(O_i - E_i) ^ 2}{E_i}$
+:::
 
-For a contingency test, $df = (\text{number of rows} - 1) \times (\text{number of columns} - 1)$
+::: {.fragment fragment-index="0" style="width: 100%;"}
+Test statistic is $\chi^2 = 0.127$
+:::
 
-$df = (2 - 1) \times (2 - 1)$
 
-$df = 1$
+:::
 
-## Example: simpler numbers
 
-**Let's run our null hypothesis test**
+```{r}
+#| echo: false
+#| results: asis
 
+glue(tbl, .open = "<<", .close = ">>")
+```
+
+::: {.fragment fragment-index="1"}
+
+What about degrees of freedom? For a contingency test d.f. is: 
+
+$$
+\begin{align}
+df &= (\text{number of rows} - 1) \times (\text{number of columns} - 1) \\
+&= (2 - 1) \times (2 - 1) \\
+&= 1
+\end{align}
+$$
+
+:::
+
+## Example: simpler numbers {.top-align}
+
+Let's run our null hypothesis test
+
+::: {.fragment}
 $H_0$: there is no difference in the proportions across explanatory groups
+:::
 
+::: {.fragment}
 $H_A$: there *is* a difference in the proportions across explanatory groups
+:::
 
+<br>
+
+::: {.fragment}
 ```{r}
 #| echo: true
 
@@ -1207,27 +1268,27 @@ df <- 1
 pchisq(chi2_test_stat, df, lower.tail = FALSE)
 ```
 
-We fail to reject the null
+We fail to reject the null (but recall this is just a tiny subset of the data)
 
-## Example: simpler numbers
+:::
 
-**Let's run our null hypothesis test**
+## Example: simpler numbers {.top-align}
+
+Let's run our null hypothesis test
 
 $H_0$: there is no difference in the proportions across explanatory groups
 
 $H_A$: there *is* a difference in the proportions across explanatory groups
 
+Or can use the built-in `chisq.test`, but first we have to format the data
+
 ```{r}
 #| echo: true
+#| warning: true
 
 dat <- matrix(c(1, 5, 2, 16), nrow = 2)
 dat
-```
 
-```{r}
-#| eval: false
-
-# simpler to use the built-in chi-squared test function
 chisq.test(dat)
 ```
 
@@ -1237,36 +1298,35 @@ chisq.test(dat)
 #| echo: true
 #| warning: true
 
-# simpler to use the built-in chi-squared test function
 chisq.test(dat)
 ```
 
-And this tells us we shouldn't be using $\chi^2$ because our sample size is too small!
+The [Warning]{style="font-family: monospace; color: gray;"} is important! It tells us we shouldn't be using $\chi^2$ because our sample size is too small
 
 ## Example: simpler numbers
 
-**Sure enough we had an expected frequency less than 1!!!**
+*Sure enough we had an expected frequency less than 1* ***and*** *half our expected frequencies are under 5*
 
-**Also half our expected frequencies are under 5**
+```{r}
+#| echo: false
+#| results: asis
 
-|  | non-English $O$ | non-English $E$ | English $O$ | English $E$ | **Totals** |
-|--:|:--:|:--:|:--:|:--:|:--:|
-| Primary C-section | 1 | $\frac{3}{4}$ | 2 | $2\frac{1}{4}$ | **3** |
-| Primary vaginal | 5 | $5 \frac{1}{4}$ | 16 | $15 \frac{3}{4}$ | **21** |
-| **Totals** | **6** |  | **18** |  | **24** |
+glue(tbl, .open = "<<", .close = ">>")
+```
 
 ## Example: birth outcomes for non-English and English speakers in Hawaiʻi
 
 The real data have sufficient sample size to do a $\chi^2$ test
 
+::: {.no-bold-header}
 |  | non-English speaker | English speaker |
 |--:|:--:|:--:|
 | Primary Caesarean delivery | 127 | 934 |
 | Primary vaginal delivery | 1022 | 9336 |
+:::
 
 ## Example: birth outcomes for non-English and English speakers in Hawaiʻi
 
-**Let's run our null hypothesis test for real**
 
 $H_0$: there is no difference in the proportions across explanatory groups
 
@@ -1277,12 +1337,6 @@ $H_A$: there *is* a difference in the proportions across explanatory groups
 
 dat <- matrix(c(127, 1022, 934, 9336), nrow = 2)
 dat
-```
-
-## Example: birth outcomes for non-English and English speakers in Hawaiʻi
-
-```{r}
-#| echo: true
 
 chisq.test(dat)
 ```
@@ -1419,9 +1473,11 @@ We reject the null
 | Number of variables   | **2**                 |
 | Type of data          | categorical  |
 | Parameter             | *Odds ratio (OR)*  |
-| Estimate              | $\hat{OR}$  |
+| Estimate              | $\widehat{OR}$  |
 | Sampling distribution | $\chi^2$ distribution |
 | Test statistic        | $\chi^2$ statistic    |
+
+<br>
 
 The [odds ratio]{.alert} is the fraction of how likely a certain outcome is in one group compared to the other
 
@@ -1447,21 +1503,37 @@ $$
 
 If the [odds ratio]{.alert} is equal to 1, both groups have the same odds
 
-**Our null hypothesis is that the odds ratio is equal to 1**
+::: {.r-stack}
+
+:::: {.fragment .fade-in-then-out style="width: 100%;"}
+::::: {.pause-think}
+What is the null hypothesis in terms of the odds ratio?
+:::::
+::::
+
+:::: {.fragment style="width: 100%;"}
+::::: {.pause-think}
+***The null hypothesis is that the odds ratio is equal to 1***
+:::::
+::::
+
+:::
 
 ## Odds and odds ratio
 
-The [odds ratio]{.alert} we calculate from data is an estimate $\hat{OR}$
+The [odds ratio]{.alert} we calculate from data is an estimate $\widehat{OR}$
 
+::: {.no-bold-header}
 |                            | non-English speaker | English speaker |
 |---------------------------:|:--------------------|:----------------|
 | Primary Caesarean delivery | 127                 | 934             |
 | Primary vaginal delivery   | 1022                | 9336            |
 | Odds $\hat{O}$             | 127/1022            | 934/9336 |
+:::
 
 $$
 \begin{aligned}
-\hat{OR} &= \frac{\hat{O}_{nE}}{\hat{O}_{E}} \\
+\widehat{OR} &= \frac{\hat{O}_{nE}}{\hat{O}_{E}} \\
 &= \frac{127/1022}{934/9336} \\
 &= 1.242
 \end{aligned}
@@ -1469,52 +1541,73 @@ $$
 
 ## Odds and odds ratio
 
-The [odds ratio]{.alert} we calculate from data is an estimate $\hat{OR}$
+The [odds ratio]{.alert} we calculate from data is an [estimate]{.alert} $\widehat{OR}$
 
+::: {.no-bold-header style="font-size: 80%;"}
 |                            | non-English speaker | English speaker |
 |---------------------------:|:--------------------|:----------------|
 | Primary Caesarean delivery | 127                 | 934             |
 | Primary vaginal delivery   | 1022                | 9336            |
 | Odds $\hat{O}$             | 127/1022            | 934/9336 |
+:::
 
+::: {.r-stack}
+
+:::: {.fragment .fade-out fragment-index="0" style="width: 100%;"}
 $$
-\hat{OR} = 1.242
+\begin{aligned}
+\widehat{OR} &= \frac{\hat{O}_{nE}}{\hat{O}_{E}} \\
+&= \frac{127/1022}{934/9336} \\
+&= 1.242
+\end{aligned}
+$$
+::::
+
+:::: {.fragment fragment-index="0" style="width: 100%;"}
+$$
+\widehat{OR} = 1.242
 $$
 
-**Our null hypothesis is that the odds ratio is equal to 1**
+$H_0$: $OR = 1$. Do we reject the null with $\widehat{OR} = 1.242$?
 
-Null hypothesis test: *Is 1.242 significantly different from 1?*
-
-- $P$-value
+::: {.fragment fragment-index="1"}
+- $P$-value from $\chi^2$ test answers this 
 - or...
+:::
+
+::::
+
+:::
 
 ## Confidence interval for the odds ratio
 
-**95% CI**
+The [95% confidence interval]{.alert}:
 
-- the range of values that contain 95% of the central probability of the sampling distribution for the estimate
-- the range will overlap the *true population parameter* 95% of the time in hypothetical repeat studies
+::: {.incremental}
+- is the range of values that contain 95% of the central probability of the sampling distribution for the estimate
+- that range will overlap the *true population parameter* 95% of the time in hypothetical repeat studies
 - if the 95% CI does not overlap the null hypothesis (e.g. $OR = 1$) we reject the null at $\alpha = 0.05$
 - confidence intervals give us more information that $P$-values alone
+:::
 
 ## Confidence interval for the odds ratio
 
 The **95% CI** for the natural log of the odds ratio follows the nice (approximate) rule
 
 $$
-\text{95\% CI} = \ln(\hat{OR}) \pm 2 \times SE_\text{log-scale}
+\text{95\% CI} = \ln(\widehat{OR}) \pm 2 \times SE_\text{log-scale}
 $$
 
 An even better approximation is
 
 $$
-\text{95\% CI} = \ln(\hat{OR}) \pm 1.96 \times SE_\text{log-scale}
+\text{95\% CI} = \ln(\widehat{OR}) \pm 1.96 \times SE_\text{log-scale}
 $$
 
 ## Confidence interval for the odds ratio
 
 $$
-\text{95\% CI} = \ln(\hat{OR}) \pm 1.96 \times SE_\text{log-scale}
+\text{95\% CI} = \ln(\widehat{OR}) \pm 1.96 \times SE_\text{log-scale}
 $$
 
 But what is $SE_\text{log-scale}$?  Just take my word for it:
@@ -1536,14 +1629,16 @@ $$
 
 ## Confidence interval for the odds ratio
 
+::: {.no-bold-header}
 |                            | non-English speaker | English speaker |
 |---------------------------:|:--------------------|:----------------|
 | Primary Caesarean delivery | 127                 | 934             |
 | Primary vaginal delivery   | 1022                | 9336            |
+:::
 
 $$
 \begin{aligned}
-\text{95\% CI} &= \ln(\hat{OR}) \pm 1.96 \times SE_\text{log-scale} \\
+\text{95\% CI} &= \ln(\widehat{OR}) \pm 1.96 \times SE_\text{log-scale} \\
 &= \ln(1.242) \pm 1.96 \times \sqrt{\frac{1}{127} + \frac{1}{1022} + \frac{1}{934} + \frac{1}{9336}} \\
 &= \ln(1.242) \pm 1.96 \times 0.100 \\
 &= \ln(1.242) \pm 0.196
@@ -1559,7 +1654,7 @@ $$
 
 $$
 \begin{aligned}
-\text{95\% CI} &= \ln(\hat{OR}) \pm 1.96 \times SE_\text{log-scale} \\
+\text{95\% CI} &= \ln(\widehat{OR}) \pm 1.96 \times SE_\text{log-scale} \\
 &= \ln(1.242) \pm 0.196
 \end{aligned}
 $$
@@ -1583,49 +1678,50 @@ Here is a more accurate what of getting all the same information:
 
 # make the contingency table in R
 d <- matrix(c(127, 1022, 934, 9336), nrow = 2)
-```
-
-```{r}
-#| echo: true
-#| eval: false
 
 # an "exact" test without the chi-sqrd assumptions
 fisher.test(d)
 ```
 
-## $\chi^2$ contingency tests are all approximate
+<!-- ## $\chi^2$ contingency tests are all approximate -->
 
-Here is a more accurate what of getting all the same information:
+<!-- Here is a more accurate what of getting all the same information: -->
 
-```{r}
-#| echo: true
+<!-- ```{r} -->
+<!-- #| echo: true -->
 
-fisher.test(d)
-```
+<!-- fisher.test(d) -->
+<!-- ``` -->
 
-## Why do we care so much about [confidence intervals]{.alert}?
+## Why [confidence intervals]{.alert}? {.top-align}
 
 **There's a replication crisis in biostatistics**
 
+::: {.incremental}
 - Studies will publish a "significant" finding (one with $P$-value $\le 0.05$)
-- Other researchers will try to reproduce that finding, and more often than not, **they fail**
+- Other researchers will try to reproduce that finding, and more often than not, ***they fail*** 💀
 - Are any of our insights valid?!
+:::
 
+::: {.fragment}
 [Blakeley et al. (2019)](https://www.tandfonline.com/doi/full/10.1080/00031305.2018.1527253) write about this problem in an article titled:
 
 ::: {style="text-align: center;"}
 *Abandon Statistical Significance*
-:::
 
 (i.e. no more $P$-values, please)
+:::
 
-## Why do we care so much about [confidence intervals]{.alert}?
+:::
+
+
+## Why [confidence intervals]{.alert}? {.top-align}
 
 **There's a replication crisis in biostatistics**
 
 Confidence intervals are a small, simple, incomplete fix: they let us keep doing statistics pretty much the same, but CIs are *more informative* and thus less prone to *P-hacking*
 
-## Why do we care so much about [confidence intervals]{.alert}?
+## Why [confidence intervals]{.alert}? {.top-align}
 
 **There's a replication crisis in biostatistics**
 
@@ -1633,171 +1729,176 @@ Confidence intervals are a small, simple, incomplete fix
 
 An example with odds ratios (the null hypothesis is $OR = 1$)
 
-| $P$-value | $\chi^2$ stat | odds ratio | (95% CI) |
+| $P$-value | $\chi^2$ stat | odds ratio | 95% CI |
 |-----------|---------------|------------|----------|
 | $P = 0.01$ | 6.63 | 1.211 | (1.011, 1.425) |
 | $P = 0.01$ | 6.63 | 1.003 | (1.001, 1.004) |
 | $P = 0.01$ | 6.63 | 2.327 | (1.983, 3.782) |
 
-$P$-values are all the same, but due to different sample sizes and true effect sizes, odds ratios and confidence intervals are wildly different, with some warranting our interest and others not
+$P$-values are all the same, but due to different sample sizes and true effect sizes, odds ratios and confidence intervals are wildly different
 
-## Why do we care so much about [confidence intervals]{.alert}?
 
-**There's a replication crisis in biostatistics**
 
-Confidence intervals are a small, simple, incomplete fix
-
-An example with odds ratios (the null hypothesis is $OR = 1$)
-
-| $P$-value | $\chi^2$ stat | odds ratio | (95% CI) | conclusion |
-|-----------|---------------|------------|----------|------------|
-| $P = 0.01$ | 6.63 | 1.211 | (1.011, 1.425) | Could be interesting, needs more samples |
-| $P = 0.01$ | 6.63 | 1.003 | (1.001, 1.004) | Huge sample size, biologically meaningless |
-| $P = 0.01$ | 6.63 | 2.327 | (1.983, 3.782) | Clearly there's an effect |
-
-## How did we get here?
-
-**There's a replication crisis in biostatistics**
-
-## How did we get here?
+## How did we get here? {.top-align}
 
 **There's a replication crisis in biostatistics**
 
 ::: columns
-::: {.column width="50%"}
+::: {.column width="35%"}
 ![](/img/bernoulli_falacy.jpg)
 :::
 
-::: {.column width="50%"}
+::: {.column width="65%"}
 Aubrey Clayton argues that "political agendas" of early statisticians drove them to develop methods that could prove their own "unpopular" beliefs and shield their "controversial" views behind the guise of "objectivity"
 
 (quotes are not Clayton's...I'm building suspense...)
 :::
 :::
 
-## How did we get here?
+## How did we get here? {.top-align}
 
-**There's a replication crisis in biostatistics**
+**Some early statisticians**
 
 ::: columns
-::: {.column width="50%"}
-**Early statisticians**
-
+::: {.column}
 Ronald Fisher
 
 - promoted $P$-values
 - developed that "Fisher exact test" thing
 - lots more we'll be talking about
+:::
 
+::: {.column}
 Karl Pearson
 
-- developed the $chi^2$ test
+- developed the $\chi^2$ test
 - developed methods for correlation
 - lots more we'll be talking about
 :::
-
-::: {.column width="50%"}
-"political agendas" = eugenics
-
-"unpopular" beliefs = white supremacy
-
-"controversial" views = genocide is necessary
-:::
 :::
 
-## Disease at the root, disease in the shoot
+::: {.no-header-table}
+| | | |
+|---:|:-:|:---|
+| political agendas | = | eugenics |
+| "unpopular" beliefs | = | white supremacy |
+| "controversial" views | = | genocide is necessary |
+:::
+
+
+
+## Confronting the biostats lineage {.top-align}
 
 ::: columns
 ::: {.column width="70%"}
-*"Available scientific knowledge provides a firm basis for believing that the groups of mankind differ in their innate capacity for intellectual and emotional development"*
 
-*"I am sorry that there should be propaganda in favour of miscegenation* [bigoted term for marriage between perceived racial groups] *in North America as I am sure it can do nothing but harm"*
 
-*"Unfortunately, considerable propaganda is now being developed to convince the public that cigarette smoking is dangerous"* [Fisher was funded by the tobacco industry]
+> Available scientific knowledge provides a firm basis for believing that the groups of mankind differ in their innate capacity for intellectual and emotional development
+
+
+::: {.fragment}
+> I am sorry that there should be propaganda in favour of miscegenation *[bigoted term for marriage between perceived racial groups]* in North America as I am sure it can do nothing but harm
+:::
+
+
 :::
 
 ::: {.column width="30%"}
 ![](/img/fisher.jpeg)
 
-Ronald Fisher
-
-- Racist
-- Eugenicist
-- Pawn of big tobacco
+Ronald Fisher: *racist, eugenicist, pawn of big tobacco*
 :::
 :::
 
-## Disease at the root, disease in the shoot
+
+## Confronting the biostats lineage {.top-align}
+
+::: columns
+::: {.column width="70%"}
+
+
+> Unfortunately, considerable propaganda is now being developed to convince the public that cigarette smoking is dangerous 
+
+[Fisher was funded by the tobacco industry]
+
+
+:::
+
+::: {.column width="30%"}
+![](/img/fisher.jpeg)
+
+Ronald Fisher: *racist, eugenicist, pawn of big tobacco*
+:::
+:::
+
+## Confronting the biostats lineage {.top-align}
 
 ::: columns
 ::: {.column width="30%"}
 ![](/img/Karl_Pearson_1912.jpg)
 
-Karl Pearson
-
-- Racist
-- Eugenicist
-- Antisemite
+Karl Pearson: *racist, eugenicist, antisemite*
 :::
 
 ::: {.column width="70%"}
-*"My view---and I think it may be called the scientific view of a nation---is that of an organized whole, kept up to a high pitch of internal efficiency by insuring that its numbers are substantially recruited from the better stocks, and kept up to a high pitch of external efficiency by contest, chiefly by way of war with inferior races"*
 
-*"It is a false view of human solidarity, a weak humanitarianism, not a true humanism, which regrets that a capable and stalwart race of white men should replace a dark-skinned tribe..."*
+
+> My view---and I think it may be called the scientific view of a nation---is that of an organized whole, kept up to a high pitch of internal efficiency by insuring that its numbers are substantially recruited from the better stocks, and kept up to a high pitch of external efficiency by contest, chiefly by way of war with inferior races
+
+::: {.fragment}
+> It is a false view of human solidarity, a weak humanitarianism, not a true humanism, which regrets that a capable and stalwart race of white men should replace a dark-skinned tribe..."
+:::
+
 :::
 :::
 
-## Disease at the root, disease in the shoot
+## Confronting the biostats lineage {.top-align}
 
 ::: columns
 ::: {.column width="30%"}
 ![](/img/Karl_Pearson_1912.jpg)
 
-Karl Pearson
+Karl Pearson: *racist, eugenicist, antisemite*
 
-- Racist
-- Eugenicist
-- Antisemite
 :::
 
 ::: {.column width="70%"}
-*"It is a false view of human solidarity, a weak humanitarianism, not a true humanism, which regrets that a capable and stalwart race of white men should replace a dark-skinned tribe which can neither utilize its land for the full benefit of mankind, nor contribute its quota to the common stock of human knowledge."*
+> It is a false view of human solidarity, a weak humanitarianism, not a true humanism, which regrets that a capable and stalwart race of white men should replace a dark-skinned tribe which can neither utilize its land for the full benefit of mankind, nor contribute its quota to the common stock of human knowledge.
 
-*"Taken on the average, and regarding both sexes, this alien Jewish population is somewhat inferior physically and mentally to the native population"*
+::: {.fragment}
+> Taken on the average, and regarding both sexes, this alien Jewish population is somewhat inferior physically and mentally to the native population
+:::
+
 :::
 :::
 
-## Disease at the root, disease in the shoot
 
-::: {style="text-align: center;"}
+
+## Confronting the biostats lineage {.top-align}
+
 What do we do? Why learn "statistics"?
-:::
 
-## Disease at the root, disease in the shoot
-
-What do we do? Why learn "statistics"?
-
+::: {.incremental}
 - Why learn statistics?
     - It holds a powerful position in science and society
-    - To undo harm, "beat them at their own game"
-    - Some methods (even $P$-values) not wrong, just poorly applied
-    - Those f@&%kers were **NOT** geniuses, others would have developed similar ideas and did (e.g. Anil Kumar Gain)
-
-## Disease at the root, disease in the shoot
-
-What do we do? Why learn "statistics"?
-
-- Stop the spread
+    - Having statistics as a tool can help you do good rather than harm
+    - Methods (even $P$-values) are not wrong, just wrongly applied
+    - Those f@&!ers were **NOT** geniuses, others would have developed similar ideas and did (e.g. Anil Kumar Gain)
+- Use statistics for good
     - Confront the history
     - Remove its influence on the contemporary
-- Be intentional and self-reflective about how and why we use statistics
+    - Be intentional and self-reflective about your research
+:::
 
-## Disease at the root, disease in the shoot
+## Confronting the biostats lineage {.top-align}
 
 What do we do? Why learn "statistics"?
 
+::: {.incremental}
 - Seek and embrace alternative knowledge systems
     - Reject the idea that western science is a superior knowledge system
     - Do not be extractive in connection to other knowledge systems
     - Check out Ethnomathematics here at UH
     - Let's see if we can decolonize statistics
+
+:::
