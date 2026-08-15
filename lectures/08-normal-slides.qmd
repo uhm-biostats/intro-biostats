@@ -14,6 +14,8 @@ library(glue)
 library(stringr)
 library(tidyr)
 library(extraDistr)
+
+options(keep.source = TRUE)
 ```
 
 ## Ka hua ʻōlelo o ka haʻawina
@@ -22,64 +24,73 @@ library(extraDistr)
 [kaulike]{.alert}
 :::
 
-## The world is shockingly normal
+## {background-image="/img/earth.png" background-size="50%" background-color="black"}
 
-::: {style="text-align: center;"}
-![](/img/earth.png)
+::: {style="text-align: center; color: white; font-size: 200%;"}
+The world is shockingly normal
 :::
 
 ## Let's try an example
 
 Run this code on your computer
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 s <- sample(20, 5, replace = TRUE)
 mean(s)
 ```
 
 ## Let's try an example
 
-If there were thousands of us, the result would look more and more perfectly [normal]{.alert}
+If there were thousands of us and we looked at the distribution of all our samples it would look more and more perfectly [normal]{.alert}
 
-```{r fig.align='center', fig.width=4, fig.height=4}
-foo <- replicate(10000, {
+```{r}
+#| label: clt-fig
+#| fig-align: center
+#| fig-width: 4
+#| fig-height: 3
+#| out-width: "6in"
+#| cache: true
+
+samps <- replicate(10000, {
     s <- sample(20, 5, replace = TRUE)
     mean(s)
 })
 
-dat <- data.frame(Sample_Mean = foo)
+dat <- data.frame(Sample_Mean = samps)
 
 ggplot(dat, aes(x = Sample_Mean)) +
     geom_histogram(aes(y = after_stat(density)),
                    bins = 20) +
     stat_function(fun = dnorm,
                   args = list(mean = mean(dat$Sample_Mean),
-                              sd = sd(dat$Sample_Mean)))
+                              sd = sd(dat$Sample_Mean)), 
+                  color = "tomato", linewidth = 2)
+
 ```
 
 ## Let's try an example
 
 In case you are curious, here is the code for making that graphic
 
-```{r eval = FALSE, echo = TRUE}
-foo <- replicate(10000, {
-    s <- sample(20, 5, replace = TRUE)
-    mean(s)
-})
+```{r}
+#| results: asis
+code <- knitr::knit_code$get("clt-fig")
 
-dat <- data.frame(Sample_Mean = foo)
-
-ggplot(dat, aes(x = Sample_Mean)) +
-    geom_histogram(aes(y = after_stat(density)),
-                   bins = 20) +
-    stat_function(fun = dnorm,
-                  args = list(mean = mean(dat$Sample_Mean),
-                              sd = sd(dat$Sample_Mean)))
+cat("```r", code, "```", sep = "\n")
 ```
+
+
 
 ## The normal distribution allows many useful methods
 
-```{r fig.align='center', fig.width=7, fig.height=5}
+```{r}
+#| fig-align: center
+#| fig-width: 7
+#| fig-height: 5
+#| out-width: "8in"
+
 set.seed(1)
 noni_dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)),
                        group = c(rep("10mg noni", 100),
@@ -118,16 +129,18 @@ p23 <- plot_grid(p2, p3, labels = c("Analysis of Variance",
 plot_grid(p1, p23, ncol = 2)
 ```
 
-## Learning Objectives
+## Learning goals
 
-1. *Describe the properties of a normal distribution*
-2. *Know that the standard error of the sampling distribution of size $n$ from the normal distribution equals* $\sigma/\sqrt{n}$
-3. *Find the probability density of a range of sample mean*
-4. *Use a Z-transform to convert any normal distribution into the standard normal distribution*
-6. *Explain why normal distributions are common, and explain the Central Limit Theorem*
-6. Use *R* to make calculations about and sample from a normal distribution
-5. Interpret histograms and qq-plots to meaningfully evaluate if data are roughly normal
-7. Transform non-normal data to become normal
+::: {.incremental}
+1. Describe the properties of a normal distribution
+2. Know that the standard error of the sampling distribution of size $n$ from the normal distribution equals $\sigma/\sqrt{n}$
+3. Find the probability density of a range of sample mean
+4. Use a Z-transform to convert any normal distribution into the standard normal distribution
+6. Explain why normal distributions are common, and explain the Central Limit Theorem
+<!-- 6. Use *R* to make calculations about and sample from a normal distribution -->
+<!-- 5. Interpret histograms and qq-plots to meaningfully evaluate if data are roughly normal -->
+<!-- 7. Transform non-normal data to become normal -->
+:::
 
 ## [Normal distribution]{.alert}
 
@@ -135,20 +148,22 @@ plot_grid(p1, p23, ncol = 2)
 
 ## The [normal distribution]{.alert} has two parameters, mean and standard deviation
 
-For the population, consider a continuous variable $Y$ with mean $\mu$ and standard deviation $\sigma$
+For the population, consider a continuous random variable $Y$ with mean $\mu$ and standard deviation $\sigma$
 
 $$f(Y) = \frac{1}{\sqrt{2 \pi \sigma^2}} e ^ {\frac{-(Y - \mu) ^ 2}{2 \sigma ^ 2}}$$
-$f(Y)$ is the probability density associated with a value $Y$
+$f(Y)$ is the probability density of $Y$. Higher probability when:
 
-Higher probability when:
-
-1. $Y$ is close to $\mu$
-
-2. The spread of the distribution is low ($\sigma$ is small)
+- $Y$ is close to $\mu$
+-0The spread of the distribution is low ($\sigma$ is small)
 
 ## The [normal distribution]{.alert} has two parameters, mean and standard deviation
 
-```{r, fig.align='center', out.height="80%"}
+```{r}
+#| fig-align: center
+#| fig-width: 10
+#| fig-height: 7
+#| out-width: "8in"
+
 x <- read.csv("../data/bird_morpho.csv")
 
 df1 <- x[x$species %in% c("jawe", "rwbu", "wrsh"), ] |>
@@ -173,8 +188,9 @@ ggplot(x[x$species %in% c("jawe", "rwbu", "wrsh"), ],
     geom_histogram(mapping = aes(nares_to_tip, y = ..density..),
                    show.legend = FALSE, binwidth = 0.2) +
     geom_line(data = df2, mapping = aes(x1, y), size = 2, color = "darkgrey") +
-    geom_text(data = df1, mapping = aes(x = 5, y = 1, label = label), hjust = 0,
+    geom_text(data = df1, mapping = aes(x = 5, y = 0.9, label = label), hjust = 0,
               size = 8) +
+    scale_y_continuous(limits = 0:1) +
     xlab("Beak length (mm)") +
     ylab("Probability density") +
     scale_fill_viridis_d() +
@@ -195,7 +211,10 @@ ggplot(x[x$species %in% c("jawe", "rwbu", "wrsh"), ],
 
 ## Discrete versus Continuous distributions
 
-```{r, fig.align='center', out.width="80%"}
+```{r}
+#| fig-align: center
+#| out-width: "8in"
+
 df1 <- tibble(x = seq(0, 10, 1), y = dbinom(x, size = 10, prob = 0.5))
 df2 <- tibble(x = seq(-3, 3, 0.01), y = dnorm(x))
 
@@ -236,7 +255,10 @@ Discrete: Probability of 5 successes is `r round(dbinom(5, 10, 0.5), 2)`
 
 Continuous: Probability of $`r round(qnorm(0.375), 2)` < Y < `r round(qnorm(0.625), 2)`$ is 0.25
 
-```{r, fig.align='center', out.width="80%"}
+```{r}
+#| fig-align: center
+#| out-width: "8in"
+
 gp3 <- gp1 +
   geom_col(
     data = filter(df1, x == 5),
@@ -254,7 +276,10 @@ plot_grid(gp3, gp4)
 
 ## Symmetrical around its mean
 
-```{r, fig.align='center', out.width="80%"}
+```{r}
+#| fig-align: center
+#| out-width: "8in"
+
 df1 <- tibble(x = seq(0, 20, 0.01), y = dchisq(x, df = 6))
 df2 <- tibble(x = seq(-3, 3, 0.01), y = dnorm(x))
 
@@ -295,7 +320,10 @@ Asymmetric: Probability of $\chi^2 > \text{mean}$ is `r round(pchisq(6, 6, lower
 
 Symmetric: Probability of $Y > \text{mean}$ is `r round(pnorm(0, lower.tail = FALSE), 2)`
 
-```{r, fig.align='center', out.width="80%"}
+```{r}
+#| fig-align: center
+#| out-width: "8in"
+
 gp3 <- gp1 +
   geom_area(
     data = filter(df1, x > 6),
@@ -314,6 +342,9 @@ plot_grid(gp3, gp4)
 ## It has a single mode
 
 ```{r}
+#| fig-align: center
+#| out-width: "8in"
+
 df1 <- tibble(x = seq(0, 1, 0.01), y = dbeta(x, 0.5, 0.5))
 df2 <- tibble(x = seq(-3, 3, 0.01), y = dnorm(x))
 
@@ -350,7 +381,10 @@ plot_grid(gp1, gp2)
 
 ## The probability density is highest exactly at the mean
 
-```{r, fig.align='center', out.width="80%"}
+```{r}
+#| fig-align: center
+#| out-width: "8in"
+
 df1 <- tibble(x = seq(0, 20, 0.01), y = dchisq(x, df = 6))
 df2 <- tibble(x = seq(-3, 3, 0.01), y = dnorm(x))
 
@@ -387,14 +421,9 @@ gp2 <- ggplot(df2, aes(x, y)) +
 plot_grid(gp1, gp2)
 ```
 
-## Properties of a [normal distribution]{.alert}
 
-* Continuous distribution
-* Symmetrical around its mean
-* It has a single mode
-* The probability density is highest exactly at the mean
 
-## Standard error of the sample mean is $\sigma_{\overline{Y}} = \sigma/\sqrt{n}$
+## Standard error of the sample mean 
 
 The standard error is the standard deviation of the sampling distribution
 
@@ -408,7 +437,12 @@ $$\sigma_{\overline{Y}} = \sigma/\sqrt{n}$$
 If $\sigma = 1$, which panels show the sampling distribution of the sample mean associated with $n = 4$, $n = 9$, and $n = 25$?
 :::
 
-```{r, fig.align='center', fig.width=4, fig.height=2}
+```{r}
+#| fig-align: center
+#| fig-width: 4
+#| fig-height: 2
+#| out-width: "6.5in"
+
 se <- c(A = 1/5, B = 1/2, C = 1/3)
 df <- crossing(x = seq(-2, 2, 0.1), g = names(se)) |>
     mutate(x1 = x, "Probability density" = dnorm(x1, 0, se))
@@ -433,7 +467,12 @@ If $\sigma = 1$
 | 25 | $1/\sqrt{25} = 1/5$ |
 :::
 
-```{r, fig.align='center', fig.width=4, fig.height=2, out.height="45%"}
+```{r}
+#| fig-align: center
+#| fig-width: 4
+#| fig-height: 2
+#| out-width: "6in"
+
 gp + facet_grid(cols = vars(g),
                 labeller = as_labeller(c(A = "n = 25",
                                          B = "n = 4",
@@ -454,7 +493,9 @@ We can answer this!
 
 In *R*
 
-```{r, echo = TRUE}
+```{r}
+#| echo: true
+
 dnorm(1.0, mean = 0, sd = 1 / sqrt(4))
 ```
 
@@ -474,7 +515,9 @@ We can answer this!
 
 In *R*
 
-```{r, echo = TRUE}
+```{r}
+#| echo: true
+
 pnorm(1.0, mean = 0, sd = 1 / sqrt(4), lower.tail = FALSE)
 ```
 
@@ -486,7 +529,12 @@ The probability density $f(Y)$ associated with $\overline{Y}$ is the height of t
 
 The probability of a range of sample means in the area under the curve for that range
 
-```{r, fig.align='center', out.height="70%"}
+```{r}
+#| fig-align: center
+#| fig-width: 7
+#| fig-height: 5
+#| out-width: "7in"
+
 df <- tibble(
   x = seq(-2, 2, 0.01),
   y = dnorm(x, 0, 0.5)
@@ -507,7 +555,12 @@ ggplot(df, aes(x, y)) +
 
 ## All normal distributions can be described by $\mu$ and $\sigma$
 
-```{r, fig.align='center', out.height="85%"}
+```{r}
+#| fig-align: center
+#| fig-width: 7
+#| fig-height: 5
+#| out-width: "8.5in"
+
 df <- tibble(x = seq(-3, 3, 0.01), y = dnorm(x))
 
 ggplot(df, aes(x, y)) +
@@ -526,7 +579,12 @@ ggplot(df, aes(x, y)) +
 
 ## The [standard normal distribution]{.alert} has $\mu = 0$ and $\sigma = 1$
 
-```{r, fig.align='center', out.height="85%"}
+```{r}
+#| fig-align: center
+#| fig-width: 7
+#| fig-height: 5
+#| out-width: "8.5in"
+
 df <- tibble(x = seq(-3, 3, 0.01), y = dnorm(x))
 
 ggplot(df, aes(x, y)) +
@@ -589,7 +647,10 @@ $\mu = -2$, $\sigma = 3$
 
 Run this code on your computer
 
-```{r echo = TRUE,  eval = FALSE}
+```{r}
+#| echo: true
+#| eval: false
+
 s <- sample(20, 5, replace = TRUE)
 mean(s)
 ```
@@ -598,7 +659,12 @@ mean(s)
 
 **the world is shockingly normal**
 
-```{r fig.align='center', fig.width=4, fig.height=4}
+```{r}
+#| fig-align: center
+#| fig-width: 4
+#| fig-height: 4
+#| out-width: "6.5in"
+
 foo <- replicate(5000, {
     s <- sample(20, 5, replace = TRUE)
     mean(s)
@@ -616,7 +682,12 @@ ggplot(dat, aes(x = Sample_Mean)) +
 
 ## The normal distribution allows many useful methods
 
-```{r fig.align='center', fig.width=7, fig.height=5}
+```{r}
+#| fig-align: center
+#| fig-width: 7
+#| fig-height: 5
+#| out-width: "9in"
+
 set.seed(1)
 noni_dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)),
                        group = c(rep("10mg noni", 100),
@@ -655,9 +726,10 @@ p23 <- plot_grid(p2, p3, labels = c("Analysis of Variance",
 plot_grid(p1, p23, ncol = 2)
 ```
 
-# Break!
 
 ## Learning Objectives
+
+<!-- TO-DO: condense learning goals, remove review and make one continuous slide deck -->
 
 1. Describe the properties of a normal distribution
 2. Know that the standard error of the sampling distribution of size $n$ from the normal distribution equals $\sigma/\sqrt{n}$
@@ -671,7 +743,12 @@ plot_grid(p1, p23, ncol = 2)
 
 ## The normal distribution allows many useful methods
 
-```{r fig.align='center', fig.width=7, fig.height=5}
+```{r}
+#| fig-align: center
+#| fig-width: 7
+#| fig-height: 5
+#| out-width: "9in"
+
 set.seed(1)
 noni_dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)),
                        group = c(rep("10mg noni", 100),
@@ -729,7 +806,12 @@ Higher probability when:
 
 ## The [normal distribution]{.alert} has two parameters, mean and standard deviation
 
-```{r, fig.align='center', out.height="80%"}
+```{r}
+#| fig-align: center
+#| fig-width: 7
+#| fig-height: 5
+#| out-width: "8in"
+
 x <- read.csv("../data/bird_morpho.csv")
 
 df1 <- x[x$species %in% c("jawe", "rwbu", "wrsh"), ] |>
@@ -783,7 +865,10 @@ ggplot(x[x$species %in% c("jawe", "rwbu", "wrsh"), ],
 
 Run this code on your computer
 
-```{r echo = TRUE,  eval = FALSE}
+```{r}
+#| echo: true
+#| eval: false
+
 s <- sample(20, 5, replace = TRUE)
 mean(s)
 ```
@@ -792,7 +877,12 @@ mean(s)
 
 **the world is shockingly normal**
 
-```{r fig.align='center', fig.width=4, fig.height=4}
+```{r}
+#| fig-align: center
+#| fig-width: 4
+#| fig-height: 4
+#| out-width: "6.5in"
+
 foo <- replicate(5000, {
     s <- sample(20, 5, replace = TRUE)
     mean(s)
@@ -821,7 +911,12 @@ Given a normal distribution with $\mu = 0$ and $\sigma = 1$, what's the probabil
 
 ::: columns
 ::: {.column width="50%"}
-```{r fig.align='center', fig.width=3, fig.height=3, out.width="80%"}
+```{r}
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 3
+#| out-width: "5in"
+
 x <- seq(-3.5, 3.5, 0.01)
 df1 <- data.frame(x = x, y = dnorm(x))
 
@@ -842,7 +937,9 @@ ggplot(df1, aes(x, y)) +
 :::
 
 ::: {.column width="50%"}
-```{r, echo = TRUE}
+```{r}
+#| echo: true
+
 dnorm(1.0, mean = 0, sd = 1)
 ```
 :::
@@ -854,7 +951,12 @@ Given a normal distribution with $\mu = 0$ and $\sigma = 1$, what's the probabil
 
 ::: columns
 ::: {.column width="50%"}
-```{r fig.align='center', fig.width=3, fig.height=3, out.width="80%"}
+```{r}
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 3
+#| out-width: "5in"
+
 ggplot(df1, aes(x, y)) +
     geom_area(stat = "function", fun = dnorm, fill="tomato", xlim = c(-3.5, 1)) +
     geom_line(color = "black", size = 2) +
@@ -866,7 +968,9 @@ ggplot(df1, aes(x, y)) +
 :::
 
 ::: {.column width="50%"}
-```{r, echo = TRUE}
+```{r}
+#| echo: true
+
 pnorm(1.0, mean = 0, sd = 1)
 ```
 :::
@@ -878,7 +982,12 @@ Given a normal distribution with $\mu = 0$ and $\sigma = 1$, what's the probabil
 
 ::: columns
 ::: {.column width="50%"}
-```{r fig.align='center', fig.width=3, fig.height=3, out.width="80%"}
+```{r}
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 3
+#| out-width: "5in"
+
 ggplot(df1, aes(x, y)) +
     geom_area(stat = "function", fun = dnorm, fill="tomato", xlim = c(1, 3.5)) +
     geom_line(color = "black", size = 2) +
@@ -890,7 +999,9 @@ ggplot(df1, aes(x, y)) +
 :::
 
 ::: {.column width="50%"}
-```{r, echo = TRUE}
+```{r}
+#| echo: true
+
 pnorm(1.0, mean = 0, sd = 1,
       lower.tail = FALSE)
 
@@ -906,7 +1017,12 @@ Given a normal distribution with $\mu = 0$ and $\sigma = 1$, what's the 10% quan
 
 ::: columns
 ::: {.column width="50%"}
-```{r fig.align='center', fig.width=3, fig.height=3, out.width="80%"}
+```{r}
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 3
+#| out-width: "5in"
+
 q10 <- qnorm(0.1)
 
 ggplot(df1, aes(x, y)) +
@@ -928,7 +1044,9 @@ ggplot(df1, aes(x, y)) +
 :::
 
 ::: {.column width="50%"}
-```{r, echo = TRUE}
+```{r}
+#| echo: true
+
 qnorm(0.1, mean = 0, sd = 1)
 ```
 :::
@@ -940,7 +1058,12 @@ Given a normal distribution with $\mu = 0$ and $\sigma = 1$, what about all the 
 
 ::: columns
 ::: {.column width="50%"}
-```{r fig.align='center', fig.width=3, fig.height=3, out.width="80%"}
+```{r}
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 3
+#| out-width: "5in"
+
 q10 <- qnorm(0.1)
 
 ggplot(df1, aes(x, y)) +
@@ -976,7 +1099,9 @@ ggplot(df1, aes(x, y)) +
 :::
 
 ::: {.column width="50%"}
-```{r, echo = TRUE}
+```{r}
+#| echo: true
+
 qq <- seq(0.1, 0.9, by = 0.1)
 qq
 
@@ -991,7 +1116,12 @@ A useful visual tool for assessing normality in a sample
 
 ## QQ plot examples
 
-```{r, fig.align="center", out.height="80%"}
+```{r}
+#| fig-align: center
+#| fig-width: 7
+#| fig-height: 5
+#| out-width: "8in"
+
 set.seed(20210325)
 df1 <- tibble(x = seq(-3, 3, 0.01), y = dnorm(x))
 df2 <- tibble(Y = rnorm(1e3))
@@ -1049,7 +1179,12 @@ plot_grid(gp1, gp2, gp3, gp4, nrow = 2)
 
 ## QQ plot examples
 
-```{r, fig.align="center", out.height="80%"}
+```{r}
+#| fig-align: center
+#| fig-width: 7
+#| fig-height: 5
+#| out-width: "8in"
+
 set.seed(20210325)
 df1 <- tibble(x = seq(-3, 3, 0.01), y = dnorm(x))
 df2 <- tibble(Y = rnorm(1e3))
@@ -1107,7 +1242,12 @@ plot_grid(gp1, gp2, gp3, gp4, nrow = 2)
 
 ## QQ plot examples
 
-```{r, fig.align="center", out.height="80%"}
+```{r}
+#| fig-align: center
+#| fig-width: 7
+#| fig-height: 5
+#| out-width: "8in"
+
 set.seed(20210325)
 df1 <- tibble(x = seq(-3, 3, 0.01), y = dnorm(x))
 df2 <- tibble(Y = rnorm(1e3))
@@ -1165,7 +1305,12 @@ plot_grid(gp1, gp2, gp3, gp4, nrow = 2)
 
 ## QQ plot examples
 
-```{r, fig.align="center", out.height="80%"}
+```{r}
+#| fig-align: center
+#| fig-width: 7
+#| fig-height: 5
+#| out-width: "8in"
+
 set.seed(20210325)
 df1 <- tibble(x = seq(-3, 3, 0.01), y = dnorm(x))
 df2 <- tibble(Y = rnorm(1e3))
@@ -1231,7 +1376,12 @@ Other situations (left-skew, long tails, bimodality) involve more complex approa
 
 ## Log-transformation is very useful for right-skewed distributions
 
-```{r, fig.align="center", out.height="80%"}
+```{r}
+#| fig-align: center
+#| fig-width: 7
+#| fig-height: 5
+#| out-width: "8in"
+
 set.seed(20210325)
 df4 <- tibble(Y = rlnorm(1e3))
 
@@ -1286,7 +1436,9 @@ plot_grid(gp1, gp2, gp3, gp4, nrow = 2)
 
 **How do you log-transform your data?**
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 # read-in one of our example datasets: mammal masses
 mam <- read.csv("../data/mammals.csv")
 
@@ -1300,7 +1452,10 @@ mam$log_body_mass <- log(mam$body_mass_kg)
 
 This is how you display a qq-plot
 
-```{r echo = TRUE, eval = FALSE}
+```{r}
+#| echo: true
+#| eval: false
+
 ggplot(mam, aes(sample = log_body_mass)) +
     geom_qq(color = "tomato") +
     geom_qq_line(alpha = 0.5, size = 2) +
@@ -1313,7 +1468,12 @@ ggplot(mam, aes(sample = log_body_mass)) +
 
 **How do you log-transform your data?**
 
-```{r fig.align="center", fig.width = 6, fig.height = 4, out.height="70%"}
+```{r}
+#| fig-align: center
+#| fig-width: 6
+#| fig-height: 4
+#| out-width: "8in"
+
 histlog <- ggplot(mam, aes(x = log_body_mass)) +
     geom_histogram(fill = "tomato", bins = 20) +
     theme_cowplot() +
