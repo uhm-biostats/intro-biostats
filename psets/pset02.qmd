@@ -144,7 +144,7 @@ ggplot(penguins, aes(x = body_mass_g, y = flipper_length_mm,
     geom_point()
 ```
 
-You will need to install the `palmerpenguins` package following the instructions from [Lab 02](https://uhm-biostats.github.io/biol220-labs/lab02.html) about how to install packages in R.
+You will need to install the `palmerpenguins` package following the instructions from [Lab 02](../labs/lab02.qmd) about how to install packages in R.
 
 5. [3 points] Choose two aspects of the penguins data plot that you think should be improved. Then starting with the above code, add to it with additional commands to realize the improvements you'd like to make.
 
