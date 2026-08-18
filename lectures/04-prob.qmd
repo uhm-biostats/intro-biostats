@@ -1,0 +1,8 @@
+---
+title: "Lecture: Probability"
+---
+
+```{=html}
+<iframe class="slide-deck" src="04-prob-slides.html" width="100%" style="aspect-ratio: 3 / 2; border: 4px solid #dee2e6;"></iframe>
+```
+
