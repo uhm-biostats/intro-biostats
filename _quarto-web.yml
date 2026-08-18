@@ -1,13 +1,10 @@
 project:
   type: website
   output-dir: docs
-  render: 
-    - index.qmd
-    - setup.qmd
-    - lectures/01-intro.qmd
-    - labs/lab01.qmd
-    - psets/pset01.qmd
-  post-render: quarto render --profile slides
+  render:
+    - "*.qmd"
+    - "!01_activity_uhu/"
+  post-render: bash post-render.sh
 
 execute:
   freeze: auto
@@ -16,7 +13,7 @@ website:
   title: "Introductory Biostatistics"
   page-navigation: true
   sidebar:
-    style: "docked"
+    # style: "docked"
     search: true
     contents:
       - file: index.qmd
@@ -29,10 +26,91 @@ website:
             file: labs/lab01.qmd
           - icon: pencil-square
             file: psets/pset01.qmd
+      - section: "Describing & Visualizing Data"
+        contents:
+          - icon: easel
+            file: lectures/02-describing-data.qmd
+          - icon: easel
+            file: lectures/02-graphics.qmd
+          - icon: terminal
+            file: labs/lab02.qmd
+          - icon: pencil-square
+            file: psets/pset02.qmd
+      - section: "Estimation"
+        contents:
+          - icon: easel
+            file: lectures/03-estimation.qmd
+          - icon: terminal
+            file: labs/lab03.qmd
+          - icon: pencil-square
+            file: psets/pset03.qmd
+      - section: "Probability"
+        contents:
+          - icon: easel
+            file: lectures/04-prob.qmd
+          - icon: terminal
+            file: labs/lab04.qmd
+          - icon: pencil-square
+            file: psets/pset04.qmd
+      - section: "Null Hypothesis Testing"
+        contents:
+          - icon: easel
+            file: lectures/05-hyp-test.qmd
+          - icon: terminal
+            file: labs/lab05.qmd
+          - icon: pencil-square
+            file: psets/pset05.qmd
+      - section: "Proportions"
+        contents:
+          - icon: easel
+            file: lectures/06-proportions.qmd
+          - icon: terminal
+            file: labs/lab06.qmd
+          - icon: pencil-square
+            file: psets/pset06.qmd
+      - section: "Chi-Squared Test"
+        contents:
+          - icon: easel
+            file: lectures/07-chi-sq.qmd
+          - icon: terminal
+            file: labs/lab07.qmd
+          - icon: pencil-square
+            file: psets/pset07.qmd
+      - section: "Normal Distribution & t-test"
+        contents:
+          - icon: easel
+            file: lectures/08-normal.qmd
+          - icon: easel
+            file: lectures/09-t-test.qmd
+          - icon: terminal
+            file: labs/lab08.qmd
+          - icon: pencil-square
+            file: psets/pset08.qmd
+      - section: "Correlation"
+        contents:
+          - icon: easel
+            file: lectures/10-correlation.qmd
+          - icon: terminal
+            file: labs/lab09.qmd
+          - icon: pencil-square
+            file: psets/pset09.qmd
+      - section: "Regression"
+        contents:
+          - icon: easel
+            file: lectures/11-regression.qmd
+          - icon: terminal
+            file: labs/lab10.qmd
+          - icon: pencil-square
+            file: psets/pset10.qmd
+      - section: "Analysis of Variance"
+        contents:
+          - icon: easel
+            file: lectures/12-anova.qmd
+          - icon: terminal
+            file: labs/lab11.qmd
 
 format:
   html:
-    theme: 
+    theme:
       - cosmo
-      # - mods.scss
     toc: true
