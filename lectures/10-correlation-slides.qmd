@@ -43,7 +43,12 @@ Native *Drosophila*
 
 Looks like it...a question for [correlation]{.alert}
 
-```{r fig.align='center', fig.width=4, fig.height=3}
+```{r}
+#| fig-align: center
+#| fig-width: 4
+#| fig-height: 3
+#| out-width: "6.5in"
+
 hi_insect <- read.csv("../data/hembry_etal.csv")
 hi_insect$clade_richness <- round(hi_insect$clade_richness)
 
@@ -104,7 +109,12 @@ The correlation coefficient is bound between -1 and 1
 
 ## Examples of population $\rho$ versus estimated sample $r$
 
-```{r, fig.align='center', out.width="80%"}
+```{r}
+#| fig-align: center
+#| fig-width: 7
+#| fig-height: 5.5
+#| out-width: "9in"
+
 set.seed(20210420)
 df <- c(-0.9, 0, 0.5, 0.9) %>%
   map_dfr(~ {
@@ -182,7 +192,9 @@ r = \frac{\sum_i (X_i - \overline{X}) (Y_i - \overline{Y})}{\sqrt{\sum_i (X_i - 
 $$
 Or in *R*:
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 head(hi_insect, n = 3)
 
 cor(hi_insect$clade_age, hi_insect$clade_richness)
@@ -200,7 +212,9 @@ We could use `pt`, but instead...
 
 ## 4. Calculate $P$-value
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 cor.test(hi_insect$clade_age, hi_insect$clade_richness)
 ```
 
@@ -297,7 +311,10 @@ The rank-based test for correlation works by:
 
 ## What to do when assumptions are violated: rank correlation
 
-```{r echo = TRUE, warning=FALSE}
+```{r}
+#| echo: true
+#| warning: false
+
 cor.test(hi_insect$clade_age, hi_insect$clade_richness,
          method = "spearman")
 ```
@@ -322,7 +339,12 @@ df <- tibble(
 
 In this figure, $r = `r round(cor(df$X, df$Y), 2)`$
 
-```{r, fig.align='center', out.height="50%"}
+```{r}
+#| fig-align: center
+#| fig-width: 5
+#| fig-height: 4
+#| out-width: "6.5in"
+
 ggplot(df, aes(X, Y)) +
   geom_point(color = "tomato", size = 4) +
   xlab(expression(italic(X))) +
@@ -348,7 +370,12 @@ Four data sets with identical summary statistics
 
 ## Interpret correlation results with care
 
-```{r fig.align='center'}
+```{r}
+#| fig-align: center
+#| fig-width: 6
+#| fig-height: 6
+#| out-width: "7in"
+
 anscombe_tidy <- anscombe %>%
   mutate(observation = seq_len(n())) %>%
   pivot_longer(-observation) %>%
@@ -382,7 +409,12 @@ ggplot(anscombe_tidy, aes(x, y, color = set)) +
 
 Seems like when I wear my lucky socks, good things happen
 
-```{r fig.align='center', fig.width=8, fig.height=3, out.height="75%"}
+```{r}
+#| fig-align: center
+#| fig-width: 8
+#| fig-height: 3
+#| out-width: "9in"
+
 set.seed(123)
 x <- MASS::mvrnorm(50, c(0, 0), matrix(c(1, 0.8, 0.8, 1), nrow = 2))
 x[x >= 0] <- 1
@@ -427,7 +459,12 @@ We can also build *models* based on this plausible mechanism and show that they 
 
 [Pause & Think]{.alert}
 
-```{r fig.align='center', fig.width=4, fig.height=3}
+```{r}
+#| fig-align: center
+#| fig-width: 4
+#| fig-height: 3
+#| out-width: "6.5in"
+
 ggplot(hi_insect, aes(x = clade_age, y = clade_richness)) +
     geom_point() +
     theme_cowplot() +

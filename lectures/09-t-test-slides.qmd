@@ -128,7 +128,12 @@ How would you expect the uncertainty of the estimated standard error to affect t
 
 ## Student's $t$ distribution
 
-```{r, fig.align='center', out.height="75%"}
+```{r}
+#| fig-align: center
+#| fig-width: 7
+#| fig-height: 5
+#| out-width: "7.5in"
+
 df1 <- crossing(x = seq(-4, 4, 0.01), nesting(
   Distribution = c("t", "Z"),
   df = c(4, Inf))) %>%
@@ -224,7 +229,10 @@ For our study, $5 - 1 = 4$ degrees of freedom
 
 The $t_4$ distribution looks like this:
 
-```{r, fig.align="center", out.width="50%"}
+```{r}
+#| fig-align: center
+#| out-width: "5in"
+
 test_stat <- ybar / (s / sqrt(5))
 
 df <- tibble(t = seq(-4, 4, 0.01), y = dt(t, 4))
@@ -254,7 +262,10 @@ ggplot(df, aes(t, y)) +
 
 The $t$ distribution is symmetrical around 0, so we can find the area under of the curve greater/less than and our test statistic and use that same value, times -1, on the other side
 
-```{r, fig.align="center", out.width="50%"}
+```{r}
+#| fig-align: center
+#| out-width: "5in"
+
 ggplot(df, aes(t, y)) +
   geom_area(data = filter(df, t > test_stat), fill = "tomato") +
   geom_area(data = filter(df, t < -test_stat), fill = "tomato") +
@@ -273,7 +284,10 @@ ggplot(df, aes(t, y)) +
 
 For a two-tailed test (most common)
 
-```{r, echo = TRUE, eval = TRUE}
+```{r}
+#| echo: true
+#| eval: true
+
 P_value <- 2 * pt(
   q = 1.592,
   df = 4,
@@ -287,7 +301,10 @@ P_value
 
 For a one-tailed test (less common)
 
-```{r, echo = TRUE, eval = FALSE}
+```{r}
+#| echo: true
+#| eval: false
+
 P_value <- pt(
   q = 1.592,
   df = 4,
@@ -298,7 +315,9 @@ P_value <- pt(
 
 ## 4. $P$-values: Even easier with the function `t.test`
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 y <- c(-0.04, 0.00, 0.06, 0.12, 0.20)
 t.test(y)
 ```
@@ -323,7 +342,10 @@ Recall definition of confidence intervals: 95% of the time, 95% confidence inter
 
 $$-t_{0.05(2),\mathit{df}} < \frac{\overline{Y} - \mu}{\text{SE}_{\overline{Y}}} < t_{0.05(2),\mathit{df}}$$
 
-```{r, fig.align="center", out.width="75%"}
+```{r}
+#| fig-align: center
+#| out-width: "7.5in"
+
 ggplot(df, aes(t, y)) +
   geom_area(data = filter(df, t < critical_value, t > -critical_value), fill = "tomato") +
   geom_vline(xintercept = c(critical_value, -critical_value), color = "grey") +
@@ -358,7 +380,9 @@ $$\overline{Y}-t_{0.05(2),\mathit{df}} \text{SE}_{\overline{Y}}< \mu < \overline
 
 For $n = 5$, we have 4 degrees of freedom, so we calculate $t_{0.05(2),4}$
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 critical_value <- qt(0.025, 4, lower.tail = FALSE)
 critical_value
 ```
@@ -556,7 +580,10 @@ For our study, $(15 - 1) + (16 - 1) = 29$ degrees of freedom
 
 The $t_{29}$ distribution looks like this:
 
-```{r, fig.align="center", out.width="50%"}
+```{r}
+#| fig-align: center
+#| out-width: "5in"
+
 test_stat <- (720 - 582) / (sqrt(63909.889310 * (1/15 + 1/16)))
 
 df <- tibble(t = seq(-4, 4, 0.01), y = dt(t, 29))
@@ -582,7 +609,10 @@ ggplot(df, aes(t, y)) +
 
 ## 4. $P$-values
 
-```{r, fig.align="center", out.width="50%"}
+```{r}
+#| fig-align: center
+#| out-width: "5in"
+
 ggplot(df, aes(t, y)) +
   geom_area(data = filter(df, t > test_stat), fill = "tomato") +
   geom_area(data = filter(df, t < -test_stat), fill = "tomato") +
@@ -601,7 +631,10 @@ ggplot(df, aes(t, y)) +
 
 For a two-tailed test (most common)
 
-```{r, echo = TRUE, eval = TRUE}
+```{r}
+#| echo: true
+#| eval: true
+
 P_value <- 2 * pt(
   q = 1.518867,
   df = 29,
@@ -625,7 +658,9 @@ We don't have enough evidence to conclude that susceptible genotypes of lettuc h
 
 [Welch's $t$-test]{.alert} is the default in *R*
 
-```{r echo = FALSE}
+```{r}
+#| echo: false
+
 sus <- rnorm(15, 720, 223.6)
 sus <- (sus - mean(sus)) / sd(sus)
 sus <- sus * 223.6 + 720
@@ -638,6 +673,8 @@ dat <- data.frame(genotype = rep(c("Susceptible", "Resistant"), c(15, 16)),
                   n_seeds = c(sus, res))
 ```
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 t.test(dat$n_seeds ~ dat$genotype)
 ```

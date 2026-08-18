@@ -28,7 +28,9 @@ library(magrittr)
 
 ## Example ANOVA for multiple groups in *R*
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 # make some pretend data
 groups <- rep(LETTERS[1:3], each = 10)
 y <- 1.2 * as.numeric(as.factor(groups)) + rnorm(30, mean = 0, sd = 0.5)
@@ -40,20 +42,34 @@ head(dat_groups, n = 3)
 
 ## Example ANOVA for multiple groups in *R*
 
-```{r echo = TRUE, fig.align='center', fig.width=3, fig.height=3}
+```{r}
+#| echo: true
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 3
+#| out-width: "5in"
+
 ggplot(dat_groups, aes(x = group, y = y)) + geom_boxplot()
 ```
 
 ## Example ANOVA for multiple groups in *R*
 
-```{r echo = TRUE, fig.align='center', fig.width=3, fig.height=2}
+```{r}
+#| echo: true
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 2
+#| out-width: "5in"
+
 ggplot(dat_groups, aes(x = group, y = y)) +
     geom_jitter(aes(color = group))
 ```
 
 ## Example ANOVA for multiple groups in *R*
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 mod_group <- lm(y ~ group, data = dat_groups)
 anova(mod_group)
 ```
@@ -74,7 +90,13 @@ anova(mod_group)
 
 ANOVA does not tell you which group(s) is/are different!  Just that a difference exists
 
-```{r echo = FALSE, fig.align='center', fig.width=3, fig.height=3}
+```{r}
+#| echo: false
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 3
+#| out-width: "5in"
+
 ggplot(dat_groups, aes(x = group, y = y)) + geom_boxplot()
 ```
 
@@ -92,14 +114,18 @@ Which groups are different?  Just do $t$-tests between all pairwise comparisons,
 - The problem is that doing multiple $t$-tests leads to a false positive rate $> \alpha$
 - If we do 3 pairwise comparisons with $t$-tests and $\alpha = 0.05$ for each one, then probability of at least 1 false positive is:
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 prob_false_positive <- 1 - dbinom(0, size = 3, prob = 0.05)
 prob_false_positive
 ```
 
 ## Pos hoc tests and multiple comparisons
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 prob_false_positive <- 1 - dbinom(0, size = 3, prob = 0.05)
 prob_false_positive
 ```
@@ -110,12 +136,17 @@ Each $t$-test is like a coin toss with "heads = false positive", the more you do
 
 So we use a post hoc test:
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 # annoying, but we have to pass the model through the `aov` function
 aov_group <- aov(mod_group)
 ```
 
-```{r echo = TRUE, eval = FALSE}
+```{r}
+#| echo: true
+#| eval: false
+
 # "Tukey Honest Significant Difference"
 TukeyHSD(aov_group)
 ```
@@ -124,7 +155,9 @@ TukeyHSD(aov_group)
 
 So we use a post hoc test:
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 # "Tukey Honest Significant Difference"
 TukeyHSD(aov_group)
 ```
@@ -145,7 +178,9 @@ The adjusted Confidence Intervals and $P$-values make sure that the overall $\al
 
 ## Example multi-factor ANOVA in *R*
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 # make some pretend data
 restoration <- factor(rep(c("restored", "control"), each = 30))
 impact <- factor(rep(c("low", "high"), 30),
@@ -171,7 +206,10 @@ head(dat)
 
 ## Example multi-factor ANOVA in *R*
 
-```{r echo = TRUE, eval = FALSE}
+```{r}
+#| echo: true
+#| eval: false
+
 ggplot(dat, aes(x = restoration, y = fish_biomass,
                 fill = impact)) +
   geom_boxplot() +
@@ -180,7 +218,13 @@ ggplot(dat, aes(x = restoration, y = fish_biomass,
 
 ## Example multi-factor ANOVA in *R*
 
-```{r echo = FALSE, fig.align='center', fig.width=3, fig.height=2}
+```{r}
+#| echo: false
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 2
+#| out-width: "5in"
+
 gp <- ggplot(dat, aes(x = restoration, y = fish_biomass,
                 fill = impact)) +
   geom_boxplot() +
@@ -190,7 +234,9 @@ gp
 
 ## Example multi-factor ANOVA in *R*
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 mod <- lm(fish_biomass ~ impact + restoration, data = dat)
 anova(mod)
 ```
@@ -199,7 +245,9 @@ anova(mod)
 
 How do we see the estimate of the effects?
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 summary(mod)
 ```
 
@@ -207,7 +255,12 @@ summary(mod)
 
 But looking at the graph, it also seems like the effect of restoration depends on human impact
 
-```{r fig.align='center', fig.width=3, fig.height=2}
+```{r}
+#| fig-align: center
+#| fig-width: 3
+#| fig-height: 2
+#| out-width: "5in"
+
 gp
 ```
 
@@ -217,7 +270,9 @@ The two effects [interact]{.alert}
 
 The asterisk `*` between terms allows for interactions
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 mod_interactions <- lm(fish_biomass ~ impact * restoration,
                        data = dat)
 anova(mod_interactions)
@@ -227,7 +282,9 @@ anova(mod_interactions)
 
 And the interaction effect is meaningful!
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 summary(mod_interactions)
 ```
 
@@ -241,7 +298,10 @@ If you want to do a post-hock test, how would you do it?
 
 If you want to do a post-hock test, how would you do it? *Just like before!*
 
-```{r echo = TRUE, eval = FALSE}
+```{r}
+#| echo: true
+#| eval: false
+
 aov_interactions <- aov(mod_interactions)
 TukeyHSD(aov_interactions)
 ```

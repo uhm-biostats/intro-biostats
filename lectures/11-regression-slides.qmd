@@ -43,7 +43,12 @@ Native *Drosophila*
 
 Looks like it...a question for [correlation]{.alert}
 
-```{r fig.align='center', fig.width=4, fig.height=3}
+```{r}
+#| fig-align: center
+#| fig-width: 4
+#| fig-height: 3
+#| out-width: "6.5in"
+
 hi_insect <- read.csv("../data/hembry_etal.csv")
 hi_insect$clade_richness <- round(hi_insect$clade_richness)
 
@@ -70,7 +75,12 @@ How do we actually predict number of species from clade age?
 
 ::: columns
 ::: {.column width="50%"}
-```{r fig.align='center', fig.width=4, fig.height=3, out.width="100%"}
+```{r}
+#| fig-align: center
+#| fig-width: 4
+#| fig-height: 3
+#| out-width: "5in"
+
 hi_insect <- read.csv("../data/hembry_etal.csv")
 hi_insect$clade_richness <- round(hi_insect$clade_richness)
 
@@ -103,7 +113,9 @@ ggplot(hi_insect, aes(x = clade_age, y = clade_richness)) +
 
 Make some fake tooth decay data
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 # this makes all "random" numbers the same every time
 # we run this code
 set.seed(12)
@@ -121,7 +133,9 @@ dateOfBirth <- 1992.27 - 0.05326 * deltaC14 +
 
 Make some fake tooth decay data
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 # combine into data.frame
 tooth.data <- data.frame(deltaC14 = deltaC14,
                          dateOfBirth = dateOfBirth)
@@ -134,7 +148,13 @@ head(tooth.data)
 
 Plot it
 
-```{r echo = TRUE, fig.width=3.5, fig.height=3, fig.align='center', out.width="50%"}
+```{r}
+#| echo: true
+#| fig-align: center
+#| fig-width: 3.5
+#| fig-height: 3
+#| out-width: "5.5in"
+
 ggplot(tooth.data, aes(deltaC14, dateOfBirth)) +
     geom_point()
 ```
@@ -143,7 +163,9 @@ ggplot(tooth.data, aes(deltaC14, dateOfBirth)) +
 
 Make a linear model
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 tooth.model <- lm(dateOfBirth ~ deltaC14,
                   data = tooth.data)
 ```
@@ -152,11 +174,16 @@ tooth.model <- lm(dateOfBirth ~ deltaC14,
 
 Get info on null hypothesis tests
 
-```{r eval=FALSE, echo = TRUE}
+```{r}
+#| eval: false
+#| echo: true
+
 summary(tooth.model)
 ```
 
-```{r echo=FALSE}
+```{r}
+#| echo: false
+
 summary(tooth.model)
 ```
 
@@ -166,6 +193,8 @@ Notice that `F-statistics` stuff, we'll get there! But not yet
 
 Get confidence intervals of coefficient estimates
 
-```{r echo = TRUE}
+```{r}
+#| echo: true
+
 confint(tooth.model)
 ```
