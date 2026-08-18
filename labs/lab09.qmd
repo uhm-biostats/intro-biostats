@@ -1,4 +1,6 @@
-# Correlation
+---
+title: "Lab 09: Correlation"
+---
 
 
 ```{r setup, include=FALSE}

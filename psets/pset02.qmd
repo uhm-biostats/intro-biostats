@@ -1,4 +1,6 @@
-# Graphics
+---
+title: "Problem Set 02: Graphics"
+---
 
 For this problem set you *will* need to use *R*. In RStudio running on Koa in your student folder you will find an empty R script (called `pset_02_graphics.R`) waiting for you that you can use to complete aspects of this problem set that require R.  **But please note:** you still need to turn in the problem set via the google form found in google classroom.
 
@@ -6,7 +8,7 @@ For this problem set you *will* need to use *R*. In RStudio running on Koa in yo
 
 Consider the graphic below from an [article in *Science* by the Cenozoic CO2 Proxy Integration Project Consortium](https://www.science.org/doi/10.1126/science.adi5177). The data visualization attempts to show complex data about the change in atmospheric CO$_2$ and average global temperature over the past approximately 65 million years.
 
-![](img/cenozoic_co2.png)
+![](../img/cenozoic_co2.png)
 
 ::: {.callout-tip}
 ## Use the figure above to answer questions 1 & 2.
@@ -25,7 +27,6 @@ Consider a situation in which bacterial swabs were taken from the ears and noses
 ```{r, echo = FALSE, eval = TRUE, message = FALSE, warning = FALSE}
 library(dplyr)
 library(ggplot2)
-library(ggmosaic)
 library(cowplot)
 library(knitr)
 library(kableExtra)
@@ -81,9 +82,9 @@ dfAll <- rbind(cbind(g = "A", df1),
 dfAll$g <- as.factor(dfAll$g)
 
 
-ggplot(data = dfAll) +
-    geom_mosaic(aes(x = product(body_part), fill = present)) +
-    facet_wrap(facets = dfAll$g) +
+ggplot(data = dfAll, aes(x = body_part, fill = present)) +
+    geom_bar(position = "fill") +
+    facet_wrap(vars(g)) +
     scale_fill_viridis_d() +
     theme_bw() +
     scale_y_continuous(breaks = seq(0, 1, 0.2)) +

@@ -1,4 +1,6 @@
-# Binomial Test
+---
+title: "Problem Set 06: Binomial Test"
+---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, eval = TRUE, message = FALSE, 
@@ -14,7 +16,7 @@ library(DT)
 # Satellite forest mapping {.unnumbered}
 
 ```{r, fig.align = "center", out.width="100%", fig.cap="Example of using remote sensing to identify likely areas of Rapid ʻŌhiʻa Death (modified from Vaughn et. al (2018)"}
-knitr::include_graphics("img/rod.png")
+knitr::include_graphics("../img/rod.png")
 ```
 
 Rapid ʻŌhiʻa Death (ROD) is a devastating pathogen affecting native ʻōhiʻa forests in Hawaiʻi. Much work has been done to try to document its spread. [Vaughn et al. (2018)](https://www.mdpi.com/2072-4292/10/4/502) used remote sensing images from 2017 to detect areas of potential ROD. Remote sensing uses fancy cameras attached to low-flying airplanes to capture many different wavelengths of light. The wavelengths are then analyzed to classify areas as likely ROD or not. The image above is from the Kohala Mountains on the Island of Hawaiʻi and shows 28.67% ROD in forested areas. Suppose Vaughn et al. were able to re-survey this same area now in 2025 and calculate the percentage of ROD as 34.78%. 
@@ -37,7 +39,7 @@ Rapid ʻŌhiʻa Death (ROD) is a devastating pathogen affecting native ʻōhiʻa
 ## Hybrid viability {.unnumbered}
 
 ```{r, fig.align = "center", out.width="50%", fig.cap="A representative of the diverse Hawaiian Drosophila: D. picticornis"}
-knitr::include_graphics("img/Drosophila_picticornis.jpg")
+knitr::include_graphics("../img/Drosophila_picticornis.jpg")
 ```
 
 Hawaiian *Drosophila* (yes that famous genus of fruit fly) are super diverse and super awesome. They speciate like crazy due, in part, to reproductive isolation. When studying reproductive isolation between species, scientists will often allow different species to mate then count the viability of hybrid offspring. Suppose that you are measuring the viability of hybrid eggs laid by a fruit fly. This fruit fly will lay eggs over a period of one week, but the fly needs to be transferred to a fresh vial of food (yeast) every day. After you transfer the fly to a new vial, you count the number of eggs laid and record the number of viable eggs. Here are your data:

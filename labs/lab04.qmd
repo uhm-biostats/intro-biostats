@@ -1,4 +1,6 @@
-# Probability
+---
+title: "Lab 04: Probability"
+---
 
 
 ```{r setup, include=FALSE}
@@ -190,7 +192,7 @@ Questions 5--7 will revisit the visualization of probabilities as overlapping ci
 5. Fill in the probability figure. Use the made up data below to calculate the probabilities of all the events in the figure (e.g. what is $Pr(\text{length} > 40)$? What about $Pr(\text{length} \leq 40 \text{ \& species} \neq \text{uhu})$?)
 
 
-![](images/AB_prob.png)
+![](../img/AB_prob.png)
 
 ```{r echo = FALSE}
 set.seed(1)
@@ -223,7 +225,7 @@ datatable(dat,
 
 6. Below, we have highlighted just two parts of the probability figure, use the above made up data to calculate the probabilities in this figure.
 
-![](images/AB_not-prob.png)
+![](../img/AB_not-prob.png)
 
 7. Using conditional probabilities (e.g. $Pr(A | B)$), would you say that the event of $length > 40$ and $species = uhu$ are independent or not?
 

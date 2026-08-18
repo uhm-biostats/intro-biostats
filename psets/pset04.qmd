@@ -1,4 +1,6 @@
-# Probability
+---
+title: "Problem Set 04: Probability"
+---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, eval = TRUE, message = FALSE, 
@@ -14,7 +16,7 @@ library(DT)
 
 ## Mōlī on O‘ahu {.unnumbered}
 
-![A mōlī seen from Kauaʻi, Photo credit: DickDaniels (http://carolinabirds.org/)](img/Laysan_Albatross_RWD2.jpg){width=75% height=75%}
+![A mōlī seen from Kauaʻi, Photo credit: DickDaniels (http://carolinabirds.org/)](../img/Laysan_Albatross_RWD2.jpg){width=75% height=75%}
 
 The mōlī, aka Laysan albatross *(Phoebastria immutabilis)*, have a breading population on Oʻahu that is of considerable conservation importance and has been extensively studied (e.g. [VanderWerf and Young 2016](https://doi.org/10.1650/CONDOR-16-49.1). Mōlī remain at sea for a year or more after fledging and then return to their birthplace to breed on land. 
 
@@ -118,7 +120,7 @@ ggplot(df_fledge, aes(x, y, label = y)) +
 
 Survival of mōlī chicks is determined by a number of factors; an important is infection with infection with avian pox virus. Avian pox virus also influences whether fledglings will return to reproduce after their adolescent years at sea. 
 
-![A mōlī chick with avian pox virus](img/moli_pox.png)
+![A mōlī chick with avian pox virus](../img/moli_pox.png)
 
 VanderWerf and Young (2016) studied the effect of avian pox virus on chick survival and recruitment back into the breeding colony (i.e. returning to Oʻahu to breed). They found that chick survival probability was 0.79 when not infected with avian pox virus, versus 0.68 probability when severely infected. Recruitment probability was measured by estimating the proportion of fledged birds that returned to the breeding colony by age 9. The recruitment probability, thus defined, for birds not infected was 0.58, versus 0.39 when severely infected.
 
@@ -165,7 +167,7 @@ VanderWerf and Young (2016) studied the effect of avian pox virus on chick survi
 [Young et al. (2009)]() studied the success of hatching and fledging of mōlī on Oʻahu. Their data for 2004 to 2009 is reproduced in the table below
 
 ```{r}
-moli <- read.csv("data/moli_repro.csv")
+moli <- read.csv("../data/moli_repro.csv")
 
 datatable(moli,
           width = 400,
@@ -205,7 +207,7 @@ moli <- data.frame(year = c(2004, 2005, 2006, 2007, 2008, 2009),
 <!-- ## Answer->
 
 <!-- ```{r} -->
-<!-- moli <- read.csv("data/moli_repro.csv") -->
+<!-- moli <- read.csv("../data/moli_repro.csv") -->
 
 <!-- probs_hatch_all_yr <- moli$chicks_hatched / moli$eggs_laid -->
 <!-- prob_hatch <- mean(probs_hatch_all_yr) -->

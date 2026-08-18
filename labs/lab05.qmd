@@ -1,4 +1,6 @@
-# Statistical Null Hypothesis Testing
+---
+title: "Lab 05: Statistical Null Hypothesis Testing"
+---
 
 
 ```{r setup, include=FALSE}
@@ -66,7 +68,7 @@ reef_fish <- read.csv("biol220_class/students/username/data/reef_fish.csv")
 ```{r}
 #| echo: false
 
-reef_fish <- read.csv("data/reef_fish.csv")
+reef_fish <- read.csv("../data/reef_fish.csv")
 ```
 
 ```{r eval = FALSE}

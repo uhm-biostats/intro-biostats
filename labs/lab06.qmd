@@ -1,4 +1,6 @@
-# The Binomial Distribution and Analysis of Proportion Data
+---
+title: "Lab 06: The Binomial Distribution and Analysis of Proportion Data"
+---
 
 
 ```{r setup, include=FALSE}

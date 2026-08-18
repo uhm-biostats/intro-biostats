@@ -1,4 +1,6 @@
-# Null Hypothesis Significance Testing
+---
+title: "Problem Set 05: Null Hypothesis Significance Testing"
+---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, eval = TRUE, message = FALSE, 
@@ -60,7 +62,7 @@ library(DT)
 ## Hawaiian *Tetragnatha* spiders {.unnumbered}
 
 ```{r, fig.align = "center", out.width="50%", fig.cap="Two species of endemic Hawaiian *Tetragnatha* spiders"}
-knitr::include_graphics("img/tetragnatha.png")
+knitr::include_graphics("../img/tetragnatha.png")
 ```
 
 One very cool group of spiders in Hawaiʻi are the *Tetragnatha* spiders, which are an example of adaptive radiation.  On each island, these spiders re-evolved distinctive color morphs that use different strategies to avoid depredation and catch prey. The "green" color morph is especially pretty. On Oʻahu there are two green morphs, one is *T. tantalus* shown above. On Hawaiʻi Island there is only one green morph--*T. brevignatha*.  I used to spend a lot of time up in the ʻuka catching and identifying spiders, but being behind the computer all the time, I worry I lost those skills. A friend gave me a challenge: they showed me 10 pictures of *Tetragnatha* and told me 5 were *T. tantalus*, and 5 were *T. brevignatha*. My test was to correctly guess which was which. Don't be fooled! Not all *T. brevignatha* have the red spot (some are all green), and some *T. tantalus* have a red spot of their own!

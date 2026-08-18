@@ -1,4 +1,6 @@
-# Hypothesis tests with a $\chi^2$ null distribution
+---
+title: 'Problem Set 07: Hypothesis tests with a $\chi^2$ null distribution'
+---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, eval = TRUE, message = FALSE, 

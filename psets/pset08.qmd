@@ -1,4 +1,6 @@
-# Analyzing means with t-tests
+---
+title: "Problem Set 08: Analyzing means with t-tests"
+---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, eval = TRUE, message = FALSE, 

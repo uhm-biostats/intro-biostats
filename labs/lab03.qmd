@@ -1,4 +1,6 @@
-# The Sampling Distribution
+---
+title: "Lab 03: The Sampling Distribution"
+---
 
 
 ```{r setup, include=FALSE}
@@ -238,7 +240,7 @@ knitr::kable(d)
 
 ```{r, echo = FALSE, eval = TRUE, message = FALSE, warning = FALSE}
 
-leafsize <- read.csv("data/wright_etal_2017.csv") |>
+leafsize <- read.csv("../data/wright_etal_2017.csv") |>
   select(latitude, leafsize_cm2) |>
   filter(!is.na(leafsize_cm2), abs(latitude) < 23.43655)
 
@@ -266,7 +268,7 @@ g <- ggplot(sample_dists, aes(Y_bar)) +
     facet_grid(rows = vars(sample_size)) +
     geom_histogram(bins = 30)
 
-ggsave("images/lab-04-q1d.png", plot = g)
+ggsave("../img/lab-04-q1d.png", plot = g)
 
 ```
 
@@ -333,7 +335,7 @@ All questions are about the sampling distribution of the sample mean, $\bar{Y}$
 
 4. Make a multi-panel histogram with separate panels for each sample size. It should look something like this, but will not be exactly the same because the simulations are random.
        
-    ![](images/lab-04-q1d.png)
+    ![](../img/lab-04-q1d.png)
 
 
 

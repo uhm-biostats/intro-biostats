@@ -1,4 +1,6 @@
-# The normal distribution and sample means
+---
+title: "Lab 08: The normal distribution and sample means"
+---
 
 
 ```{r setup, include=FALSE}
@@ -37,7 +39,7 @@ titanic_data <- read.csv("biol220_class/students/username/data/titanic.csv" )
 
 ```{r, echo = FALSE, eval = TRUE}
 # remember to insert your actual user name
-titanic_data <- read.csv("data/titanic.csv" )
+titanic_data <- read.csv("../data/titanic.csv" )
 ```
 
 Remember we can use `ggplot()` to draw histograms.
@@ -91,7 +93,7 @@ These points fall mainly along a straight line, but there is some wobble around 
 When data are not normally distributed, the dots in the quantile plot will not follow a straight line, even approximately. For example, here is a histogram and a QQ plot for the population size of various counties, from the data in wright_etal_2017.csv. These data are very skewed to the right, and do not follow a normal distribution at all.
 
 ```{r, echo = FALSE, eval = TRUE}
-leafsize <- read.csv("data/wright_etal_2017.csv")
+leafsize <- read.csv("../data/wright_etal_2017.csv")
 ```
 
 ```{r, echo = TRUE, eval = FALSE}

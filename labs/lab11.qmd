@@ -1,4 +1,6 @@
-# Analysis of Variance
+---
+title: "Lab 11: Analysis of Variance"
+---
 
 
 ```{r setup, include=FALSE}
@@ -17,7 +19,7 @@ library(DT)
 For the examples in this tutorial, we will again return to the Titanic data set. We’ll group passengers by the passenger class they traveled under (a categorical variable) and ask whether different passenger classes differed in their mean age (a numerical variable).
 
 ```{r, echo = FALSE, eval = TRUE}
-titanic_data <- read.csv("data/titanic.csv" )
+titanic_data <- read.csv("../data/titanic.csv" )
 ```
 
 ```{r}

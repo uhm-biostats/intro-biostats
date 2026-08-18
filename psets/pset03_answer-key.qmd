@@ -37,7 +37,7 @@ The table below (not shown in answer key) contains data on the amount of caffein
 
 
 ```{r echo = FALSE}
-caf <- read.csv("data/caffeine.csv")
+caf <- read.csv("../data/caffeine.csv")
 ```
 
 
@@ -89,7 +89,7 @@ With a standard deviation of `r round(sd(caf$caffeine_mg_16oz), 2)`, the amount 
 ```{r echo = TRUE}
 
 # file path will be different for you
-bucks <- read.csv("data/caffeineStarbucks.csv")
+bucks <- read.csv("../data/caffeineStarbucks.csv")
 
 se <- sd(bucks$caffeine_mg_16oz) / sqrt(nrow(bucks))
 
@@ -140,9 +140,9 @@ The 99% CI is wider because it covers more of the sampling distribution
 ```{r, fig.align = "center", fig.width=7, fig.height=5}
 
 df <- bind_rows(
-  select(read_csv("data/caffeine.csv"), caffeine_mg_16oz) %>%
+  select(read_csv("../data/caffeine.csv"), caffeine_mg_16oz) %>%
     mutate(`Data set` = "Multiple brands"),
-  select(read_csv("data/caffeineStarbucks.csv"), caffeine_mg_16oz) %>% 
+  select(read_csv("../data/caffeineStarbucks.csv"), caffeine_mg_16oz) %>% 
     mutate(`Data set` = "Starbucks")
 ) %>%
   group_by(`Data set`) %>%

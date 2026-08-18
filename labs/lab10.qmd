@@ -1,4 +1,6 @@
-# Regerssion
+---
+title: "Lab 10: Regression"
+---
 
 
 ```{r setup, include=FALSE}
@@ -27,7 +29,7 @@ library(DT)
 We will revisit the data set from Example 2.3B in Whitlock and Schluter that we used last week to introduce correlation. These data investigate the relationship between how ornamented a father guppy is (`fatherOrnamentation`) and how attractive to females are his sons (`sonAttractiveness`). Load the data from the .csv file:
 
 ```{r, echo = FALSE}
-guppy_data <- read.csv("data/chap02e3bGuppyFatherSonAttractiveness.csv")
+guppy_data <- read.csv("../data/chap02e3bGuppyFatherSonAttractiveness.csv")
 ```
 
 ```{r, eval = FALSE}
@@ -117,7 +119,7 @@ This residual plot shows no major deviation from the assumptions of linear regre
 
 Opfer and Siegler (2007) asked second- and fourth-grade school children to mark on a number line where a given number would fall. Each child was given a drawing of a number line with two ends marked at 0 and 1000, and was then asked to make an X on that line where a number, for example 150, should be placed. They asked each child to place several different numbers on the number lines, each on a fresh new piece of paper.
 
-![](images/lab15-q2.png)
+![](../img/lab15-q2.png)
 
 The researchers then measured the placement of each mark on a linear scale. The results, averaged over all 93 kids for each group, are given in the file "numberline.csv".
 
@@ -135,7 +137,7 @@ Hint: if you get stuck on which transformation to use, unhide the plot below to 
 library(tidyr)
 library(cowplot)
 
-numberline <- read.csv("data/numberline.csv") %>%
+numberline <- read.csv("../data/numberline.csv") %>%
   pivot_longer(-true_value) %>%
   mutate(Grade = ifelse(name == "second_graders_guess", "Second", "Fourth"))
 

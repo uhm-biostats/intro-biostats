@@ -1,4 +1,6 @@
-# Sample estimates and confidence intervals
+---
+title: "Problem Set 03: Sample estimates and confidence intervals"
+---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, eval = TRUE, message = FALSE, warning = FALSE)
@@ -16,13 +18,13 @@ library(infer)
 ## How much caffeine is in your coffee?
 
 ```{r, fig.align = "center", out.width="50%", fig.cap="A cup of black coffee. (Photo credit: Julius Schorzman)"}
-knitr::include_graphics("img/A_small_cup_of_coffee.jpeg")
+knitr::include_graphics("../img/A_small_cup_of_coffee.jpeg")
 ```
 
 The table below contains data on the amount of caffeine in a 16 oz. cup of coffee obtained from various vendors. For context, doses of caffeine over 25 mg are enough to increase anxiety in some people, and doses over 300 to 360 mg are enough to significantly increase heart rate in most people. A can of Red Bull contains 80mg of caffeine.
 
 ```{r}
-caf <- read.csv("data/caffeine.csv")
+caf <- read.csv("../data/caffeine.csv")
 
 datatable(caf,
           width = 400,
@@ -64,7 +66,7 @@ After reading into R, use those data to answer the following questions.
 The table below has data on six 16 oz. cups of Breakfast Blend coffee sampled on six different days from a Starbucks location. 
 
 ```{r}
-sb <- read.csv("data/caffeineStarbucks.csv")
+sb <- read.csv("../data/caffeineStarbucks.csv")
 
 datatable(sb,
           width = 400,

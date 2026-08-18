@@ -1,4 +1,6 @@
-# Graphics in R
+---
+title: "Lab 02: Graphics in R"
+---
 
 As with all labs, please complete this lab using *RStudio* running on the UH *Koa Server*. Access the *Koa Server* at [koa.its.hawaii.edu](https://koa.its.hawaii.edu/){target="_blank"} and use your UH credentials to log in. If needed, refer back to ["Setup"](index.qmd) and ["Lab 1"](lab01.qmd) for instructions on access, setting up your account, and how to turn in your lab report.
 
@@ -20,11 +22,11 @@ Each package needs to be installed on your computer only once, but to be used it
 
 To install a package in *RStudio*, click on the packages tab from the sub-window with tables for Files, Plots, Packages, Help, and Viewer. Immediately below that will be a button labeled "Install" -- click that and a window will open.
 
-![](images/rstudio-cloud-install.png)
+![](../img/rstudio-cloud-install.png)
 
 In the second row (labeled "Packages"), type **ggplot2**. Make sure the box for "Install dependencies" near the bottom is clicked, and then click the "Install" button at bottom right. This will install the graphics package **ggplot2**.
 
-![](images/rstudio-cloud-ggplot2.png)
+![](../img/rstudio-cloud-ggplot2.png)
 
 Alternatively, you can also use a function to install packages:
 
@@ -68,7 +70,7 @@ Let's see how to make a basic histogram using the age data from the Titanic data
 ```{r}
 #| echo: false
 
-titanic_data <- read.csv("data/titanic.csv")
+titanic_data <- read.csv("../data/titanic.csv")
 ```
 
 ```{r}
@@ -155,7 +157,7 @@ The titanic data set does not have two numerical variables, so let's use a diffe
 You can load the data with:
 
 ```{r, echo = TRUE, eval = TRUE}
-reef_fish <- read.csv("data/global-reef-fish.csv")
+reef_fish <- read.csv("../data/global-reef-fish.csv")
 ```
 
 To make a scatter plot of the variables `temp_C` and `spp_richness` with **ggplot**, you need to specify the $x$ and $y$ variables, and use `geom_point()`:

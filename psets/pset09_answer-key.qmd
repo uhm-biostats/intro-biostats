@@ -31,7 +31,7 @@ library(magrittr)
 ## Benefits of biodiversity {.unnumbered}
 
 ```{r, fig.align = "center", out.width="50%", fig.cap="Ho'omaluhia Botanical Garden, an urban green space on O'ahu. Photo credit: Daniel Ramirez / Flickr"}
-knitr::include_graphics("img/hoomaluhia.jpeg")
+knitr::include_graphics("../img/hoomaluhia.jpeg")
 ```
 
 [Fuller *et al.* (2007)](https://doi.org/10.1098/rsbl.2007.0149) measured the diversity of plant, bird, and butterfly species in 15 urban green spaces of varying size. They also asked 312 green-space users about their emotional "attachment" to green spaces to see if more biodiverse green space lead to greater emotional attachment from users.
