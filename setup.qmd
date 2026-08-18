@@ -92,7 +92,7 @@ image_trim(koa4) |>
   grid.raster()
 ```
 
-RStudio is arranged into several panels, each with its own purpose.  You will learn all about these in ["Lab 01: Getting started"](lab01.qmd).  For now, we need to know that the bottom right panel is how we access files and folders on the server.  Click on the folder named for our class "biol220_class."
+RStudio is arranged into several panels, each with its own purpose.  You will learn all about these in ["Lab 01: Getting started"](labs/lab01.qmd).  For now, we need to know that the bottom right panel is how we access files and folders on the server.  Click on the folder named for our class "biol220_class."
 
 ```{r}
 #| label: koa5

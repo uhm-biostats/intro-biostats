@@ -1,8 +1,8 @@
 ---
-title: "Problem Set: Biostatistics basics"
+title: "Problem Set 01: Biostatistics basics"
 ---
 
-Note: you do not *have* to use R to complete this problem set.  If you would like to use R for any of the questions, please make use of the RStudio Server app running on the Koa Server. For a reminder on how to use the RStudio Server app check out the [Setup](https://uhm-biostats.github.io/biol220-labs/){target="_blank"} and [Lab 1](https://uhm-biostats.github.io/biol220-labs/lab01.html){target="_blank"} sections from our lab instructions website.
+Note: you do not *have* to use R to complete this problem set.  If you would like to use R for any of the questions, please make use of the RStudio Server app running on the Koa Server. For a reminder on how to use the RStudio Server app check out the [Setup](../setup.qmd){target="_blank"} and [Lab 01](../labs/lab01.qmd){target="_blank"} sections from our lab instructions website.
 
 ## Populations, estimates, sources of variation {.unnumbered}
 
