@@ -4,6 +4,7 @@ project:
   render:
     - "*.qmd"
     - "!01_activity_uhu/"
+    - "!*answer-key.qmd"
   post-render: bash post-render.sh
 
 execute:
