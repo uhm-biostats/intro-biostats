@@ -2,7 +2,7 @@
 title: "Lab 02: Graphics in R"
 ---
 
-As with all labs, please complete this lab using *RStudio* running on the UH *Koa Server*. Access the *Koa Server* at [koa.its.hawaii.edu](https://koa.its.hawaii.edu/){target="_blank"} and use your UH credentials to log in. If needed, refer back to ["Setup"](index.qmd) and ["Lab 1"](lab01.qmd) for instructions on access, setting up your account, and how to turn in your lab report.
+As with all labs, please complete this lab using *RStudio* running on the UH *Koa Server*. Access the *Koa Server* at [koa.its.hawaii.edu](https://koa.its.hawaii.edu/){target="_blank"} and use your UH credentials to log in. If needed, refer back to ["Setup"](../setup.qmd) and ["Lab 1"](lab01.qmd) for instructions on access, setting up your account, and how to turn in your lab report.
 
 ## Goals
 

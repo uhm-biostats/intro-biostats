@@ -35,7 +35,7 @@ The *Koa Server* allows you to run a hosted version of *RStudio* in the cloud th
 
 ### Getting started with on the *Koa Server*
 
-Follow the instructions on the ["Setup"](setup.qmd) page for setting yourself up on the *Koa Server*.
+Follow the instructions on the ["Setup"](../setup.qmd) page for setting yourself up on the *Koa Server*.
 
 Once done, proceed with the rest of the lab below.
 
