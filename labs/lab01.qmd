@@ -443,7 +443,7 @@ mean(x)
 # The mean of c(1, 2, 3) is 2. Here's what that means...
 ```
         
-1. Run the **Learning the tools** commands in *R* from your "scratch.R" script. Did you get the same answers as shown in the text? (Answer "yes", "no", or a more detailed explanation. You don't need to re-run all the code and output here.)
+1. When you ran all the **Learning the tools** commands in *R*, did you get the same answers as shown in the text? (Answer "yes", "no", or a more detailed explanation. You don't need to re-run all the code and output here.)
 
 1. For each of the following, come up with a variable name that would be appropriate to use in *R* for the listed variable:
 
