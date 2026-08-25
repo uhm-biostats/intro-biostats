@@ -149,12 +149,13 @@ Species richness across the Hawaiian islands is highly variable, how could the s
 
 On Google Classroom
 
-# Break!
-
 ## Logistics
 
-1. In lab you will be registering for a Koa server account (make sure to do this!)
+1. Please register for a Koa server account 
 2. Nothing else due this week :)
+
+# Break!
+
 
 ## Learning goals
 
