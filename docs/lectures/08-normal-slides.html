@@ -217,7 +217,7 @@
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>s <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">20</span>, <span class="dv">5</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb1-2"><a href=""></a><span class="fu">mean</span>(s)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 9.2</code></pre>
+<pre><code>[1] 9</code></pre>
 </div>
 </div>
 </section>
@@ -391,66 +391,83 @@
 <p>If we take a sample of <span class="math inline">\(n\)</span> from a normally distributed population with standard deviation <span class="math inline">\(\sigma\)</span>, the population standard error of the sample mean is:</p>
 <p><span class="math display">\[\sigma_{\overline{Y}} = \sigma/\sqrt{n}\]</span></p>
 </section>
-<section id="standard-error-of-the-sample-mean-is-sigma_overliney-sigmasqrtn" class="slide level2">
-<h2>Standard error of the sample mean is <span class="math inline">\(\sigma_{\overline{Y}} = \sigma/\sqrt{n}\)</span></h2>
+<section id="standard-error-of-the-sample-mean-1" class="slide level2 top-align">
+<h2>Standard error of the sample mean</h2>
+<div class="r-stack">
+<div class="fragment fade-out" data-fragment-index="0">
 <div class="pause-think">
 <p>If <span class="math inline">\(\sigma = 1\)</span>, which panels show the sampling distribution of the sample mean associated with <span class="math inline">\(n = 4\)</span>, <span class="math inline">\(n = 9\)</span>, and <span class="math inline">\(n = 25\)</span>?</p>
 </div>
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center" style="width:6.5in"></p>
-</figure>
 </div>
-</div>
-</div>
-</section>
-<section id="standard-error-of-the-sample-mean-is-sigma_overliney-sigmasqrtn-1" class="slide level2">
-<h2>Standard error of the sample mean is <span class="math inline">\(\sigma_{\overline{Y}} = \sigma/\sqrt{n}\)</span></h2>
+<div class="fragment" data-fragment-index="0" style="width: 100%;">
 <div class="pause-think">
-<p>If <span class="math inline">\(\sigma = 1\)</span></p>
 <table class="caption-top">
 <thead>
 <tr class="header">
+<th style="text-align: center;"><span class="math inline">\(\sigma\)</span></th>
 <th style="text-align: center;"><span class="math inline">\(n\)</span></th>
 <th style="text-align: center;">standard error of the sample mean</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: center;">1</td>
 <td style="text-align: center;">4</td>
 <td style="text-align: center;"><span class="math inline">\(1/\sqrt{4} = 1/2\)</span></td>
 </tr>
 <tr class="even">
+<td style="text-align: center;">1</td>
 <td style="text-align: center;">9</td>
 <td style="text-align: center;"><span class="math inline">\(1/\sqrt{9} = 1/3\)</span></td>
 </tr>
 <tr class="odd">
+<td style="text-align: center;">1</td>
 <td style="text-align: center;">25</td>
 <td style="text-align: center;"><span class="math inline">\(1/\sqrt{25} = 1/5\)</span></td>
 </tr>
 </tbody>
 </table>
 </div>
+</div>
+</div>
+<div class="r-stack">
+<div class="fragment fade-out" data-fragment-index="0">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center" style="width:6in"></p>
+<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center" style="width:7in"></p>
 </figure>
+</div>
+</div>
+</div>
+</div>
+<div class="fragment" data-fragment-index="0">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center" style="width:7in"></p>
+</figure>
+</div>
+</div>
 </div>
 </div>
 </div>
 </section>
 <section id="the-probability-density-of-a-sample-mean" class="slide level2">
 <h2>The probability density of a sample mean</h2>
+<div class="pause-think">
 <p>If <span class="math inline">\(\mu = 0\)</span> and <span class="math inline">\(\sigma = 1\)</span>, what’s the probability of the sample mean <span class="math inline">\(\overline{Y} = 1.0\)</span> for <span class="math inline">\(n = 4\)</span>?</p>
+</div>
+<div class="fragment">
 <p>Trick question: with a continuous variable, the probability of any exact value of <span class="math inline">\(\overline{Y}\)</span> is infinitesimal (<span class="math inline">\(\approx 0\)</span>).</p>
+</div>
 </section>
 <section id="the-probability-density-of-a-sample-mean-1" class="slide level2">
 <h2>The probability density of a sample mean</h2>
 <p>If <span class="math inline">\(\mu = 0\)</span> and <span class="math inline">\(\sigma = 1\)</span>, what’s the probability <strong>density</strong> of the sample mean <span class="math inline">\(\overline{Y} = 1.0\)</span> for <span class="math inline">\(n = 4\)</span>?</p>
+<div class="fragment">
 <p>We can answer this!</p>
 <p>In <em>R</em></p>
 <div class="cell">
@@ -459,16 +476,24 @@
 <pre><code>[1] 0.1079819</code></pre>
 </div>
 </div>
+</div>
+<div class="fragment">
 <p>This does <strong>NOT</strong> mean there is a 10% chance of <span class="math inline">\(\overline{Y} = 1.0\)</span></p>
+</div>
 </section>
 <section id="the-probability-density-of-a-range-of-sample-means" class="slide level2">
 <h2>The probability density of a range of sample means</h2>
+<div class="pause-think">
 <p>If <span class="math inline">\(\mu = 0\)</span> and <span class="math inline">\(\sigma = 1\)</span>, what’s the probability <strong>density</strong> that the sample mean <span class="math inline">\(\overline{Y} \ge 1.0\)</span> for <span class="math inline">\(n = 4\)</span>?</p>
+</div>
+<div class="fragment">
 <p>Trick question: probability density is associated with a specific value of <span class="math inline">\(\overline{Y}\)</span>.</p>
+</div>
 </section>
 <section id="the-probability-of-a-range-of-sample-means" class="slide level2">
 <h2>The probability of a range of sample means</h2>
 <p>If <span class="math inline">\(\mu = 0\)</span> and <span class="math inline">\(\sigma = 1\)</span>, what’s the probability that the sample mean <span class="math inline">\(\overline{Y} \ge 1.0\)</span> for <span class="math inline">\(n = 4\)</span>?</p>
+<div class="fragment">
 <p>We can answer this!</p>
 <p>In <em>R</em></p>
 <div class="cell">
@@ -477,7 +502,10 @@
 <pre><code>[1] 0.02275013</code></pre>
 </div>
 </div>
+</div>
+<div class="fragment">
 <p>This means there is a 2.28% chance of <span class="math inline">\(\overline{Y} \ge 1.0\)</span></p>
+</div>
 </section>
 <section id="the-probability-of-a-range-of-sample-means-1" class="slide level2">
 <h2>The probability of a range of sample means</h2>
@@ -495,31 +523,37 @@
 </section>
 <section id="all-normal-distributions-can-be-described-by-mu-and-sigma" class="slide level2">
 <h2>All normal distributions can be described by <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span></h2>
+<div class="fragment" data-fragment-index="0">
+<p>The <span class="alert">standard normal distribution</span> has <span class="math inline">\(\mu = 0\)</span> and <span class="math inline">\(\sigma = 1\)</span></p>
+</div>
+<div class="r-stack">
+<div class="fragment fade-out" data-fragment-index="0">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center" style="width:8.5in"></p>
+<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center" style="width:7.5in"></p>
 </figure>
 </div>
 </div>
 </div>
-</section>
-<section id="the-standard-normal-distribution-has-mu-0-and-sigma-1" class="slide level2">
-<h2>The <span class="alert">standard normal distribution</span> has <span class="math inline">\(\mu = 0\)</span> and <span class="math inline">\(\sigma = 1\)</span></h2>
+</div>
+<div class="fragment" data-fragment-index="0">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-17-1.png" class="quarto-figure quarto-figure-center" style="width:8.5in"></p>
+<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-17-1.png" class="quarto-figure quarto-figure-center" style="width:7.5in"></p>
 </figure>
 </div>
 </div>
 </div>
+</div>
+</div>
 </section>
-<section id="the-standard-normal-distribution-has-mu-0-and-sigma-1-1" class="slide level2">
-<h2>The <span class="alert">standard normal distribution</span> has <span class="math inline">\(\mu = 0\)</span> and <span class="math inline">\(\sigma = 1\)</span></h2>
-<p><span class="math inline">\(Z\)</span>-transformation: transform any normal distribution to a standard normal</p>
+<section id="the-standard-normal-distribution" class="slide level2">
+<h2>The <span class="alert">standard normal distribution</span></h2>
+<p><span class="math inline">\(Z\)</span>-transformation: transform any normal distribution to a standard normal (<span class="math inline">\(\mu = 0\)</span> and <span class="math inline">\(\sigma = 1\)</span>)</p>
 <p><span class="math display">\[Z = \frac{Y - \mu}{\sigma}\]</span></p>
 <div class="columns">
 <div class="column" style="width:50%;">
@@ -578,6 +612,41 @@
 <p>A <span class="alert">standard normal deviate</span>, or <span class="math inline">\(Z\)</span>, tells us how many standard deviations a particular value is from the mean</p>
 </blockquote>
 </section>
+<section id="why-do-we-care-so-much-about-the-normal-distribution" class="slide level2">
+<h2>Why do we care so much about the normal distribution?</h2>
+<div class="fragment">
+<p><strong>because the world is shockingly normal</strong></p>
+<p>Run this code on your computer</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a>s <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">20</span>, <span class="dv">5</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-2"><a href=""></a><span class="fu">mean</span>(s)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center" style="width:6in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="why-do-we-care-so-much-about-the-normal-distribution-1" class="slide level2">
+<h2>Why do we care so much about the normal distribution?</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-20-1.png" class="quarto-figure quarto-figure-center" style="width:6in"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We get this result because of the <span class="alert">Central Limit Theorem</span></p>
+</section>
 <section id="central-limit-theorem" class="slide level2">
 <h2><span class="alert">Central Limit Theorem</span></h2>
 <blockquote>
@@ -592,126 +661,13 @@
 <li>It can speed up calculations for large samples from non-normal distributions</li>
 </ol>
 </section>
-<section id="because-of-the-central-limit-theorem" class="slide level2">
-<h2>Because of the <span class="alert">Central Limit Theorem</span>…</h2>
-<p><strong>the world is shockingly normal</strong></p>
-<p>Run this code on your computer</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a>s <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">20</span>, <span class="dv">5</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb8-2"><a href=""></a><span class="fu">mean</span>(s)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="because-of-the-central-limit-theorem-1" class="slide level2">
-<h2>Because of the <span class="alert">Central Limit Theorem</span>…</h2>
-<p><strong>the world is shockingly normal</strong></p>
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center" style="width:6.5in"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
 <section id="the-normal-distribution-allows-many-useful-methods-1" class="slide level2">
 <h2>The normal distribution allows many useful methods</h2>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-20-1.png" class="quarto-figure quarto-figure-center" style="width:9in"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="learning-objectives" class="slide level2">
-<h2>Learning Objectives</h2>
-<!-- TO-DO: condense learning goals, remove review and make one continuous slide deck -->
-<ol type="1">
-<li>Describe the properties of a normal distribution</li>
-<li>Know that the standard error of the sampling distribution of size <span class="math inline">\(n\)</span> from the normal distribution equals <span class="math inline">\(\sigma/\sqrt{n}\)</span></li>
-<li>Find the probability density of a range of sample mean</li>
-<li>Use a Z-transform to convert any normal distribution into the standard normal distribution</li>
-<li>Explain why normal distributions are common, and explain the Central Limit Theorem</li>
-<li><em>Use</em> R <em>to make calculations about and sample from a normal distribution</em></li>
-<li><em>Interpret histograms and qq-plots to meaningfully evaluate if data are roughly normal</em></li>
-<li><em>Transform non-normal data to become normal</em></li>
-<li><em>Understand problematic, pseudo-scientific “applications” of the normal distribution</em></li>
-</ol>
-</section>
-<section id="the-normal-distribution-allows-many-useful-methods-2" class="slide level2">
-<h2>The normal distribution allows many useful methods</h2>
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-21-1.png" class="quarto-figure quarto-figure-center" style="width:9in"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="normal-distribution-1" class="slide level2">
-<h2><span class="alert">Normal distribution</span></h2>
-<blockquote>
-<p>The <span class="alert">normal distribution</span> is a continuous probability distribution describing a bell-shaped curve. It is a good approximation to the frequency distribution of many biological variables.</p>
-</blockquote>
-</section>
-<section id="the-normal-distribution-has-two-parameters-mean-and-standard-deviation-2" class="slide level2">
-<h2>The <span class="alert">normal distribution</span> has two parameters, mean and standard deviation</h2>
-<p>For the population, consider a continuous variable <span class="math inline">\(Y\)</span> with mean <span class="math inline">\(\mu\)</span> and standard deviation <span class="math inline">\(\sigma\)</span></p>
-<p><span class="math display">\[f(Y) = \frac{1}{\sqrt{2 \pi \sigma^2}} e ^ {\frac{-(Y - \mu) ^ 2}{2 \sigma ^ 2}}\]</span> <span class="math inline">\(f(Y)\)</span> is the probability density associated with a value <span class="math inline">\(Y\)</span></p>
-<p>Higher probability when:</p>
-<ol type="1">
-<li><p><span class="math inline">\(Y\)</span> is close to <span class="math inline">\(\mu\)</span></p></li>
-<li><p>The spread of the distribution is low (<span class="math inline">\(\sigma\)</span> is small)</p></li>
-</ol>
-</section>
-<section id="the-normal-distribution-has-two-parameters-mean-and-standard-deviation-3" class="slide level2">
-<h2>The <span class="alert">normal distribution</span> has two parameters, mean and standard deviation</h2>
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-22-1.png" class="quarto-figure quarto-figure-center" style="width:8in"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="central-limit-theorem-1" class="slide level2">
-<h2><span class="alert">Central Limit Theorem</span></h2>
-<blockquote>
-<p>According to the <span class="alert">central limit theorem</span>, the sum or mean of a large number of measurements randomly sampled from a non-normal population is approximately normally distributed.</p>
-</blockquote>
-</section>
-<section id="why-the-central-limit-theorem-matters-1" class="slide level2">
-<h2>Why the <span class="alert">Central Limit Theorem</span> matters</h2>
-<ol type="1">
-<li>It explains why so many quantities are normally distributed</li>
-<li>When <span class="math inline">\(n\)</span> is large, many statistical tests that assume data are normal sampling distributions work OK</li>
-<li>It can speed up calculations for large samples from non-normal distributions</li>
-</ol>
-</section>
-<section id="because-of-the-central-limit-theorem-2" class="slide level2">
-<h2>Because of the <span class="alert">Central Limit Theorem</span>…</h2>
-<p><strong>the world is shockingly normal</strong></p>
-<p>Run this code on your computer</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a>s <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">20</span>, <span class="dv">5</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb9-2"><a href=""></a><span class="fu">mean</span>(s)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="because-of-the-central-limit-theorem-3" class="slide level2">
-<h2>Because of the <span class="alert">Central Limit Theorem</span>…</h2>
-<p><strong>the world is shockingly normal</strong></p>
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-24-1.png" class="quarto-figure quarto-figure-center" style="width:6.5in"></p>
+<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-21-1.png" class="quarto-figure quarto-figure-center" style="width:8in"></p>
 </figure>
 </div>
 </div>
@@ -719,7 +675,7 @@
 </section>
 <section id="for-the-rest-of-lecture" class="slide level2">
 <h2>For the rest of lecture…</h2>
-<ol start="6" type="1">
+<ol type="1">
 <li><em>Use</em> R <em>to make calculations about and sample from a normal distribution</em></li>
 <li><em>Interpret histograms and qq-plots to meaningfully evaluate if data are roughly normal</em></li>
 <li><em>Transform non-normal data to become normal</em></li>
@@ -735,14 +691,14 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-25-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-22-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
 </figure>
 </div>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a><span class="fu">dnorm</span>(<span class="fl">1.0</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a><span class="fu">dnorm</span>(<span class="fl">1.0</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.2419707</code></pre>
 </div>
@@ -758,14 +714,14 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-27-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-24-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
 </figure>
 </div>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a><span class="fu">pnorm</span>(<span class="fl">1.0</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="fu">pnorm</span>(<span class="fl">1.0</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.8413447</code></pre>
 </div>
@@ -781,20 +737,20 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-29-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-26-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
 </figure>
 </div>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a><span class="fu">pnorm</span>(<span class="fl">1.0</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>,</span>
-<span id="cb14-2"><a href=""></a>      <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a><span class="fu">pnorm</span>(<span class="fl">1.0</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>,</span>
+<span id="cb13-2"><a href=""></a>      <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.1586553</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href=""></a><span class="co"># ...or...</span></span>
-<span id="cb16-2"><a href=""></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="fl">1.0</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a><span class="co"># ...or...</span></span>
+<span id="cb15-2"><a href=""></a><span class="dv">1</span> <span class="sc">-</span> <span class="fu">pnorm</span>(<span class="fl">1.0</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.1586553</code></pre>
 </div>
@@ -810,14 +766,14 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-31-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-28-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
 </figure>
 </div>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href=""></a><span class="fu">qnorm</span>(<span class="fl">0.1</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href=""></a><span class="fu">qnorm</span>(<span class="fl">0.1</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] -1.281552</code></pre>
 </div>
@@ -833,19 +789,19 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-33-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-30-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
 </figure>
 </div>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a>qq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>, <span class="at">by =</span> <span class="fl">0.1</span>)</span>
-<span id="cb20-2"><a href=""></a>qq</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href=""></a>qq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>, <span class="at">by =</span> <span class="fl">0.1</span>)</span>
+<span id="cb19-2"><a href=""></a>qq</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a><span class="fu">qnorm</span>(qq, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href=""></a><span class="fu">qnorm</span>(qq, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] -1.2815516 -0.8416212 -0.5244005 -0.2533471  0.0000000  0.2533471  0.5244005
 [8]  0.8416212  1.2815516</code></pre>
@@ -863,7 +819,7 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-35-1.png" class="quarto-figure quarto-figure-center" style="width:8in"></p>
+<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-32-1.png" class="quarto-figure quarto-figure-center" style="width:8in"></p>
 </figure>
 </div>
 </div>
@@ -875,7 +831,7 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-36-1.png" class="quarto-figure quarto-figure-center" style="width:8in"></p>
+<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-33-1.png" class="quarto-figure quarto-figure-center" style="width:8in"></p>
 </figure>
 </div>
 </div>
@@ -887,7 +843,7 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-37-1.png" class="quarto-figure quarto-figure-center" style="width:8in"></p>
+<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-34-1.png" class="quarto-figure quarto-figure-center" style="width:8in"></p>
 </figure>
 </div>
 </div>
@@ -899,7 +855,7 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-38-1.png" class="quarto-figure quarto-figure-center" style="width:8in"></p>
+<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-35-1.png" class="quarto-figure quarto-figure-center" style="width:8in"></p>
 </figure>
 </div>
 </div>
@@ -917,7 +873,7 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-39-1.png" class="quarto-figure quarto-figure-center" style="width:8in"></p>
+<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-36-1.png" class="quarto-figure quarto-figure-center" style="width:8in"></p>
 </figure>
 </div>
 </div>
@@ -927,11 +883,11 @@
 <h2>Log-transformation is very useful for right-skewed distributions</h2>
 <p><strong>How do you log-transform your data?</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a><span class="co"># read-in one of our example datasets: mammal masses</span></span>
-<span id="cb24-2"><a href=""></a>mam <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../data/mammals.csv"</span>)</span>
-<span id="cb24-3"><a href=""></a></span>
-<span id="cb24-4"><a href=""></a><span class="co"># add a log-transformed body mass column</span></span>
-<span id="cb24-5"><a href=""></a>mam<span class="sc">$</span>log_body_mass <span class="ot">&lt;-</span> <span class="fu">log</span>(mam<span class="sc">$</span>body_mass_kg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href=""></a><span class="co"># read-in one of our example datasets: mammal masses</span></span>
+<span id="cb23-2"><a href=""></a>mam <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../data/mammals.csv"</span>)</span>
+<span id="cb23-3"><a href=""></a></span>
+<span id="cb23-4"><a href=""></a><span class="co"># add a log-transformed body mass column</span></span>
+<span id="cb23-5"><a href=""></a>mam<span class="sc">$</span>log_body_mass <span class="ot">&lt;-</span> <span class="fu">log</span>(mam<span class="sc">$</span>body_mass_kg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="log-transformation-is-very-useful-for-right-skewed-distributions-3" class="slide level2">
@@ -939,12 +895,12 @@
 <p><strong>How do you log-transform your data?</strong></p>
 <p>This is how you display a qq-plot</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a><span class="fu">ggplot</span>(mam, <span class="fu">aes</span>(<span class="at">sample =</span> log_body_mass)) <span class="sc">+</span></span>
-<span id="cb25-2"><a href=""></a>    <span class="fu">geom_qq</span>(<span class="at">color =</span> <span class="st">"tomato"</span>) <span class="sc">+</span></span>
-<span id="cb25-3"><a href=""></a>    <span class="fu">geom_qq_line</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb25-4"><a href=""></a>    <span class="fu">theme_cowplot</span>() <span class="sc">+</span></span>
-<span id="cb25-5"><a href=""></a>    <span class="fu">xlab</span>(<span class="st">"Theoretical quantiles"</span>) <span class="sc">+</span></span>
-<span id="cb25-6"><a href=""></a>    <span class="fu">ylab</span>(<span class="st">"Observed quantiles"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a><span class="fu">ggplot</span>(mam, <span class="fu">aes</span>(<span class="at">sample =</span> log_body_mass)) <span class="sc">+</span></span>
+<span id="cb24-2"><a href=""></a>    <span class="fu">geom_qq</span>(<span class="at">color =</span> <span class="st">"tomato"</span>) <span class="sc">+</span></span>
+<span id="cb24-3"><a href=""></a>    <span class="fu">geom_qq_line</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb24-4"><a href=""></a>    <span class="fu">theme_cowplot</span>() <span class="sc">+</span></span>
+<span id="cb24-5"><a href=""></a>    <span class="fu">xlab</span>(<span class="st">"Theoretical quantiles"</span>) <span class="sc">+</span></span>
+<span id="cb24-6"><a href=""></a>    <span class="fu">ylab</span>(<span class="st">"Observed quantiles"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="log-transformation-is-very-useful-for-right-skewed-distributions-4" class="slide level2">
@@ -954,7 +910,7 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-42-1.png" class="quarto-figure quarto-figure-center" style="width:8in"></p>
+<p><img data-src="08-normal-slides_files/figure-revealjs/unnamed-chunk-39-1.png" class="quarto-figure quarto-figure-center" style="width:8in"></p>
 </figure>
 </div>
 </div>
@@ -962,17 +918,17 @@
 </section>
 <section id="cant-talk-about-the-normal-distribution-without" class="slide level2">
 <h2>Can’t talk about the normal distribution without…</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<p><img data-src="../img/bell_curve_book.png"></p>
-</div><div class="column" style="width:50%;">
 <p>The “bell curve” and the pseudo-science of “race science”</p>
+<div class="columns">
+<div class="column" style="width:35%;">
+<p><img data-src="../img/bell_curve_book.png" style="width:80.0%"></p>
+</div><div class="column" style="width:65%;">
 <ul>
-<li>Claims there’s an “average man” in terms of intangible qualities like “intelligence” <strong>FALSE</strong></li>
-<li>Claims “intelligence” is largely genetic <strong>FALSE</strong></li>
-<li>Claims different “races” have different <em>genetic</em> propensities for “intelligence” <strong>FALSE</strong></li>
-<li>Used to justify racism</li>
-<li>Why do some instructors curve grades?</li>
+<li class="fragment">Claims there’s an “average man” in terms of intangible qualities like “intelligence” <strong>FALSE</strong></li>
+<li class="fragment">Claims “intelligence” is largely genetic <strong>FALSE</strong></li>
+<li class="fragment">Claims different “races” have different <em>genetic</em> propensities for “intelligence” <strong>FALSE</strong></li>
+<li class="fragment">Used to justify racism</li>
+<li class="fragment">“The curve” has saved my ʻōkole, but it has a disturbing origin</li>
 </ul>
 </div></div>
 

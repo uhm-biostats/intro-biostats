@@ -1223,7 +1223,7 @@
     "href": "lectures/08-normal-slides.html#lets-try-an-example",
     "title": "Introducing the Normal Distribution",
     "section": "Let’s try an example",
-    "text": "Let’s try an example\nRun this code on your computer\n\ns &lt;- sample(20, 5, replace = TRUE)\nmean(s)\n\n[1] 9.2"
+    "text": "Let’s try an example\nRun this code on your computer\n\ns &lt;- sample(20, 5, replace = TRUE)\nmean(s)\n\n[1] 9"
   },
   {
     "objectID": "lectures/08-normal-slides.html#lets-try-an-example-1",
@@ -1331,46 +1331,39 @@
     "text": "Standard error of the sample mean\nThe standard error is the standard deviation of the sampling distribution\nIf we take a sample of \\(n\\) from a normally distributed population with standard deviation \\(\\sigma\\), the population standard error of the sample mean is:\n\\[\\sigma_{\\overline{Y}} = \\sigma/\\sqrt{n}\\]"
   },
   {
-    "objectID": "lectures/08-normal-slides.html#standard-error-of-the-sample-mean-is-sigma_overliney-sigmasqrtn",
-    "href": "lectures/08-normal-slides.html#standard-error-of-the-sample-mean-is-sigma_overliney-sigmasqrtn",
+    "objectID": "lectures/08-normal-slides.html#standard-error-of-the-sample-mean-1",
+    "href": "lectures/08-normal-slides.html#standard-error-of-the-sample-mean-1",
     "title": "Introducing the Normal Distribution",
-    "section": "Standard error of the sample mean is \\(\\sigma_{\\overline{Y}} = \\sigma/\\sqrt{n}\\)",
-    "text": "Standard error of the sample mean is \\(\\sigma_{\\overline{Y}} = \\sigma/\\sqrt{n}\\)\n\nIf \\(\\sigma = 1\\), which panels show the sampling distribution of the sample mean associated with \\(n = 4\\), \\(n = 9\\), and \\(n = 25\\)?"
-  },
-  {
-    "objectID": "lectures/08-normal-slides.html#standard-error-of-the-sample-mean-is-sigma_overliney-sigmasqrtn-1",
-    "href": "lectures/08-normal-slides.html#standard-error-of-the-sample-mean-is-sigma_overliney-sigmasqrtn-1",
-    "title": "Introducing the Normal Distribution",
-    "section": "Standard error of the sample mean is \\(\\sigma_{\\overline{Y}} = \\sigma/\\sqrt{n}\\)",
-    "text": "Standard error of the sample mean is \\(\\sigma_{\\overline{Y}} = \\sigma/\\sqrt{n}\\)\n\nIf \\(\\sigma = 1\\)\n\n\n\n\\(n\\)\nstandard error of the sample mean\n\n\n\n\n4\n\\(1/\\sqrt{4} = 1/2\\)\n\n\n9\n\\(1/\\sqrt{9} = 1/3\\)\n\n\n25\n\\(1/\\sqrt{25} = 1/5\\)"
+    "section": "Standard error of the sample mean",
+    "text": "Standard error of the sample mean\n\n\n\nIf \\(\\sigma = 1\\), which panels show the sampling distribution of the sample mean associated with \\(n = 4\\), \\(n = 9\\), and \\(n = 25\\)?\n\n\n\n\n\n\n\n\\(\\sigma\\)\n\\(n\\)\nstandard error of the sample mean\n\n\n\n\n1\n4\n\\(1/\\sqrt{4} = 1/2\\)\n\n\n1\n9\n\\(1/\\sqrt{9} = 1/3\\)\n\n\n1\n25\n\\(1/\\sqrt{25} = 1/5\\)"
   },
   {
     "objectID": "lectures/08-normal-slides.html#the-probability-density-of-a-sample-mean",
     "href": "lectures/08-normal-slides.html#the-probability-density-of-a-sample-mean",
     "title": "Introducing the Normal Distribution",
     "section": "The probability density of a sample mean",
-    "text": "The probability density of a sample mean\nIf \\(\\mu = 0\\) and \\(\\sigma = 1\\), what’s the probability of the sample mean \\(\\overline{Y} = 1.0\\) for \\(n = 4\\)?\nTrick question: with a continuous variable, the probability of any exact value of \\(\\overline{Y}\\) is infinitesimal (\\(\\approx 0\\))."
+    "text": "The probability density of a sample mean\n\nIf \\(\\mu = 0\\) and \\(\\sigma = 1\\), what’s the probability of the sample mean \\(\\overline{Y} = 1.0\\) for \\(n = 4\\)?\n\n\nTrick question: with a continuous variable, the probability of any exact value of \\(\\overline{Y}\\) is infinitesimal (\\(\\approx 0\\))."
   },
   {
     "objectID": "lectures/08-normal-slides.html#the-probability-density-of-a-sample-mean-1",
     "href": "lectures/08-normal-slides.html#the-probability-density-of-a-sample-mean-1",
     "title": "Introducing the Normal Distribution",
     "section": "The probability density of a sample mean",
-    "text": "The probability density of a sample mean\nIf \\(\\mu = 0\\) and \\(\\sigma = 1\\), what’s the probability density of the sample mean \\(\\overline{Y} = 1.0\\) for \\(n = 4\\)?\nWe can answer this!\nIn R\n\ndnorm(1.0, mean = 0, sd = 1 / sqrt(4))\n\n[1] 0.1079819\n\n\nThis does NOT mean there is a 10% chance of \\(\\overline{Y} = 1.0\\)"
+    "text": "The probability density of a sample mean\nIf \\(\\mu = 0\\) and \\(\\sigma = 1\\), what’s the probability density of the sample mean \\(\\overline{Y} = 1.0\\) for \\(n = 4\\)?\n\nWe can answer this!\nIn R\n\ndnorm(1.0, mean = 0, sd = 1 / sqrt(4))\n\n[1] 0.1079819\n\n\n\n\nThis does NOT mean there is a 10% chance of \\(\\overline{Y} = 1.0\\)"
   },
   {
     "objectID": "lectures/08-normal-slides.html#the-probability-density-of-a-range-of-sample-means",
     "href": "lectures/08-normal-slides.html#the-probability-density-of-a-range-of-sample-means",
     "title": "Introducing the Normal Distribution",
     "section": "The probability density of a range of sample means",
-    "text": "The probability density of a range of sample means\nIf \\(\\mu = 0\\) and \\(\\sigma = 1\\), what’s the probability density that the sample mean \\(\\overline{Y} \\ge 1.0\\) for \\(n = 4\\)?\nTrick question: probability density is associated with a specific value of \\(\\overline{Y}\\)."
+    "text": "The probability density of a range of sample means\n\nIf \\(\\mu = 0\\) and \\(\\sigma = 1\\), what’s the probability density that the sample mean \\(\\overline{Y} \\ge 1.0\\) for \\(n = 4\\)?\n\n\nTrick question: probability density is associated with a specific value of \\(\\overline{Y}\\)."
   },
   {
     "objectID": "lectures/08-normal-slides.html#the-probability-of-a-range-of-sample-means",
     "href": "lectures/08-normal-slides.html#the-probability-of-a-range-of-sample-means",
     "title": "Introducing the Normal Distribution",
     "section": "The probability of a range of sample means",
-    "text": "The probability of a range of sample means\nIf \\(\\mu = 0\\) and \\(\\sigma = 1\\), what’s the probability that the sample mean \\(\\overline{Y} \\ge 1.0\\) for \\(n = 4\\)?\nWe can answer this!\nIn R\n\npnorm(1.0, mean = 0, sd = 1 / sqrt(4), lower.tail = FALSE)\n\n[1] 0.02275013\n\n\nThis means there is a 2.28% chance of \\(\\overline{Y} \\ge 1.0\\)"
+    "text": "The probability of a range of sample means\nIf \\(\\mu = 0\\) and \\(\\sigma = 1\\), what’s the probability that the sample mean \\(\\overline{Y} \\ge 1.0\\) for \\(n = 4\\)?\n\nWe can answer this!\nIn R\n\npnorm(1.0, mean = 0, sd = 1 / sqrt(4), lower.tail = FALSE)\n\n[1] 0.02275013\n\n\n\n\nThis means there is a 2.28% chance of \\(\\overline{Y} \\ge 1.0\\)"
   },
   {
     "objectID": "lectures/08-normal-slides.html#the-probability-of-a-range-of-sample-means-1",
@@ -1384,21 +1377,14 @@
     "href": "lectures/08-normal-slides.html#all-normal-distributions-can-be-described-by-mu-and-sigma",
     "title": "Introducing the Normal Distribution",
     "section": "All normal distributions can be described by \\(\\mu\\) and \\(\\sigma\\)",
-    "text": "All normal distributions can be described by \\(\\mu\\) and \\(\\sigma\\)"
+    "text": "All normal distributions can be described by \\(\\mu\\) and \\(\\sigma\\)\n\nThe standard normal distribution has \\(\\mu = 0\\) and \\(\\sigma = 1\\)"
   },
   {
-    "objectID": "lectures/08-normal-slides.html#the-standard-normal-distribution-has-mu-0-and-sigma-1",
-    "href": "lectures/08-normal-slides.html#the-standard-normal-distribution-has-mu-0-and-sigma-1",
+    "objectID": "lectures/08-normal-slides.html#the-standard-normal-distribution",
+    "href": "lectures/08-normal-slides.html#the-standard-normal-distribution",
     "title": "Introducing the Normal Distribution",
-    "section": "The standard normal distribution has \\(\\mu = 0\\) and \\(\\sigma = 1\\)",
-    "text": "The standard normal distribution has \\(\\mu = 0\\) and \\(\\sigma = 1\\)"
-  },
-  {
-    "objectID": "lectures/08-normal-slides.html#the-standard-normal-distribution-has-mu-0-and-sigma-1-1",
-    "href": "lectures/08-normal-slides.html#the-standard-normal-distribution-has-mu-0-and-sigma-1-1",
-    "title": "Introducing the Normal Distribution",
-    "section": "The standard normal distribution has \\(\\mu = 0\\) and \\(\\sigma = 1\\)",
-    "text": "The standard normal distribution has \\(\\mu = 0\\) and \\(\\sigma = 1\\)\n\\(Z\\)-transformation: transform any normal distribution to a standard normal\n\\[Z = \\frac{Y - \\mu}{\\sigma}\\]\n\n\n\\(\\mu = 1\\), \\(\\sigma = 2\\)\n\n\n\n\\(Y\\)\n\\(Z\\)\n\n\n\n\n-1\n\\(\\frac{-1 - 1}{2} = -1\\)\n\n\n1\n\\(\\frac{1 - 1}{2} = 0\\)\n\n\n3\n\\(\\frac{3 - 1}{2} = 1\\)\n\n\n\n\n\\(\\mu = -2\\), \\(\\sigma = 3\\)\n\n\n\n\\(Y\\)\n\\(Z\\)\n\n\n\n\n-5\n\\(\\frac{-5 - (-2)}{3} = -1\\)\n\n\n-2\n\\(\\frac{-2 - (-2)}{3} = 0\\)\n\n\n1\n\\(\\frac{1 - (-2)}{3} = 1\\)"
+    "section": "The standard normal distribution",
+    "text": "The standard normal distribution\n\\(Z\\)-transformation: transform any normal distribution to a standard normal (\\(\\mu = 0\\) and \\(\\sigma = 1\\))\n\\[Z = \\frac{Y - \\mu}{\\sigma}\\]\n\n\n\\(\\mu = 1\\), \\(\\sigma = 2\\)\n\n\n\n\\(Y\\)\n\\(Z\\)\n\n\n\n\n-1\n\\(\\frac{-1 - 1}{2} = -1\\)\n\n\n1\n\\(\\frac{1 - 1}{2} = 0\\)\n\n\n3\n\\(\\frac{3 - 1}{2} = 1\\)\n\n\n\n\n\\(\\mu = -2\\), \\(\\sigma = 3\\)\n\n\n\n\\(Y\\)\n\\(Z\\)\n\n\n\n\n-5\n\\(\\frac{-5 - (-2)}{3} = -1\\)\n\n\n-2\n\\(\\frac{-2 - (-2)}{3} = 0\\)\n\n\n1\n\\(\\frac{1 - (-2)}{3} = 1\\)"
   },
   {
     "objectID": "lectures/08-normal-slides.html#z-standard-normal-deviate",
@@ -1406,6 +1392,20 @@
     "title": "Introducing the Normal Distribution",
     "section": "\\(Z\\): standard normal deviate",
     "text": "\\(Z\\): standard normal deviate\n\nA standard normal deviate, or \\(Z\\), tells us how many standard deviations a particular value is from the mean"
+  },
+  {
+    "objectID": "lectures/08-normal-slides.html#why-do-we-care-so-much-about-the-normal-distribution",
+    "href": "lectures/08-normal-slides.html#why-do-we-care-so-much-about-the-normal-distribution",
+    "title": "Introducing the Normal Distribution",
+    "section": "Why do we care so much about the normal distribution?",
+    "text": "Why do we care so much about the normal distribution?\n\nbecause the world is shockingly normal\nRun this code on your computer\n\ns &lt;- sample(20, 5, replace = TRUE)\nmean(s)"
+  },
+  {
+    "objectID": "lectures/08-normal-slides.html#why-do-we-care-so-much-about-the-normal-distribution-1",
+    "href": "lectures/08-normal-slides.html#why-do-we-care-so-much-about-the-normal-distribution-1",
+    "title": "Introducing the Normal Distribution",
+    "section": "Why do we care so much about the normal distribution?",
+    "text": "Why do we care so much about the normal distribution?\n\n\n\n\n\n\n\n\n\nWe get this result because of the Central Limit Theorem"
   },
   {
     "objectID": "lectures/08-normal-slides.html#central-limit-theorem",
@@ -1422,88 +1422,11 @@
     "text": "Why the Central Limit Theorem matters\n\nIt explains why so many quantities are normally distributed\nWhen \\(n\\) is large, many statistical tests that assume data are normal sampling distributions work OK\nIt can speed up calculations for large samples from non-normal distributions"
   },
   {
-    "objectID": "lectures/08-normal-slides.html#because-of-the-central-limit-theorem",
-    "href": "lectures/08-normal-slides.html#because-of-the-central-limit-theorem",
-    "title": "Introducing the Normal Distribution",
-    "section": "Because of the Central Limit Theorem…",
-    "text": "Because of the Central Limit Theorem…\nthe world is shockingly normal\nRun this code on your computer\n\ns &lt;- sample(20, 5, replace = TRUE)\nmean(s)"
-  },
-  {
-    "objectID": "lectures/08-normal-slides.html#because-of-the-central-limit-theorem-1",
-    "href": "lectures/08-normal-slides.html#because-of-the-central-limit-theorem-1",
-    "title": "Introducing the Normal Distribution",
-    "section": "Because of the Central Limit Theorem…",
-    "text": "Because of the Central Limit Theorem…\nthe world is shockingly normal"
-  },
-  {
     "objectID": "lectures/08-normal-slides.html#the-normal-distribution-allows-many-useful-methods-1",
     "href": "lectures/08-normal-slides.html#the-normal-distribution-allows-many-useful-methods-1",
     "title": "Introducing the Normal Distribution",
     "section": "The normal distribution allows many useful methods",
     "text": "The normal distribution allows many useful methods"
-  },
-  {
-    "objectID": "lectures/08-normal-slides.html#learning-objectives",
-    "href": "lectures/08-normal-slides.html#learning-objectives",
-    "title": "Introducing the Normal Distribution",
-    "section": "Learning Objectives",
-    "text": "Learning Objectives\n\n\nDescribe the properties of a normal distribution\nKnow that the standard error of the sampling distribution of size \\(n\\) from the normal distribution equals \\(\\sigma/\\sqrt{n}\\)\nFind the probability density of a range of sample mean\nUse a Z-transform to convert any normal distribution into the standard normal distribution\nExplain why normal distributions are common, and explain the Central Limit Theorem\nUse R to make calculations about and sample from a normal distribution\nInterpret histograms and qq-plots to meaningfully evaluate if data are roughly normal\nTransform non-normal data to become normal\nUnderstand problematic, pseudo-scientific “applications” of the normal distribution"
-  },
-  {
-    "objectID": "lectures/08-normal-slides.html#the-normal-distribution-allows-many-useful-methods-2",
-    "href": "lectures/08-normal-slides.html#the-normal-distribution-allows-many-useful-methods-2",
-    "title": "Introducing the Normal Distribution",
-    "section": "The normal distribution allows many useful methods",
-    "text": "The normal distribution allows many useful methods"
-  },
-  {
-    "objectID": "lectures/08-normal-slides.html#normal-distribution-1",
-    "href": "lectures/08-normal-slides.html#normal-distribution-1",
-    "title": "Introducing the Normal Distribution",
-    "section": "Normal distribution",
-    "text": "Normal distribution\n\nThe normal distribution is a continuous probability distribution describing a bell-shaped curve. It is a good approximation to the frequency distribution of many biological variables."
-  },
-  {
-    "objectID": "lectures/08-normal-slides.html#the-normal-distribution-has-two-parameters-mean-and-standard-deviation-2",
-    "href": "lectures/08-normal-slides.html#the-normal-distribution-has-two-parameters-mean-and-standard-deviation-2",
-    "title": "Introducing the Normal Distribution",
-    "section": "The normal distribution has two parameters, mean and standard deviation",
-    "text": "The normal distribution has two parameters, mean and standard deviation\nFor the population, consider a continuous variable \\(Y\\) with mean \\(\\mu\\) and standard deviation \\(\\sigma\\)\n\\[f(Y) = \\frac{1}{\\sqrt{2 \\pi \\sigma^2}} e ^ {\\frac{-(Y - \\mu) ^ 2}{2 \\sigma ^ 2}}\\] \\(f(Y)\\) is the probability density associated with a value \\(Y\\)\nHigher probability when:\n\n\\(Y\\) is close to \\(\\mu\\)\nThe spread of the distribution is low (\\(\\sigma\\) is small)"
-  },
-  {
-    "objectID": "lectures/08-normal-slides.html#the-normal-distribution-has-two-parameters-mean-and-standard-deviation-3",
-    "href": "lectures/08-normal-slides.html#the-normal-distribution-has-two-parameters-mean-and-standard-deviation-3",
-    "title": "Introducing the Normal Distribution",
-    "section": "The normal distribution has two parameters, mean and standard deviation",
-    "text": "The normal distribution has two parameters, mean and standard deviation"
-  },
-  {
-    "objectID": "lectures/08-normal-slides.html#central-limit-theorem-1",
-    "href": "lectures/08-normal-slides.html#central-limit-theorem-1",
-    "title": "Introducing the Normal Distribution",
-    "section": "Central Limit Theorem",
-    "text": "Central Limit Theorem\n\nAccording to the central limit theorem, the sum or mean of a large number of measurements randomly sampled from a non-normal population is approximately normally distributed."
-  },
-  {
-    "objectID": "lectures/08-normal-slides.html#why-the-central-limit-theorem-matters-1",
-    "href": "lectures/08-normal-slides.html#why-the-central-limit-theorem-matters-1",
-    "title": "Introducing the Normal Distribution",
-    "section": "Why the Central Limit Theorem matters",
-    "text": "Why the Central Limit Theorem matters\n\nIt explains why so many quantities are normally distributed\nWhen \\(n\\) is large, many statistical tests that assume data are normal sampling distributions work OK\nIt can speed up calculations for large samples from non-normal distributions"
-  },
-  {
-    "objectID": "lectures/08-normal-slides.html#because-of-the-central-limit-theorem-2",
-    "href": "lectures/08-normal-slides.html#because-of-the-central-limit-theorem-2",
-    "title": "Introducing the Normal Distribution",
-    "section": "Because of the Central Limit Theorem…",
-    "text": "Because of the Central Limit Theorem…\nthe world is shockingly normal\nRun this code on your computer\n\ns &lt;- sample(20, 5, replace = TRUE)\nmean(s)"
-  },
-  {
-    "objectID": "lectures/08-normal-slides.html#because-of-the-central-limit-theorem-3",
-    "href": "lectures/08-normal-slides.html#because-of-the-central-limit-theorem-3",
-    "title": "Introducing the Normal Distribution",
-    "section": "Because of the Central Limit Theorem…",
-    "text": "Because of the Central Limit Theorem…\nthe world is shockingly normal"
   },
   {
     "objectID": "lectures/08-normal-slides.html#for-the-rest-of-lecture",
@@ -1622,7 +1545,7 @@
     "href": "lectures/08-normal-slides.html#cant-talk-about-the-normal-distribution-without",
     "title": "Introducing the Normal Distribution",
     "section": "Can’t talk about the normal distribution without…",
-    "text": "Can’t talk about the normal distribution without…\n\n\n\n\nThe “bell curve” and the pseudo-science of “race science”\n\nClaims there’s an “average man” in terms of intangible qualities like “intelligence” FALSE\nClaims “intelligence” is largely genetic FALSE\nClaims different “races” have different genetic propensities for “intelligence” FALSE\nUsed to justify racism\nWhy do some instructors curve grades?"
+    "text": "Can’t talk about the normal distribution without…\nThe “bell curve” and the pseudo-science of “race science”\n\n\n\n\n\n\nClaims there’s an “average man” in terms of intangible qualities like “intelligence” FALSE\nClaims “intelligence” is largely genetic FALSE\nClaims different “races” have different genetic propensities for “intelligence” FALSE\nUsed to justify racism\n“The curve” has saved my ʻōkole, but it has a disturbing origin"
   },
   {
     "objectID": "lectures/07-chi-sq-slides.html",
@@ -4128,7 +4051,7 @@
     "href": "lectures/01-intro-slides.html#logistics",
     "title": "BIOL 220 Introduction",
     "section": "Logistics",
-    "text": "Logistics\n\nIn lab you will be registering for a Koa server account (make sure to do this!)\nNothing else due this week :)"
+    "text": "Logistics\n\nPlease register for a Koa server account\nNothing else due this week :)"
   },
   {
     "objectID": "lectures/01-intro-slides.html#learning-goals",
