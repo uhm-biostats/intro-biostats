@@ -431,17 +431,41 @@ If we take a sample of $n$ from a normally distributed population with standard 
 
 $$\sigma_{\overline{Y}} = \sigma/\sqrt{n}$$
 
-## Standard error of the sample mean is $\sigma_{\overline{Y}} = \sigma/\sqrt{n}$
 
-::: {.pause-think}
+
+## Standard error of the sample mean {.top-align}
+
+::: {.r-stack}
+
+:::: {.fragment .fade-out fragment-index="0"}
+::::: {.pause-think}
 If $\sigma = 1$, which panels show the sampling distribution of the sample mean associated with $n = 4$, $n = 9$, and $n = 25$?
+:::::
+::::
+
+:::: {.fragment fragment-index="0" style="width: 100%;"}
+::::: {.pause-think}
+| $\sigma$ | $n$ | standard error of the sample mean |
+|:--:|:--:|:--:|
+| 1 |  4  | $1/\sqrt{4} = 1/2$ |
+| 1 | 9  | $1/\sqrt{9} = 1/3$ |
+| 1 | 25 | $1/\sqrt{25} = 1/5$ |
+:::::
+::::
+
 :::
+
+::: {.r-stack}
+
+
+::: {.fragment .fade-out fragment-index="0"}
 
 ```{r}
 #| fig-align: center
-#| fig-width: 4
+#| fig-width: 5
 #| fig-height: 2
-#| out-width: "6.5in"
+#| out-width: "7in"
+
 
 se <- c(A = 1/5, B = 1/2, C = 1/3)
 df <- crossing(x = seq(-2, 2, 0.1), g = names(se)) |>
@@ -454,40 +478,41 @@ gp <- ggplot(df, aes(x = x1, y = `Probability density`)) +
 
 gp + facet_grid(cols = vars(g))
 ```
-
-## Standard error of the sample mean is $\sigma_{\overline{Y}} = \sigma/\sqrt{n}$
-
-::: {.pause-think}
-If $\sigma = 1$
-
-| $n$ | standard error of the sample mean |
-|:--:|:--:|
-| 4  | $1/\sqrt{4} = 1/2$ |
-| 9  | $1/\sqrt{9} = 1/3$ |
-| 25 | $1/\sqrt{25} = 1/5$ |
 :::
+
+::: {.fragment fragment-index="0"}
 
 ```{r}
 #| fig-align: center
-#| fig-width: 4
+#| fig-width: 5
 #| fig-height: 2
-#| out-width: "6in"
+#| out-width: "7in"
+
 
 gp + facet_grid(cols = vars(g),
                 labeller = as_labeller(c(A = "n = 25",
                                          B = "n = 4",
                                          C = "n = 9")))
 ```
+:::
+
+:::
 
 ## The probability density of a sample mean
 
+::: {.pause-think}
 If $\mu = 0$ and $\sigma = 1$, what's the probability of the sample mean $\overline{Y} = 1.0$ for $n = 4$?
+:::
 
+::: {.fragment}
 Trick question: with a continuous variable, the probability of any exact value of $\overline{Y}$ is infinitesimal ($\approx 0$).
+:::
 
 ## The probability density of a sample mean
 
 If $\mu = 0$ and $\sigma = 1$, what's the probability **density** of the sample mean $\overline{Y} = 1.0$ for $n = 4$?
+
+::: {.fragment}
 
 We can answer this!
 
@@ -499,18 +524,28 @@ In *R*
 dnorm(1.0, mean = 0, sd = 1 / sqrt(4))
 ```
 
+:::
+
+
+::: {.fragment}
 This does **NOT** mean there is a 10% chance of $\overline{Y} = 1.0$
+:::
 
 ## The probability density of a range of sample means
 
+::: {.pause-think}
 If $\mu = 0$ and $\sigma = 1$, what's the probability **density** that the sample mean $\overline{Y} \ge 1.0$ for $n = 4$?
+:::
 
+::: {.fragment}
 Trick question: probability density is associated with a specific value of $\overline{Y}$.
+:::
 
 ## The probability of a range of sample means
 
 If $\mu = 0$ and $\sigma = 1$, what's the probability that the sample mean $\overline{Y} \ge 1.0$ for $n = 4$?
 
+::: {.fragment}
 We can answer this!
 
 In *R*
@@ -521,7 +556,11 @@ In *R*
 pnorm(1.0, mean = 0, sd = 1 / sqrt(4), lower.tail = FALSE)
 ```
 
+:::
+
+::: {.fragment}
 This means there is a 2.28% chance of $\overline{Y} \ge 1.0$
+:::
 
 ## The probability of a range of sample means
 
@@ -555,53 +594,68 @@ ggplot(df, aes(x, y)) +
 
 ## All normal distributions can be described by $\mu$ and $\sigma$
 
+
+::: {.fragment fragment-index="0"}
+The [standard normal distribution]{.alert} has $\mu = 0$ and $\sigma = 1$
+:::
+
+::: {.r-stack}
+
+::: {.fragment .fade-out fragment-index="0"}
 ```{r}
 #| fig-align: center
 #| fig-width: 7
 #| fig-height: 5
-#| out-width: "8.5in"
+#| out-width: "7.5in"
 
 df <- tibble(x = seq(-3, 3, 0.01), y = dnorm(x))
 
 ggplot(df, aes(x, y)) +
-  geom_area(size = 2, fill = "tomato", color = "black") +
-  xlab(expression(italic(Y))) +
-  ylab("Probability density") +
-  scale_x_continuous(breaks = seq(-2, 2, 1), labels = c(expression(mu - 2 * sigma), expression(mu - sigma), expression(mu), expression(mu + sigma), expression(mu + 2 * sigma))) +
-  theme_cowplot() +
-  theme(
-    axis.text.x = element_text(size = 18),
-    axis.text.y = element_blank(),
-    axis.ticks.y = element_blank(),
-    axis.title = element_text(size = 24)
-  )
+    geom_area(size = 2, fill = "tomato", color = "black") +
+    xlab(expression(italic(Y))) +
+    ylab("Probability density") +
+    scale_x_continuous(breaks = seq(-2, 2, 1), 
+                       labels = c(expression(mu - 2 * sigma), 
+                                  expression(mu - sigma), 
+                                  expression(mu), 
+                                  expression(mu + sigma), 
+                                  expression(mu + 2 * sigma))) +
+    theme_cowplot() +
+    theme(
+        axis.text = element_text(size = 18),
+        axis.title = element_text(size = 24)
+    )
 ```
+:::
 
-## The [standard normal distribution]{.alert} has $\mu = 0$ and $\sigma = 1$
+::: {.fragment fragment-index="0"}
 
 ```{r}
 #| fig-align: center
 #| fig-width: 7
 #| fig-height: 5
-#| out-width: "8.5in"
-
-df <- tibble(x = seq(-3, 3, 0.01), y = dnorm(x))
+#| out-width: "7.5in"
 
 ggplot(df, aes(x, y)) +
-  geom_area(size = 2, fill = "tomato", color = "black") +
-  xlab(expression(italic(Z))) +
-  ylab("Probability density") +
-  scale_x_continuous(breaks = seq(-2, 2, 1)) +
-  theme_cowplot() +
-  theme(
-    axis.text = element_text(size = 18),
-    axis.title = element_text(size = 24)
-  )
+    geom_area(size = 2, fill = "tomato", color = "black") +
+    xlab(expression(italic(Z))) +
+    ylab("Probability density") +
+    scale_x_continuous(breaks = seq(-2, 2, 1)) +
+    theme_cowplot() +
+    theme(
+        axis.text = element_text(size = 18),
+        axis.title = element_text(size = 24)
+    )
+
 ```
 
-## The [standard normal distribution]{.alert} has $\mu = 0$ and $\sigma = 1$
+:::
 
-$Z$-transformation: transform any normal distribution to a standard normal
+:::
+
+## The [standard normal distribution]{.alert}
+
+$Z$-transformation: transform any normal distribution to a standard normal ($\mu = 0$ and $\sigma = 1$)
 
 $$Z = \frac{Y - \mu}{\sigma}$$
 
@@ -631,19 +685,11 @@ $\mu = -2$, $\sigma = 3$
 
 > A [standard normal deviate]{.alert}, or $Z$, tells us how many standard deviations a particular value is from the mean
 
-## [Central Limit Theorem]{.alert}
 
-> According to the [central limit theorem]{.alert}, the sum or mean of a large number of measurements randomly sampled from a non-normal population is approximately normally distributed.
+## Why do we care so much about the normal distribution? 
 
-## Why the [Central Limit Theorem]{.alert} matters
-
-1. It explains why so many quantities are normally distributed
-2. When $n$ is large, many statistical tests that assume data are normal sampling distributions work OK
-3. It can speed up calculations for large samples from non-normal distributions
-
-## Because of the [Central Limit Theorem]{.alert}...
-
-**the world is shockingly normal**
+::: {.fragment}
+**because the world is shockingly normal**
 
 Run this code on your computer
 
@@ -654,16 +700,14 @@ Run this code on your computer
 s <- sample(20, 5, replace = TRUE)
 mean(s)
 ```
+:::
 
-## Because of the [Central Limit Theorem]{.alert}...
-
-**the world is shockingly normal**
-
+::: {.fragment}
 ```{r}
 #| fig-align: center
 #| fig-width: 4
-#| fig-height: 4
-#| out-width: "6.5in"
+#| fig-height: 2.5
+#| out-width: "6in"
 
 foo <- replicate(5000, {
     s <- sample(20, 5, replace = TRUE)
@@ -679,132 +723,40 @@ ggplot(dat, aes(x = Sample_Mean)) +
                   args = list(mean = mean(dat$Sample_Mean),
                               sd = sd(dat$Sample_Mean)))
 ```
+:::
 
-## The normal distribution allows many useful methods
+
+## Why do we care so much about the normal distribution? 
+
 
 ```{r}
 #| fig-align: center
-#| fig-width: 7
-#| fig-height: 5
-#| out-width: "9in"
+#| fig-width: 4
+#| fig-height: 2.5
+#| out-width: "6in"
 
-set.seed(1)
-noni_dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)),
-                       group = c(rep("10mg noni", 100),
-                                 rep("placebo", 100)))
-
-set.seed(2)
-fish_data <- data.frame(pollution = runif(100, 0, 100))
-fish_data$body <- rnorm(100, 20 - 0.1 * fish_data$pollution, 2)
-fish_data$impact <- cut(fish_data$pollution, c(0, 33, 66, 100),
-                        labels = c("Low", "Medium", "High"))
-
-p1 <- ggplot(noni_dat, aes(x = sed, fill = group)) +
-    geom_histogram(aes(y = after_stat(density)), bins = 20) +
-    facet_grid(rows = vars(group)) +
-    theme_cowplot() +
-    theme(legend.position = "none") +
-    xlab("Change in sed rate [mm/hr]\n(after - before)") +
-    ggtitle("Comparison of Means")
-
-p2 <- ggplot(fish_data, aes(x = impact, y = body)) +
-    geom_boxplot() +
-    theme_cowplot() +
-    xlab("Level of human impact") +
-    ylab("Reef fish biomass (g)")
-
-p3 <- ggplot(fish_data, aes(x = pollution, y = body)) +
-    geom_point() +
-    geom_smooth(method = "lm", formula = y ~ x) +
-    theme_cowplot() +
-    xlab("Pollution (ppm)") +
-    ylab("Reef fish biomass (g)")
-
-p23 <- plot_grid(p2, p3, labels = c("Analysis of Variance",
-                                    "Correlation and Regression"),
-                 ncol = 1)
-plot_grid(p1, p23, ncol = 2)
+ggplot(dat, aes(x = Sample_Mean)) +
+    geom_histogram(aes(y =..density..),
+                   bins = 20) +
+    stat_function(fun = dnorm,
+                  args = list(mean = mean(dat$Sample_Mean),
+                              sd = sd(dat$Sample_Mean)))
 ```
 
+We get this result because of the [Central Limit Theorem]{.alert}
 
-## Learning Objectives
+## [Central Limit Theorem]{.alert}
 
-<!-- TO-DO: condense learning goals, remove review and make one continuous slide deck -->
+> According to the [central limit theorem]{.alert}, the sum or mean of a large number of measurements randomly sampled from a non-normal population is approximately normally distributed.
 
-1. Describe the properties of a normal distribution
-2. Know that the standard error of the sampling distribution of size $n$ from the normal distribution equals $\sigma/\sqrt{n}$
-3. Find the probability density of a range of sample mean
-4. Use a Z-transform to convert any normal distribution into the standard normal distribution
-6. Explain why normal distributions are common, and explain the Central Limit Theorem
-6. *Use* R *to make calculations about and sample from a normal distribution*
-5. *Interpret histograms and qq-plots to meaningfully evaluate if data are roughly normal*
-7. *Transform non-normal data to become normal*
-8. *Understand problematic, pseudo-scientific "applications" of the normal distribution*
+## Why the [Central Limit Theorem]{.alert} matters
+
+1. It explains why so many quantities are normally distributed
+2. When $n$ is large, many statistical tests that assume data are normal sampling distributions work OK
+3. It can speed up calculations for large samples from non-normal distributions
+
 
 ## The normal distribution allows many useful methods
-
-```{r}
-#| fig-align: center
-#| fig-width: 7
-#| fig-height: 5
-#| out-width: "9in"
-
-set.seed(1)
-noni_dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)),
-                       group = c(rep("10mg noni", 100),
-                                 rep("placebo", 100)))
-
-set.seed(2)
-fish_data <- data.frame(pollution = runif(100, 0, 100))
-fish_data$body <- rnorm(100, 20 - 0.1 * fish_data$pollution, 2)
-fish_data$impact <- cut(fish_data$pollution, c(0, 33, 66, 100),
-                        labels = c("Low", "Medium", "High"))
-
-p1 <- ggplot(noni_dat, aes(x = sed, fill = group)) +
-    geom_histogram(aes(y = after_stat(density)), bins = 20) +
-    facet_grid(rows = vars(group)) +
-    theme_cowplot() +
-    theme(legend.position = "none") +
-    xlab("Change in sed rate [mm/hr]\n(after - before)") +
-    ggtitle("Comparison of Means")
-
-p2 <- ggplot(fish_data, aes(x = impact, y = body)) +
-    geom_boxplot() +
-    theme_cowplot() +
-    xlab("Level of human impact") +
-    ylab("Reef fish biomass (g)")
-
-p3 <- ggplot(fish_data, aes(x = pollution, y = body)) +
-    geom_point() +
-    geom_smooth(method = "lm", formula = y ~ x) +
-    theme_cowplot() +
-    xlab("Pollution (ppm)") +
-    ylab("Reef fish biomass (g)")
-
-p23 <- plot_grid(p2, p3, labels = c("Analysis of Variance",
-                                    "Correlation and Regression"),
-                 ncol = 1)
-plot_grid(p1, p23, ncol = 2)
-```
-
-## [Normal distribution]{.alert}
-
-> The [normal distribution]{.alert} is a continuous probability distribution describing a bell-shaped curve. It is a good approximation to the frequency distribution of many biological variables.
-
-## The [normal distribution]{.alert} has two parameters, mean and standard deviation
-
-For the population, consider a continuous variable $Y$ with mean $\mu$ and standard deviation $\sigma$
-
-$$f(Y) = \frac{1}{\sqrt{2 \pi \sigma^2}} e ^ {\frac{-(Y - \mu) ^ 2}{2 \sigma ^ 2}}$$
-$f(Y)$ is the probability density associated with a value $Y$
-
-Higher probability when:
-
-1. $Y$ is close to $\mu$
-
-2. The spread of the distribution is low ($\sigma$ is small)
-
-## The [normal distribution]{.alert} has two parameters, mean and standard deviation
 
 ```{r}
 #| fig-align: center
@@ -812,96 +764,50 @@ Higher probability when:
 #| fig-height: 5
 #| out-width: "8in"
 
-x <- read.csv("../data/bird_morpho.csv")
+set.seed(1)
+noni_dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)),
+                       group = c(rep("10mg noni", 100),
+                                 rep("placebo", 100)))
 
-df1 <- x[x$species %in% c("jawe", "rwbu", "wrsh"), ] |>
-    group_by(full_name) |>
-    summarize(
-        n = n(),
-        mu = mean(nares_to_tip, na.rm = TRUE),
-        sigma = sd(nares_to_tip, na.rm = TRUE)
-    ) |>
-    mutate(label = glue("mean = {mu}, sd = {sigma}",
-                        mu = round(mu, 1),
-                        sigma = round(sigma, 2)))
+set.seed(2)
+fish_data <- data.frame(pollution = runif(100, 0, 100))
+fish_data$body <- rnorm(100, 20 - 0.1 * fish_data$pollution, 2)
+fish_data$impact <- cut(fish_data$pollution, c(0, 33, 66, 100),
+                        labels = c("Low", "Medium", "High"))
 
-df2 <- df1 |>
-    crossing(x = seq(-3, 3, 0.01)) |>
-    mutate(x1 = mu + x * sigma, y = dnorm(x1, mu, sigma))
-
-ggplot(x[x$species %in% c("jawe", "rwbu", "wrsh"), ],
-       aes(fill = full_name)) +
-    facet_grid(rows = vars(full_name),
-               labeller = labeller(full_name = label_wrap_gen(width = 10))) +
-    geom_histogram(mapping = aes(nares_to_tip, y = ..density..),
-                   show.legend = FALSE, binwidth = 0.2) +
-    geom_line(data = df2, mapping = aes(x1, y), size = 2, color = "darkgrey") +
-    geom_text(data = df1, mapping = aes(x = 5, y = 1, label = label), hjust = 0,
-              size = 8) +
-    xlab("Beak length (mm)") +
-    ylab("Probability density") +
-    scale_fill_viridis_d() +
+p1 <- ggplot(noni_dat, aes(x = sed, fill = group)) +
+    geom_histogram(aes(y = after_stat(density)), bins = 20) +
+    facet_grid(rows = vars(group)) +
     theme_cowplot() +
-    theme(
-        axis.text = element_text(size = 18),
-        axis.title = element_text(size = 24),
-        strip.text = element_text(size = 20)
-    )
+    theme(legend.position = "none") +
+    xlab("Change in sed rate [mm/hr]\n(after - before)") +
+    ggtitle("Comparison of Means")
+
+p2 <- ggplot(fish_data, aes(x = impact, y = body)) +
+    geom_boxplot() +
+    theme_cowplot() +
+    xlab("Level of human impact") +
+    ylab("Reef fish biomass (g)")
+
+p3 <- ggplot(fish_data, aes(x = pollution, y = body)) +
+    geom_point() +
+    geom_smooth(method = "lm", formula = y ~ x) +
+    theme_cowplot() +
+    xlab("Pollution (ppm)") +
+    ylab("Reef fish biomass (g)")
+
+p23 <- plot_grid(p2, p3, labels = c("Analysis of Variance",
+                                    "Correlation and Regression"),
+                 ncol = 1)
+plot_grid(p1, p23, ncol = 2)
 ```
 
-## [Central Limit Theorem]{.alert}
 
-> According to the [central limit theorem]{.alert}, the sum or mean of a large number of measurements randomly sampled from a non-normal population is approximately normally distributed.
-
-## Why the [Central Limit Theorem]{.alert} matters
-
-1. It explains why so many quantities are normally distributed
-2. When $n$ is large, many statistical tests that assume data are normal sampling distributions work OK
-3. It can speed up calculations for large samples from non-normal distributions
-
-## Because of the [Central Limit Theorem]{.alert}...
-
-**the world is shockingly normal**
-
-Run this code on your computer
-
-```{r}
-#| echo: true
-#| eval: false
-
-s <- sample(20, 5, replace = TRUE)
-mean(s)
-```
-
-## Because of the [Central Limit Theorem]{.alert}...
-
-**the world is shockingly normal**
-
-```{r}
-#| fig-align: center
-#| fig-width: 4
-#| fig-height: 4
-#| out-width: "6.5in"
-
-foo <- replicate(5000, {
-    s <- sample(20, 5, replace = TRUE)
-    mean(s)
-})
-
-dat <- data.frame(Sample_Mean = foo)
-
-ggplot(dat, aes(x = Sample_Mean)) +
-    geom_histogram(aes(y =..density..),
-                   bins = 20) +
-    stat_function(fun = dnorm,
-                  args = list(mean = mean(dat$Sample_Mean),
-                              sd = sd(dat$Sample_Mean)))
-```
 
 ## For the rest of lecture...
 
-6. *Use* R *to make calculations about and sample from a normal distribution*
-5. *Interpret histograms and qq-plots to meaningfully evaluate if data are roughly normal*
+1. *Use* R *to make calculations about and sample from a normal distribution*
+2. *Interpret histograms and qq-plots to meaningfully evaluate if data are roughly normal*
 7. *Transform non-normal data to become normal*
 8. *Understand problematic, pseudo-scientific "applications" of the normal distribution*
 
@@ -1503,18 +1409,22 @@ plot_grid(histlin, histlog, qqlin, qqlog, nrow = 2)
 
 ## Can't talk about the normal distribution without...
 
-::: columns
-::: {.column width="50%"}
-![](/img/bell_curve_book.png)
-:::
-
-::: {.column width="50%"}
 The "bell curve" and the pseudo-science of "race science"
 
+::: columns
+::: {.column width="35%"}
+![](/img/bell_curve_book.png){width="80%"}
+:::
+
+::: {.column width="65%"}
+
+::: {.incremental}
 - Claims there's an "average man" in terms of intangible qualities like "intelligence" **FALSE**
 - Claims "intelligence" is largely genetic **FALSE**
 - Claims different "races" have different *genetic* propensities for "intelligence" **FALSE**
 - Used to justify racism
-- Why do some instructors curve grades?
+- "The curve" has saved my ʻōkole, but it has a disturbing origin
+:::
+
 :::
 :::
