@@ -1,11 +1,6 @@
 ---
 title: "BIOL 220 Problem Set 02: Graphics"
 subtitle: "Answer Key"
-format:
-  pdf:
-    toc: false
-    number-sections: false
-    colorlinks: true
 ---
 
 

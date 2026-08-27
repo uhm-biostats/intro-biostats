@@ -1,15 +1,6 @@
 ---
 title: "BIOL 220 Problem Set 06: Binomial Test"
 subtitle: "Answer Key"
-format:
-  pdf:
-    toc: false
-    number-sections: false
-    colorlinks: true
-    filters:
-      - callout-akey.lua
-header-includes:
-    - \usepackage{mdframed}
 ---
 
 ```{r setup, include=FALSE}

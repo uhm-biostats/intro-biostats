@@ -1,11 +1,6 @@
 ---
 title: "BIOL 220 Problem Set 01: Biostats Basics"
 subtitle: "Answer Key"
-format:
-  pdf:
-    toc: false
-    number-sections: false
-    colorlinks: true
 ---
 
 

@@ -1,15 +1,6 @@
 ---
 title: "BIOL 220 Problem Set 05: Null Hypothesis Significance Testing"
 subtitle: "Answer Key"
-format:
-  pdf:
-    toc: false
-    number-sections: false
-    colorlinks: true
-    filters:
-      - callout-akey.lua
-header-includes:
-    - \usepackage{mdframed}
 ---
 
 ```{r setup, include=FALSE}

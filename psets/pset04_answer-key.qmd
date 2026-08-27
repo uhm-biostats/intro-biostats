@@ -1,11 +1,6 @@
 ---
 title: "BIOL 220 Problem Set 04: Probability"
 subtitle: "Answer Key"
-format:
-  pdf:
-    toc: false
-    number-sections: false
-    colorlinks: true
 ---
 
 ```{r setup, include=FALSE}

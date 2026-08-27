@@ -1,11 +1,6 @@
 ---
 title: "BIOL 220 Problem Set 03: Sample estimates and confidence intervals"
 subtitle: "Answer Key"
-format:
-  pdf:
-    toc: false
-    number-sections: false
-    colorlinks: true
 ---
 
 ```{r setup, include=FALSE}

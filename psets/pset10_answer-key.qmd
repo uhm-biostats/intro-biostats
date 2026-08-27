@@ -1,11 +1,6 @@
 ---
 title: "BIOL 220 Problem Set 10: Regression"
 subtitle: "Answer Key"
-format:
-  pdf:
-    toc: false
-    number-sections: false
-    colorlinks: true
 ---
 
 ```{r setup, include=FALSE}

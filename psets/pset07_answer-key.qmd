@@ -1,11 +1,6 @@
 ---
 title: "BIOL 220 Problem Set 07: Hypothesis tests with a chi-squared null distribution"
 subtitle: "Answer Key"
-format:
-  pdf:
-    toc: false
-    number-sections: false
-    colorlinks: true
 ---
 
 

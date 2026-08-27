@@ -1,11 +1,6 @@
 ---
 title: "BIOL 220 Problem Set 08: Analyzing means with t-tests"
 subtitle: "Answer Key"
-format:
-  pdf:
-    toc: false
-    number-sections: false
-    colorlinks: true
 ---
 
 
