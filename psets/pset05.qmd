@@ -69,7 +69,7 @@ One very cool group of spiders in Hawaiʻi are the *Tetragnatha* spiders, which 
 
 Out of 10 trials, I got 7 right. My "scientific" hypothesis is that I still know how to ID spiders, but statistically, is that really supported by these data?
 
-::: {callout.tip}
+::: {.callout-tip}
 ## Use the data from this totally true, not made up, spider identification test to answer questions 6--10.
 
 

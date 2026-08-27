@@ -44,8 +44,6 @@ library(DT)
 
 $H_0$: The mean leaf size of plants form tropical latitudes is equal to the mean leaf size of plants from temperate latitudes
 
-The probability is the area under the curve, which is greatest between 8 and 10 in this example.
-
 ::::
 
 
@@ -75,7 +73,7 @@ $H_\textrm{A}$: The mean blood concentrations of C-reactive protein (used to dia
 
 - Hypothesis: sea water temperature changes the proportion of corals that experience bleaching. $\mathbf{H_A}$
 - Hypothesis: the ratio of body mass to brain mass across mammals equals 1. $\mathbf{H_0}$
-- Hypothesis: the average number of animal species within tropical latitudes is the same as the average number of animal species outside of the tropics $\mathbf{H_A}$
+- Hypothesis: the average number of animal species within tropical latitudes is the same as the average number of animal species outside of the tropics $\mathbf{H_0}$
 - Hypothesis: the effect of a new experimental drug called "feel better syrup" has no effect on duration of common cold symptoms $\mathbf{H_0}$
 
 ::::
@@ -122,5 +120,88 @@ a. A clinical trial with a larger sample is **more** likely than a smaller trial
 
 ::::
 
+
+:::
+
+
+## Hawaiian *Tetragnatha* spiders {.unnumbered}
+
+```{r, fig.align = "center", out.width="50%", fig.cap="Two species of endemic Hawaiian *Tetragnatha* spiders"}
+knitr::include_graphics("../img/tetragnatha.png")
+```
+
+One very cool group of spiders in Hawaiʻi are the *Tetragnatha* spiders, which are an example of adaptive radiation.  On each island, these spiders re-evolved distinctive color morphs that use different strategies to avoid depredation and catch prey. The "green" color morph is especially pretty. On Oʻahu there are two green morphs, one is *T. tantalus* shown above. On Hawaiʻi Island there is only one green morph--*T. brevignatha*.  I used to spend a lot of time up in the ʻuka catching and identifying spiders, but being behind the computer all the time, I worry I lost those skills. A friend gave me a challenge: they showed me 10 pictures of *Tetragnatha* and told me 5 were *T. tantalus*, and 5 were *T. brevignatha*. My test was to correctly guess which was which. Don't be fooled! Not all *T. brevignatha* have the red spot (some are all green), and some *T. tantalus* have a red spot of their own!
+
+Out of 10 trials, I got 7 right. My "scientific" hypothesis is that I still know how to ID spiders, but statistically, is that really supported by these data?
+
+::: {.callout-tip}
+## Use the data from this totally true, not made up, spider identification test to answer questions 6--10.
+
+
+6. What is the most appropriate test statistic for this "study" and what is its numerical value? [1 point] 
+
+:::: {.callout-akey}
+**Answer**
+
+The test statistic is the number of correct identifications out of 10 trials: $X = 7$
+
+::::
+
+7. What is the most appropriate null hypothesis? [1 point]
+
+:::: {.callout-akey}
+**Answer**
+
+$H_0$: I have no real ability to distinguish the two species -- I am just guessing at random, so the true probability of correctly identifying a spider is $p = 0.5$
+
+::::
+
+8. The figure below shows the null distribution for the number of correct guesses. Use this figure to calculate the p-value (assume a two-tailed alternative hypothesis). Round your answer to the nearest 0.001. [1 point]
+
+```{r, fecundity, fig.align='center', fig.width=6, fig.height=4}
+
+df <- data.frame(x = 0:10, y = round(dbinom(0:10, 10, 0.5), 3))
+
+ggplot(df, aes(x, y, label = y)) +
+    geom_col(fill = "tomato") +
+    geom_text(vjust = -1) +
+    scale_x_continuous(breaks = 0:10, labels = 0:10) +
+    scale_y_continuous(limits = c(0, 0.3)) +
+    xlab("Number of correct guesses") +
+    ylab("Probability") +
+    theme_cowplot()
+
+```
+
+:::: {.callout-akey}
+**Answer**
+
+The observed test statistic is 7 correct guesses. Because the alternative is two-tailed, the p-value is the probability of a result *at least as extreme* as 7 in either direction -- that is, 7, 8, 9, or 10 correct, or (by symmetry) 0, 1, 2, or 3 correct:
+
+$P = 0.117 + 0.044 + 0.01 + 0.001 + 0.001 + 0.01 + 0.044 + 0.117 = 0.344$
+
+(equivalently, in R: `2 * sum(dbinom(c(0:3, 7:10), 10, 0.5))`)
+
+$P \approx 0.344$
+
+::::
+
+9. Based on this hypothesis test and a significance level of $\alpha = 0.05$, do you reject the null? What does that mean for how confident I should feel with my spider identification abilities? [1 point]
+
+:::: {.callout-akey}
+**Answer**
+
+Since $P = 0.344 > 0.05$, we **fail to reject the null hypothesis**. Getting 7 out of 10 correct is not at all unusual if you were just guessing at random, so these data do not give us statistical evidence that this "ability" to identify spiders is any better than chance
+
+::::
+
+10. Let's suppose, for my pride (!), that the null hypothesis is not true, has an error occurred in our hypothesis test? If so what kind of error? [1 point]
+
+:::: {.callout-akey}
+**Answer**
+
+If the null hypothesis is actually false (i.e. there really is some true spider-identification skill better than random guessing) but we failed to reject it, that would be a **Type II error** (a false negative)
+
+::::
 
 :::

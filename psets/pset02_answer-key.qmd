@@ -20,7 +20,7 @@ Consider the graphic below from a recent [article in *Science* by the Cenozoic C
 
 Hints: on the legend for the color scale, where is 0? Look closely at the tick marks of the axes. What *messages* do the authors want to communicate about these data; what are the patterns they're trying to show?  Do they achieve their goals?
 
-1. Identify two instances in which this graphic violates the data visualization rules from Whitlock and Schluter's textbook. There are multiple possible answers. [2 points]
+1. Identify two instances in which this graphic deviates from the best practices for data visualization rules that we covered in lecture. There are multiple possible answers. [2 points]
 
 ::: {.callout-note appearance="simple"}
 ## Possible answers
