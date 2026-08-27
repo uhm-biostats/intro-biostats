@@ -2,8 +2,9 @@
 #
 # Post-render hook for the default (web) profile.
 #
-# Goal: don't rebuild every reveal.js slide deck on every incremental
-# `quarto preview` re-render. Quarto sets these env vars for post-render:
+# Goal: don't rebuild every reveal.js slide deck (or pset answer-key
+# PDF) on every incremental `quarto preview` re-render. Quarto sets
+# these env vars for post-render:
 #   QUARTO_PROJECT_RENDER_ALL   - non-empty on a full-project render
 #                                 (a plain `quarto render` and preview's
 #                                 initial build), empty on incremental
@@ -11,26 +12,35 @@
 #   QUARTO_PROJECT_INPUT_FILES  - newline-separated files just rendered.
 #
 # Behavior:
-#   - full render        -> rebuild all slide decks
-#   - edited a *-slides  -> rebuild only that deck
-#   - edited anything else -> do nothing (skip the slides render entirely)
+#   - full render          -> rebuild all slide decks and answer keys
+#   - edited a *-slides    -> rebuild only that deck
+#   - edited an answer key -> rebuild only that answer key
+#   - edited anything else -> do nothing (skip both renders entirely)
 
 set -euo pipefail
 
-# Full project render: build every deck.
+# Full project render: build every deck and every answer key.
 if [ -n "${QUARTO_PROJECT_RENDER_ALL:-}" ]; then
   quarto render --profile slides
+  quarto render --profile akey
   exit 0
 fi
 
-# Incremental render: only rebuild slide files that were actually touched.
+# Incremental render: only rebuild slide/answer-key files that were
+# actually touched.
 slides=()
+akeys=()
 while IFS= read -r f; do
   case "$f" in
     *-slides.qmd) slides+=("$f") ;;
+    *answer-key.qmd) akeys+=("$f") ;;
   esac
 done <<< "${QUARTO_PROJECT_INPUT_FILES:-}"
 
 if [ ${#slides[@]} -gt 0 ]; then
   quarto render "${slides[@]}" --profile slides
+fi
+
+if [ ${#akeys[@]} -gt 0 ]; then
+  quarto render "${akeys[@]}" --profile akey
 fi

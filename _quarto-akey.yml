@@ -1,0 +1,16 @@
+project:
+  render:
+    - "psets/*answer-key.qmd"
+
+format:
+  pdf:
+    toc: false
+    number-sections: false
+    colorlinks: true
+    filters:
+      - psets/callout-akey.lua
+header-includes:
+  - \usepackage{mdframed}
+
+execute:
+  freeze: auto
