@@ -644,7 +644,7 @@ $$
 
 :::
 
-## Edith Kanakaʻole
+## Aunty Edith Kanakaʻole
 
 ::: columns
 ::: {.column width="40%"}
@@ -662,6 +662,9 @@ E hō mai
 E hō mai
 
 E hō mai ē
+
+<iframe width="382" height="215" src="https://www.youtube.com/embed/-qcTKHr3CuI?si=5cIbuwXGThEBl7Y0&amp;start=4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 :::
 :::
 
