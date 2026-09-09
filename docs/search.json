@@ -3347,14 +3347,7 @@
     "href": "lectures/03-estimation-slides.html#review-of-standard-error-and-sampling-distribution-4",
     "title": "Estimation",
     "section": "Review of standard error and sampling distribution",
-    "text": "Review of standard error and sampling distribution\n\n\nIf we went out again and collected a different sample of 20 individuals (many many times) would we get roughly the same estimate or not?  SE tells us!\n\n\nIf we went out again and collected a different sample of 20 individuals (many many times) would we get roughly the same estimate or not?  SE tells us!"
-  },
-  {
-    "objectID": "lectures/03-estimation-slides.html#review-of-standard-error-and-sampling-distribution-5",
-    "href": "lectures/03-estimation-slides.html#review-of-standard-error-and-sampling-distribution-5",
-    "title": "Estimation",
-    "section": "Review of standard error and sampling distribution",
-    "text": "Review of standard error and sampling distribution\nIf we went out again and collected a different sample of 20 individuals (many many times) would we get roughly the same estimate or not?  SE tells us!\n\nThe wider the sampling distribution, the bigger the SE\n(The SE is the SD of the sampling distribution)\nThe bigger the SE, the less likely we are to get similar estimates across repeated samples\nThe less likely we are to get similar estimates across samples, the less confident we are in the accuracy of any one sample"
+    "text": "Review of standard error and sampling distribution\n\n\nIf we went out again and collected a different sample of 20 individuals (many many times) would we get roughly the same estimate or not?  SE tells us!\n\n\nIf we went out again and collected a different sample of 20 individuals (many many times) would we get roughly the same estimate or not?  SE tells us!\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe wider the sampling distribution, the bigger the SE\n(The SE is the SD of the sampling distribution)\nThe bigger the SE, the less likely we are to get similar estimates across repeated samples\nThe less likely we are to get similar estimates across samples, the less confident we are in the accuracy of any one sample"
   },
   {
     "objectID": "lectures/03-estimation-slides.html#why-do-we-care",
