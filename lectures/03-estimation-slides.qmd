@@ -446,36 +446,44 @@ Answering that question is the job of the [sampling distribution]{.alert} and th
 
 ::: {.r-stack}
 
-::: {.fragment .fade-in-then-out}
+::: {.fragment .fade-out fragment-index="0"}
 If we went out again and collected a different sample of 20 individuals (*many* ***many*** times) [would we get roughly the same estimate or not? <br>
 **SE tells us!**]{style="color:white;"}
 :::
 
-::: {.fragment}
+::: {.fragment fragment-index="0"}
 If we went out again and collected a different sample of 20 individuals (*many* ***many*** times) would we get roughly the same estimate or not? <br>
 **[SE]{.alert} tells us!**
 :::
 
 :::
 
+
+::: {.r-stack}
+
+:::: {.fragment .fade-out fragment-index="1"}
 ```{r}
 #| out-width: "7.5in"
 #| fig-align: center
 
 include_graphics("../img/uhu_samp_dist-1.png")
 ```
+::::
 
+:::: {.fragment fragment-index="1"}
 
-
-## Review of [standard error]{.alert} and [sampling distribution]{.alert} {.top-align}
-
-If we went out again and collected a different sample of 20 individuals (*many* ***many*** times) would we get roughly the same estimate or not? <br>
-**[SE]{.alert} tells us!**
-
+:::: {.incremental}
 - The wider the sampling distribution, the bigger the SE
 - (The SE is the SD of the sampling distribution)
 - The bigger the SE, the less likely we are to get similar estimates across repeated samples
 - The less likely we are to get similar estimates across samples, the less [confident]{.alert} we are in the accuracy of any one sample
+::::
+
+::::
+
+:::
+
+
 
 ## Why do we care?
 
@@ -517,11 +525,24 @@ The 95% confidence interval is simply the mean $\pm$ 2 [standard errors]{.alert}
 #| fig-align: center
 #| out-width: "6in"
 
-par(mar = c(2, 1, 2, 0) + 0.5)
-denFill(rnorm(10000000), main = "mean = 0, sd = 1", 
-        xlim = c(-4, 4), yaxt = "n")
-mtext("Probability density", 2, line = 0.5)
-text(0, 0.1, "95% of\nprobability")
+
+z95 <- ggplot(data.frame(x = -4:4, y = "a"), aes(x)) +
+    stat_function(fun = dnorm, geom = "area", 
+                  fill = "tomato", 
+                  xlim = qnorm(c(0.025, 0.975))) +
+    stat_function(fun = dnorm) +
+    theme_cowplot() +
+    ylab("Probability density") +
+    facet_grid(cols = vars(y),
+               labeller = as_labeller(c(a = "mean = 0, sd = 1"))) +
+    geom_text(x = 0, y = 0.1, label = "95% of\nprobability", 
+              color = "white", fontface = "bold",
+              inherit.aes = FALSE) +
+    theme(axis.title.x = element_blank(), 
+          axis.text.y = element_blank(), 
+          axis.ticks.y = element_blank())
+
+z95
 ```
 
 ::: {.fragment}
@@ -544,11 +565,7 @@ The 95% confidence interval is simply the mean $\pm$ 2 [standard errors]{.alert}
 #| fig-align: center
 #| out-width: "6in"
 
-par(mar = c(2, 1, 2, 0) + 0.5)
-denFill(rnorm(10000000), main = "mean = 0, sd = 1", 
-        xlim = c(-4, 4), yaxt = "n")
-mtext("Probability density", 2, line = 0.5)
-text(0, 0.1, "95% of\nprobability")
+z95
 ```
 :::
 
