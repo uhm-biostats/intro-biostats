@@ -3,8 +3,8 @@ library(tidyr)
 library(ggplot2)
 library(cowplot)
 
-# uhu <- read_sheet("1MkztBRbNc5fGjWO-lDNrndii2KkyLF4YUkeJ7YGzvJo") |>
-#     as.data.frame()
+uhu <- read_sheet("1MkztBRbNc5fGjWO-lDNrndii2KkyLF4YUkeJ7YGzvJo") |>
+    as.data.frame()
 
 uhu <- read_sheet("1_qEHhNkHZtasKF9mdLZI5sNUBx05IhsKaGOOTgsXT-8") |>
     as.data.frame()
