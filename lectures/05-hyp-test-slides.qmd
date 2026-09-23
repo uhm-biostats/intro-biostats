@@ -10,6 +10,7 @@ library(ggplot2)
 library(tibble)
 library(dplyr)
 library(viridis)
+library(magick)
 ```
 
 ## Ka hua ʻōlelo o ka haʻawina
@@ -458,12 +459,14 @@ $\bar{Y}_\text{diff} = \bar{Y}_\text{yes noni} - \bar{Y}_\text{no noni}$
 When doing [Null Hypothesis Significance Testing]{.alert}, the specific sample estimate we use is called a [test statistic]{.alert}
 
 ::: {.fragment}
-> What would be the probability of observing the [test statistic]{.alert}, or a more extreme [test statistic]{.alert}, if the [null hypothesis]{.alert} were true?
+Here we decided the [test statistic]{.alert} is $\bar{Y}_\text{diff}$
 :::
 
 ::: {.fragment}
-Here we decided the [test statistic]{.alert} is $\bar{Y}_\text{diff}$
+> What would be the probability of observing the [test statistic]{.alert}, or a more extreme [test statistic]{.alert}, if the [null hypothesis]{.alert} were true?
 :::
+
+
 
 ::: {.fragment}
 How do we get the probability distribution of the [test statistic]{.alert} $\bar{Y}_\text{diff}$?
@@ -477,102 +480,272 @@ How do we get the probability distribution of the [test statistic]{.alert} $\bar
 
 
 ::: {.fragment}
-many *many* ***many*** hypothetical repeated studies where the null is TRUE gives us the [sampling distribution]{.alert} of test statistics "under the null"
+many *many* ***many*** hypothetical repeated studies 
+:::
+
+::: {.fragment}
+where the null is TRUE
+:::
+
+::: {.fragment}
+gives us the [sampling distribution]{.alert} of test statistics "under the null"
 :::
 
 ::: {.fragment style="text-align: center;"}
 "The Null Distribution"
 :::
 
-## Simulating a sampling distribution of the test statistic under the null hypothesis
+## The Null Distribution
 
-::: {style="text-align: center;"}
-"The Null Distribution"
-:::
-
-## Simulating the null distribution {.top-align}
+The distribution of [test statistics]{.alert} from many *many* ***many*** hypothetical repeated studies, where the [null hypothesis]{.alert} is TRUE
 
 ```{r}
-#| label: null-dist
-#| cache: true
-#| echo: true
+#| fig-align: center
+#| fig-dpi: 180
 
-# repeatedly shuffle the groups to make a null distribution
-all_null <- replicate(1000, {
-    noni_null <- noni_dat
-    noni_null$group <- sample(noni_null$group)
+null_01 <- image_read("../img/null-dist-01.png") |> 
+    image_ggplot()
 
-    ybars_null <- group_by(noni_null, group)
-    ybars_null <- summarize(ybars_null, ybar = mean(sed))
-    test_stat_null <- diff(ybars_null$ybar)
-    test_stat_null
-})
+null_01 +
+    annotate("rect",
+             xmin = 750, xmax = 1700,
+             ymin = 140, ymax = 1100,
+             fill = "white") +
+    annotate("rect", 
+             xmin = 650, xmax = 1000, 
+             ymin = 370, ymax = 1700, 
+             fill = "white") +
+    annotate("rect",
+             xmin = 50, xmax = 1600,
+             ymin = 590, ymax = 1700,
+             fill = "white")
+
 ```
 
-## Simulating the null distribution {.top-align}
+
+## The Null Distribution
+
+The distribution of [test statistics]{.alert} from many *many* ***many*** hypothetical repeated studies, where the [null hypothesis]{.alert} is TRUE
 
 ```{r}
-#| echo: true
 #| fig-align: center
-#| fig-width: 3
-#| fig-height: 2
-#| out-width: "5in"
+#| fig-dpi: 180
 
-null_dist <- data.frame(test_stat_null = all_null)
+null_01 +
+    annotate("rect",
+             xmin = 820, xmax = 1700,
+             ymin = 140, ymax = 1100,
+             fill = "white") +
+    annotate("rect",
+             xmin = 630, xmax = 1600,
+             ymin = 630, ymax = 1700,
+             fill = "white")
 
-ggplot(null_dist, aes(x = test_stat_null)) +
-    geom_histogram(aes(y = after_stat(density)))
 ```
 
-## Simulating the null distribution {.top-align}
 
-TO-DO: go back to the bag example and think about putting all data in the bag and scrambling it
+## The Null Distribution
 
+The distribution of [test statistics]{.alert} from many *many* ***many*** hypothetical repeated studies, where the [null hypothesis]{.alert} is TRUE
 
 ```{r}
-#| echo: true
+#| fig-align: center
+#| fig-dpi: 180
+
+null_01 +
+    annotate("rect",
+             xmin = 880, xmax = 1700,
+             ymin = 140, ymax = 635,
+             fill = "white") +
+    annotate("rect",
+             xmin = 1100, xmax = 1600,
+             ymin = 630, ymax = 1700,
+             fill = "white")
+
+```
+
+## The Null Distribution
+
+The distribution of [test statistics]{.alert} from many *many* ***many*** hypothetical repeated studies, where the [null hypothesis]{.alert} is TRUE
+
+```{r}
+#| fig-align: center
+#| fig-dpi: 180
+
+null_01 +
+    annotate("rect",
+             xmin = 1100, xmax = 1700,
+             ymin = 140, ymax = 600,
+             fill = "white") +
+    annotate("rect",
+             xmin = 1010, xmax = 1700,
+             ymin = 140, ymax = 500,
+             fill = "white") +
+    annotate("rect",
+             xmin = 950, xmax = 1700,
+             ymin = 140, ymax = 390,
+             fill = "white") +
+    annotate("rect",
+             xmin = 910, xmax = 1700,
+             ymin = 140, ymax = 250,
+             fill = "white")
+
+
+```
+
+## The Null Distribution
+
+The distribution of [test statistics]{.alert} from many *many* ***many*** hypothetical repeated studies, where the [null hypothesis]{.alert} is TRUE
+
+```{r}
+#| fig-align: center
+#| fig-dpi: 180
+
+null_01
+
+
+```
+
+
+## The Null Distribution
+
+The distribution of [test statistics]{.alert} from many *many* ***many*** hypothetical repeated studies, where the [null hypothesis]{.alert} is TRUE
+
+```{r}
+#| fig-align: center
+#| fig-dpi: 180
+
+image_read("../img/null-dist-02.png") |> 
+    image_ggplot()
+
+
+```
+
+
+## The Null Distribution
+
+The distribution of [test statistics]{.alert} from many *many* ***many*** hypothetical repeated studies, where the [null hypothesis]{.alert} is TRUE
+
+::: {.r-stack}
+
+:::: {.fragment .fade-out fragment-index="0"}
+
+```{r}
+#| fig-align: center
+#| fig-dpi: 180
+
+image_read("../img/null-dist-03.png") |> 
+    image_ggplot()
+
+
+```
+
+::::
+
+
+:::: {.fragment fragment-index="0"}
+
+With the null distribution we can now answer
+
+> What would be the probability of observing the [test statistic]{.alert}, or a more extreme [test statistic]{.alert}, if the [null hypothesis]{.alert} were true?
+
+
+::: columns
+::: {.column width="30%"}
+```{r}
 #| fig-align: center
 #| fig-width: 3
-#| fig-height: 2
-#| out-width: "5in"
+#| fig-height: 3
+#| out-width: "3in"
 
-# add the observed test statistic
 ybars <- group_by(noni_dat, group)
 ybars <- summarize(ybars, ybar = mean(sed))
-test_stat <- diff(ybars$ybar)
-```
+test_stat <- round(diff(ybars$ybar), 2)
 
-## Simulating the null distribution
+ydiff
+```
+:::
+
+::: {.column width="70%"}
+$H_0$: The mean of *change in sedimentation rate* is the same across the two groups
+
+Test statistic: $\bar{Y}_\text{diff} = \bar{Y}_\text{yes noni} - \bar{Y}_\text{no noni}$
+
+Test statistic: $\bar{Y}_\text{diff} =$ `r round(test_stat, 2)`
+
+:::
+:::
+
+::::
+
+
+:::
+
+## The Null Distribution
+
+> What would be the probability of observing the [test statistic]{.alert}, or a more extreme [test statistic]{.alert}, if the [null hypothesis]{.alert} were true?
+
+
+::: {.columns}
+
+:::: {.column width="40%"}
 
 ```{r}
-#| echo: true
 #| fig-align: center
-#| fig-width: 3
-#| fig-height: 2
+#| fig-width: 3.5
+#| fig-height: 2.75
 #| out-width: "5in"
 
-ggplot(null_dist, aes(x = test_stat_null)) +
-    geom_histogram(aes(y = after_stat(density))) +
-    geom_vline(xintercept = test_stat,
-               color = "red", size = 1)
+ybar <- 0
+se <- 1
+
+p <- ggplot(data.frame(x = ybar + 3.75 * c(-se, se)), aes(x)) +
+    theme_cowplot() +
+    xlab(expression("Test stat if"~H[0]~"is true")) +
+    ylab("density") +
+    stat_function(fun = dnorm,
+                  args = list(mean = ybar, sd = se),
+                  xlim = ybar + test_stat * c(-se, se),
+                  geom = "area", fill = "blue", alpha = 0.5) +
+    stat_function(fun = dnorm,
+                  args = list(mean = ybar, sd = se),
+                  xlim = ybar + c(-3.75 * se, -test_stat *se),
+                  geom = "area", fill = "orange") +
+    stat_function(fun = dnorm,
+                  args = list(mean = ybar, sd = se),
+                  xlim = ybar + c(test_stat * se, 3.75 *se),
+                  geom = "area", fill = "orange") +
+    stat_function(fun = dnorm, args = list(mean = ybar, sd = se)) +
+    geom_vline(xintercept = ybar + test_stat * se, size = 1) +
+    annotate("label", 4, 0.45, 
+             label = sprintf("Observed test stat = %s", test_stat), 
+             hjust = "right") +
+    scale_y_continuous(limits = c(0, 0.47))
+
+p
 ```
 
-## Simulating the null distribution
+::::
 
-> In many many **many** hypothetical repeated studies, where the [null hypothesis]{.alert} is TRUE, what would be the distribution of [test statistics]{.alert}?
-
-From that [sampling distribution]{.alert} of test statistics, we can calculate the probability of observing the test statistic, or a more extreme value
-
-That probability is:
+:::: {.column width="60%"}
 
 ```{r}
-#| echo: true
+# pretend p-val
+pval <- 0.013
 
-mean(null_dist$test_stat_null > test_stat |
-         null_dist$test_stat_null < -test_stat)
 ```
 
-This probability has a special name: the [P-value]{.alert}
+::: {.incremental}
+- The probability is the total area under the curve in the two [orange]{style="color: orange;"} regions
+- This probability has a special name: the [$P-value$]{.alert}
+- In this example $P= `r pval`$
+
+:::
+
+::::
+
+:::
+
 
 ## [Null Hypothesis Significance Testing]{.alert}
 
@@ -622,7 +795,7 @@ ydiff
 - $H_0$: The mean of *change in sedimentation rate* is the same across the two groups
 - Test statistic: $\bar{Y}_\text{diff} = \bar{Y}_\text{yes noni} - \bar{Y}_\text{no noni}$
 - Test statistic: $\bar{Y}_\text{diff} =$ `r round(test_stat, 2)`
-- P-value: 0
+- P-value: `r pval`
 
 Yes!  At significance level $\alpha = 0.05$, we reject the null that noni has no impact on sedimentation rate
 :::
@@ -635,46 +808,211 @@ Yes!  At significance level $\alpha = 0.05$, we reject the null that noni has no
 3. Generate the null distribution
 5. Calculate the P-value
 6. Decide:
-    - Reject $H_0$ if the P-value is less than or equal to $\alpha$ ($p \le \alpha$)
-    - Fail to reject $H_0$ if P-value is greater than $\alpha$ ($p > \alpha$)
+    - Reject $H_0$ if the P-value is less than or equal to $\alpha$ (i.e. $p \le \alpha$)
+    - Fail to reject $H_0$ if P-value is greater than $\alpha$ (i.e. $p > \alpha$)
 
-## [Null Hypothesis Significance Testing]{.alert}: frequent questions
 
-Here is a more typical null distribution and test statistic:
 
-```{r}
-#| fig-align: center
-#| fig-width: 3.5
-#| fig-height: 2.75
-#| out-width: "5in"
 
-ybar <- 0
-se <- 1
 
-p <- ggplot(data.frame(x = ybar + 3.75 * c(-se, se)), aes(x)) +
-    theme_cowplot() +
-    xlab(expression("Test stat if"~H[0]~"is true")) +
-    ylab("density") +
-    stat_function(fun = dnorm,
-                  args = list(mean = ybar, sd = se),
-                  xlim = ybar + 2.2 * c(-se, se),
-                  geom = "area", fill = "blue", alpha = 0.5) +
-    stat_function(fun = dnorm,
-                  args = list(mean = ybar, sd = se),
-                  xlim = ybar + c(-3.75 * se, -2.2 *se),
-                  geom = "area", fill = "orange") +
-    stat_function(fun = dnorm,
-                  args = list(mean = ybar, sd = se),
-                  xlim = ybar + c(2.2 * se, 3.75 *se),
-                  geom = "area", fill = "orange") +
-    stat_function(fun = dnorm, args = list(mean = ybar, sd = se)) +
-    geom_vline(xintercept = ybar + 2.2 * se, size = 1) +
-    annotate("label", 4, 0.45, label = "Observed test stat = 2.2", 
-             hjust = "right") +
-    scale_y_continuous(limits = c(0, 0.47))
+<!-- ## Simulating a sampling distribution of the test statistic under the null hypothesis -->
 
-p
-```
+<!-- ::: {style="text-align: center;"} -->
+<!-- "The Null Distribution" -->
+<!-- ::: -->
+
+<!-- ## Simulating the null distribution {.top-align} -->
+
+<!-- ```{r} -->
+<!-- #| label: null-dist -->
+<!-- #| cache: true -->
+<!-- #| echo: true -->
+<!-- #| eval: false -->
+
+<!-- # repeatedly shuffle the groups to make a null distribution -->
+<!-- all_null <- replicate(1000, { -->
+<!--     noni_null <- noni_dat -->
+<!--     noni_null$group <- sample(noni_null$group) -->
+
+<!--     ybars_null <- group_by(noni_null, group) -->
+<!--     ybars_null <- summarize(ybars_null, ybar = mean(sed)) -->
+<!--     test_stat_null <- diff(ybars_null$ybar) -->
+<!--     test_stat_null -->
+<!-- }) -->
+<!-- ``` -->
+
+<!-- ## Simulating the null distribution {.top-align} -->
+
+<!-- ```{r} -->
+<!-- #| echo: true -->
+<!-- #| fig-align: center -->
+<!-- #| fig-width: 3 -->
+<!-- #| fig-height: 2 -->
+<!-- #| out-width: "5in" -->
+<!-- #| eval: false -->
+
+<!-- null_dist <- data.frame(test_stat_null = all_null) -->
+
+<!-- ggplot(null_dist, aes(x = test_stat_null)) + -->
+<!--     geom_histogram(aes(y = after_stat(density))) -->
+<!-- ``` -->
+
+<!-- ## Simulating the null distribution {.top-align} -->
+
+<!-- TO-DO: go back to the bag example and think about putting all data in the bag and scrambling it -->
+
+
+<!-- ```{r} -->
+<!-- #| echo: true -->
+<!-- #| fig-align: center -->
+<!-- #| fig-width: 3 -->
+<!-- #| fig-height: 2 -->
+<!-- #| out-width: "5in" -->
+<!-- #| eval: false -->
+
+<!-- # add the observed test statistic -->
+<!-- ybars <- group_by(noni_dat, group) -->
+<!-- ybars <- summarize(ybars, ybar = mean(sed)) -->
+<!-- test_stat <- diff(ybars$ybar) -->
+<!-- ``` -->
+
+<!-- ## Simulating the null distribution -->
+
+<!-- ```{r} -->
+<!-- #| echo: true -->
+<!-- #| fig-align: center -->
+<!-- #| fig-width: 3 -->
+<!-- #| fig-height: 2 -->
+<!-- #| out-width: "5in" -->
+<!-- #| eval: false -->
+
+<!-- ggplot(null_dist, aes(x = test_stat_null)) + -->
+<!--     geom_histogram(aes(y = after_stat(density))) + -->
+<!--     geom_vline(xintercept = test_stat, -->
+<!--                color = "red", size = 1) -->
+<!-- ``` -->
+
+<!-- ## Simulating the null distribution -->
+
+<!-- > In many many **many** hypothetical repeated studies, where the [null hypothesis]{.alert} is TRUE, what would be the distribution of [test statistics]{.alert}? -->
+
+<!-- From that [sampling distribution]{.alert} of test statistics, we can calculate the probability of observing the test statistic, or a more extreme value -->
+
+<!-- That probability is: -->
+
+<!-- ```{r} -->
+<!-- #| echo: true -->
+<!-- #| eval: false -->
+
+<!-- mean(null_dist$test_stat_null > test_stat | -->
+<!--          null_dist$test_stat_null < -test_stat) -->
+<!-- ``` -->
+
+<!-- This probability has a special name: the [P-value]{.alert} -->
+
+<!-- ## [Null Hypothesis Significance Testing]{.alert} -->
+
+<!-- Null Hypothesis Significance Testing asks the question: -->
+
+<!-- > What would be the probability (the [P-value]{.alert}) of observing the test statistic, or a more extreme value, if the [null hypothesis]{.alert} were true? -->
+
+<!-- ::: {.incremental} -->
+<!-- - If the [P-value]{.alert} is small, we say "we reject the null hypothesis" -->
+<!-- - If the [P-value]{.alert} is not small, we say "we fail to reject the null hypothesis" -->
+<!-- - How small is small enough? -->
+<!-- ::: -->
+
+<!-- ## [Null Hypothesis Significance Testing]{.alert} -->
+
+<!-- ::: {style="text-align: center;"} -->
+<!-- **How small of a [P-value]{.alert} is small enough?** -->
+<!-- ::: -->
+
+<!-- <br> -->
+
+<!-- ::: {.fragment} -->
+<!-- Answer: depends on the desired [significance level]{.alert} -->
+<!-- ::: -->
+
+<!-- ::: {.incremental} -->
+<!-- - we write the significance level as $\alpha$ -->
+<!-- - in biology, $\alpha$ is often 0.05 -->
+<!-- - remember 95% Confidence Intervals? Same thing as $\alpha = 0.05$ -->
+<!-- ::: -->
+
+<!-- ## Can we reject the null? -->
+
+<!-- ::: columns -->
+<!-- ::: {.column width="50%"} -->
+<!-- ```{r} -->
+<!-- #| fig-align: center -->
+<!-- #| fig-width: 3 -->
+<!-- #| fig-height: 4 -->
+<!-- #| out-width: "4in" -->
+<!-- #| eval: false -->
+
+<!-- ydiff -->
+<!-- ``` -->
+<!-- ::: -->
+
+<!-- ::: {.column width="50%"} -->
+<!-- - $H_0$: The mean of *change in sedimentation rate* is the same across the two groups -->
+<!-- - Test statistic: $\bar{Y}_\text{diff} = \bar{Y}_\text{yes noni} - \bar{Y}_\text{no noni}$ -->
+<!-- - Test statistic: $\bar{Y}_\text{diff} =$ `r round(test_stat, 2)` -->
+<!-- - P-value: 0 -->
+
+<!-- Yes!  At significance level $\alpha = 0.05$, we reject the null that noni has no impact on sedimentation rate -->
+<!-- ::: -->
+<!-- ::: -->
+
+<!-- ## [Null Hypothesis Significance Testing]{.alert}: the steps -->
+
+<!-- 1. State $H_0$ and $H_A$ -->
+<!-- 2. Calculate the test statistic -->
+<!-- 3. Generate the null distribution -->
+<!-- 5. Calculate the P-value -->
+<!-- 6. Decide: -->
+<!--     - Reject $H_0$ if the P-value is less than or equal to $\alpha$ ($p \le \alpha$) -->
+<!--     - Fail to reject $H_0$ if P-value is greater than $\alpha$ ($p > \alpha$) -->
+
+<!-- ## [Null Hypothesis Significance Testing]{.alert}: frequent questions -->
+
+<!-- Here is a more typical null distribution and test statistic: -->
+
+<!-- ```{r} -->
+<!-- #| fig-align: center -->
+<!-- #| fig-width: 3.5 -->
+<!-- #| fig-height: 2.75 -->
+<!-- #| out-width: "5in" -->
+<!-- #| eval: false -->
+
+<!-- ybar <- 0 -->
+<!-- se <- 1 -->
+
+<!-- p <- ggplot(data.frame(x = ybar + 3.75 * c(-se, se)), aes(x)) + -->
+<!--     theme_cowplot() + -->
+<!--     xlab(expression("Test stat if"~H[0]~"is true")) + -->
+<!--     ylab("density") + -->
+<!--     stat_function(fun = dnorm, -->
+<!--                   args = list(mean = ybar, sd = se), -->
+<!--                   xlim = ybar + 2.2 * c(-se, se), -->
+<!--                   geom = "area", fill = "blue", alpha = 0.5) + -->
+<!--     stat_function(fun = dnorm, -->
+<!--                   args = list(mean = ybar, sd = se), -->
+<!--                   xlim = ybar + c(-3.75 * se, -2.2 *se), -->
+<!--                   geom = "area", fill = "orange") + -->
+<!--     stat_function(fun = dnorm, -->
+<!--                   args = list(mean = ybar, sd = se), -->
+<!--                   xlim = ybar + c(2.2 * se, 3.75 *se), -->
+<!--                   geom = "area", fill = "orange") + -->
+<!--     stat_function(fun = dnorm, args = list(mean = ybar, sd = se)) + -->
+<!--     geom_vline(xintercept = ybar + 2.2 * se, size = 1) + -->
+<!--     annotate("label", 4, 0.45, label = "Observed test stat = 2.2",  -->
+<!--              hjust = "right") + -->
+<!--     scale_y_continuous(limits = c(0, 0.47)) -->
+
+<!-- p -->
+<!-- ``` -->
 
 ## [Null Hypothesis Significance Testing]{.alert}: frequent questions
 
@@ -699,11 +1037,11 @@ The [P-value]{.alert} is the sum of the probabilities in the two [orange]{style=
 :::: {.fragment .fade-out fragment-index="2"}
 
 ::::: {.fragment fragment-index="0"}
-**Question:** If the test statistic = -2.2, why is the P-value the sum of both [orange]{style="color: orange;"} regions?
+**Question:** If the test statistic = `r test_stat`, why is the P-value the sum of ***both*** [orange]{style="color: orange;"} regions?
 :::::
 
 ::::: {.fragment fragment-index="1"}
-- Because $H_0$ is no difference, and $H_A$ is *any* difference
+- Because $H_0$ is no difference, and $H_A$ is ***any*** difference
 - This type of alternative hypothesis is called a "two tailed" test
 :::::
 
