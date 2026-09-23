@@ -837,7 +837,7 @@ Infinite hypothetical sample mean [estimates]{.alert} go in the bag!
 
 
 
-# Rest your brain {background-image="/img/molokai.jpg" background-size="cover"}
+# Rest your brain {background-image="../img/molokai.jpg" background-size="cover"}
 
 
 ## Learning goals

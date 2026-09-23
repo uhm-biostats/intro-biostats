@@ -24,7 +24,7 @@ options(keep.source = TRUE)
 [kaulike]{.alert}
 :::
 
-## {background-image="/img/earth.png" background-size="50%" background-color="black"}
+## {background-image="../img/earth.png" background-size="50%" background-color="black"}
 
 ::: {style="text-align: center; color: white; font-size: 200%;"}
 The world is shockingly normal

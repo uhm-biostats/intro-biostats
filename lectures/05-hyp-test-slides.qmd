@@ -108,7 +108,7 @@ gnoni
 :::
 :::
 
-## {background-image="/img/Liliuokalani_overthrow.jpg" background-size="cover"}
+## {background-image="../img/Liliuokalani_overthrow.jpg" background-size="cover"}
 
 
 
@@ -454,10 +454,11 @@ $\bar{Y}_\text{diff} = \bar{Y}_\text{yes noni} - \bar{Y}_\text{no noni}$
 
 ## [Null Hypothesis Significance Testing]{.alert}
 
-> What would be the probability of observing the sample estimate, or a more extreme estimate, if the [null hypothesis]{.alert} were true?
+
+When doing [Null Hypothesis Significance Testing]{.alert}, the specific sample estimate we use is called a [test statistic]{.alert}
 
 ::: {.fragment}
-When doing [Null Hypothesis Significance Testing]{.alert}, the specific sample estimate we use is called a [test statistic]{.alert}
+> What would be the probability of observing the [test statistic]{.alert}, or a more extreme [test statistic]{.alert}, if the [null hypothesis]{.alert} were true?
 :::
 
 ::: {.fragment}
