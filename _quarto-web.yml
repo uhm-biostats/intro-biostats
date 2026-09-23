@@ -5,7 +5,7 @@ project:
     - "*.qmd"
     - "!01_activity_uhu/"
     - "!*answer-key.qmd"
-  post-render: bash post-render.sh
+  post-render: quarto render --profile slides
 
 execute:
   freeze: auto
