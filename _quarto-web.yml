@@ -5,6 +5,7 @@ project:
     - "*.qmd"
     - "!01_activity_uhu/"
     - "!*answer-key.qmd"
+    - "!*-slides.qmd"
   post-render: quarto render --profile slides
 
 execute:
