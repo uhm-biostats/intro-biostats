@@ -466,7 +466,7 @@ image credit: Hawaiʻi Public Radio
 :::
 :::
 
-## Food preferences of the pulelehua Kamehameha caterpiller
+## Food preferences of the peʻelua pulelehua Kamehameha
 
 ::: columns
 ::: {.column width="40%"}
@@ -525,7 +525,7 @@ Note: The true proportion is a [population parameter]{.alert}, and we can [estim
 :---------:|:--------:
  $p$       | $\hat{p}$
 
-## Food preferences of the pulelehua Kamehameha caterpiller
+## Food preferences of the peʻelua pulelehua Kamehameha
 
 ::: columns
 ::: {.column width="40%"}
@@ -553,7 +553,7 @@ Note: The true proportion is a [population parameter]{.alert}, and we can [estim
 
 
 
-## Food preferences of the pulelehua Kamehameha caterpiller
+## Food preferences of the peʻelua pulelehua Kamehameha
 
 
 - $H_0$: The true population proportion $p = 0.5$
@@ -576,7 +576,7 @@ The null distribution is the [binomial distribution]{.alert} with $p = 0.5$
 :::
 
 
-## Food preferences of the pulelehua Kamehameha caterpiller
+## Food preferences of the peʻelua pulelehua Kamehameha
 
 ::: columns
 ::: {.column width="40%"}
