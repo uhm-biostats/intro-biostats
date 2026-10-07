@@ -18,11 +18,11 @@ library(extraDistr)
 options(keep.source = TRUE)
 ```
 
-## Ka hua ʻōlelo o ka haʻawina
+<!-- ## Ka hua ʻōlelo o ka haʻawina -->
 
-::: {style="text-align: center;"}
-[kaulike]{.alert}
-:::
+<!-- ::: {style="text-align: center;"} -->
+<!-- [kaulike]{.alert} -->
+<!-- ::: -->
 
 ## {background-image="../img/earth.png" background-size="50%" background-color="black"}
 
