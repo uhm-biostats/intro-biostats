@@ -1883,7 +1883,7 @@ What do we do? Why learn "statistics"?
     - It holds a powerful position in science and society
     - Having statistics as a tool can help you do good rather than harm
     - Methods (even $P$-values) are not wrong, just wrongly applied
-    - Those f@&!ers were **NOT** geniuses, others would have developed similar ideas and did (e.g. Anil Kumar Gain)
+    - Past racists were **NOT** geniuses, others would have developed similar ideas and did (e.g. Anil Kumar Gain)
 - Use statistics for good
     - Confront the history
     - Remove its influence on the contemporary
