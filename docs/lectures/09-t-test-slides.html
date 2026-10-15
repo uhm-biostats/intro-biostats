@@ -198,12 +198,6 @@
 </div>
 
 </section>
-<section id="la-hua-ʻōlelo-o-ka-pule" class="slide level2">
-<h2>La hua ʻōlelo o ka pule</h2>
-<div style="text-align: center;">
-<p><span class="alert">lapu</span></p>
-</div>
-</section>
 <section id="learning-objectives" class="slide level2">
 <h2>Learning Objectives</h2>
 <ol type="1">
@@ -660,18 +654,16 @@ mean of x
 <li>“The standard deviation (and variance) of the numerical variable is the same in both populations” (we will eventually relax this assumption)</li>
 </ul>
 </section>
-<section id="cost-of-resistance-to-aphids-in-lettuce" class="slide level2">
-<h2>Cost of resistance to Aphids in lettuce</h2>
+<section id="effect-of-noni-on-inflamation" class="slide level2">
+<h2>Effect of noni on inflamation</h2>
 <ul>
-<li>Some lettuce genotypes are <em>Susceptible</em> and others are <em>Resistant</em> to aphids.</li>
-<li>Why isn’t all lettuce resistant to aphids?</li>
-<li>Let us test the hypothesis that resistant lettuce has lower fitness in the absence of aphids.</li>
-<li>Fitness = number of seeds per plant</li>
+<li>Returning to a well-known hypothetical study</li>
+<li>Does administering noni reduce inflammation as measured by a change in sedimentation rate?</li>
 </ul>
 <table class="caption-top">
 <thead>
 <tr class="header">
-<th style="text-align: center;">Genotype</th>
+<th style="text-align: center;">Treatment</th>
 <th style="text-align: center;"><span class="math inline">\(\overline{Y}_i\)</span></th>
 <th style="text-align: left;"><span class="math inline">\(s_i\)</span></th>
 <th style="text-align: center;"><span class="math inline">\(n_i\)</span></th>
@@ -679,112 +671,39 @@ mean of x
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: center;">Susceptible</td>
-<td style="text-align: center;">720</td>
-<td style="text-align: left;">223.6</td>
-<td style="text-align: center;">15</td>
+<td style="text-align: center;">placebo</td>
+<td style="text-align: center;">-0.038</td>
+<td style="text-align: left;">0.958</td>
+<td style="text-align: center;">100</td>
 </tr>
 <tr class="even">
-<td style="text-align: center;">Resistant</td>
-<td style="text-align: center;">582</td>
-<td style="text-align: left;">277.3</td>
-<td style="text-align: center;">16</td>
+<td style="text-align: center;">10 mg noni</td>
+<td style="text-align: center;">-1.891</td>
+<td style="text-align: left;">0.898</td>
+<td style="text-align: center;">100</td>
 </tr>
 </tbody>
 </table>
 </section>
-<section>
-<section id="parameter-estimation-and-confidence-intervals" class="title-slide slide level1 center">
-<h1>Parameter estimation and confidence intervals</h1>
-
-</section>
-<section id="standard-error-of-the-difference-in-means" class="slide level2">
-<h2>Standard error of the difference in means</h2>
-<table class="caption-top">
-<thead>
-<tr class="header">
-<th style="text-align: center;">Genotype</th>
-<th style="text-align: center;"><span class="math inline">\(\overline{Y}_i\)</span></th>
-<th style="text-align: left;"><span class="math inline">\(s_i\)</span></th>
-<th style="text-align: center;"><span class="math inline">\(n_i\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">Susceptible</td>
-<td style="text-align: center;">720</td>
-<td style="text-align: left;">223.6</td>
-<td style="text-align: center;">15</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">Resistant</td>
-<td style="text-align: center;">582</td>
-<td style="text-align: left;">277.3</td>
-<td style="text-align: center;">16</td>
-</tr>
-</tbody>
-</table>
-<p>The pooled sample variance is <span class="math inline">\(s_p^2 = \frac{\mathit{df}_1 s_1^2 + \mathit{df}_2 s_2^2}{\mathit{df}_1 +\mathit{df}_2}\)</span></p>
-<p><span class="math inline">\(s^2_1\)</span> is the sample variance of sample 1</p>
-<p><span class="math inline">\(s^2_2\)</span> is the sample variance of sample 2</p>
-<p><span class="math inline">\(\mathit{df}_1 = n_1 - 1\)</span>; <span class="math inline">\(\mathit{df}_2 = n_2 - 1\)</span>;</p>
-<p>total degrees of freedom for <span class="math inline">\(t\)</span> distribution: <span class="math inline">\(\mathit{df} = \mathit{df}_1 +\mathit{df}_2\)</span></p>
-<p><span class="math display">\[s_p^2 = \frac{14 \times 223.6 ^2 + 15 \times 277.3^2}{14 + 15} = 63909.889310\]</span></p>
-</section>
-<section id="standard-error-of-the-difference-in-means-1" class="slide level2">
-<h2>Standard error of the difference in means</h2>
-<table class="caption-top">
-<thead>
-<tr class="header">
-<th style="text-align: center;">Genotype</th>
-<th style="text-align: center;"><span class="math inline">\(\overline{Y}_i\)</span></th>
-<th style="text-align: left;"><span class="math inline">\(s_i\)</span></th>
-<th style="text-align: center;"><span class="math inline">\(n_i\)</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">Susceptible</td>
-<td style="text-align: center;">720</td>
-<td style="text-align: left;">223.6</td>
-<td style="text-align: center;">15</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">Resistant</td>
-<td style="text-align: center;">582</td>
-<td style="text-align: left;">277.3</td>
-<td style="text-align: center;">16</td>
-</tr>
-</tbody>
-</table>
-<p>The standard error of the difference in means is <span class="math inline">\(\mathrm{SE}_{\overline{Y}_1 - \overline{Y}_2} = \sqrt{s_p^2 (\frac{1}{n_1} + \frac{1}{n_2})}\)</span></p>
-<p><span class="math display">\[\mathrm{SE}_{\overline{Y}_1 - \overline{Y}_2} = \sqrt{63909.889310 (\frac{1}{15} + \frac{1}{16})} = 90.8571812\]</span></p>
-</section>
-<section id="confidence-intervals-for-difference-in-means-1" class="slide level2">
-<h2>95% confidence intervals for difference in means</h2>
-<p><span class="math display">\[(\overline{Y}_1 - \overline{Y}_2)-t_{0.05(2),\mathit{df}} \text{SE}_{\overline{Y}_1 - \overline{Y}_2} &lt; (\mu_1 - \mu_2) &lt; (\overline{Y}_1 - \overline{Y}_2)+t_{0.05(2),\mathit{df}} \text{SE}_{\overline{Y}_1 - \overline{Y}_2}\]</span></p>
-<p><span class="math inline">\(\mathit{df} = 29\)</span></p>
-<p><span class="math inline">\(t_{0.05(2),\mathit{29}} = 2.0452296\)</span></p>
-<p>Lower CI:</p>
-<p><span class="math display">\[(720 - 582) - 2.0452296 \times 90.8571812 = -47.8238001\]</span></p>
-<p>Upper CI:</p>
-<p><span class="math display">\[(720 - 582) + 2.0452296 \times 90.8571812 = 323.8238001\]</span></p>
-</section>
-<section id="confidence-intervals-for-difference-in-means-2" class="slide level2">
-<h2>95% confidence intervals for difference in means</h2>
-<p>We estimated the susceptible genotypes produce an average of 720 - 582 = 138 more seeds, but our 95% CI is -48 to 324.</p>
-<p>0 difference in fitness between genotypes is within the plausible range of values given our data.</p>
-</section></section>
-<section>
-<section id="hypothesis-testing" class="title-slide slide level1 center">
-<h1>Hypothesis testing</h1>
-
+<section id="hypothesis-testing" class="slide level2">
+<h2>Hypothesis testing</h2>
+<ol type="1">
+<li><p>State null and alternative hypotheses</p></li>
+<li><p>Calculate test statistic</p></li>
+<li><p>Identify null distribution</p></li>
+<li><p>Calculate <span class="math inline">\(P\)</span>-value</p></li>
+<li><p>Decide:</p>
+<ul>
+<li>Reject null</li>
+<li>Fail to reject null</li>
+</ul></li>
+</ol>
 </section>
 <section id="null-and-alternative-hypotheses-1" class="slide level2">
 <h2>1. Null and alternative hypotheses</h2>
 <p><span class="math inline">\(H_0\)</span>: <span class="math inline">\(\mu_1 = \mu_2\)</span></p>
 <p><span class="math inline">\(H_A\)</span>: <span class="math inline">\(\mu_1 \ne \mu_2\)</span></p>
-<p>In our case, the mean fitness of resistant and susceptible lettuce genotypes is the same.</p>
+<p>In our case, <span class="math inline">\(H_0\)</span> is the mean change in sed rate is the same for the placebo and noni groups.</p>
 </section>
 <section id="the-t-test-statistic-1" class="slide level2">
 <h2>2. The <span class="math inline">\(t\)</span> test statistic</h2>
@@ -792,7 +711,7 @@ mean of x
 <table class="caption-top">
 <thead>
 <tr class="header">
-<th style="text-align: center;">Genotype</th>
+<th style="text-align: center;">Treatment</th>
 <th style="text-align: center;"><span class="math inline">\(\overline{Y}_i\)</span></th>
 <th style="text-align: left;"><span class="math inline">\(s_i\)</span></th>
 <th style="text-align: center;"><span class="math inline">\(n_i\)</span></th>
@@ -800,32 +719,46 @@ mean of x
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: center;">Susceptible</td>
-<td style="text-align: center;">720</td>
-<td style="text-align: left;">223.6</td>
-<td style="text-align: center;">15</td>
+<td style="text-align: center;">placebo</td>
+<td style="text-align: center;">-0.038</td>
+<td style="text-align: left;">0.958</td>
+<td style="text-align: center;">100</td>
 </tr>
 <tr class="even">
-<td style="text-align: center;">Resistant</td>
-<td style="text-align: center;">582</td>
-<td style="text-align: left;">277.3</td>
-<td style="text-align: center;">16</td>
+<td style="text-align: center;">10 mg noni</td>
+<td style="text-align: center;">-1.891</td>
+<td style="text-align: left;">0.898</td>
+<td style="text-align: center;">100</td>
 </tr>
 </tbody>
 </table>
-<p><span class="math display">\[t = \frac{720 - 582}{90.8571812} = 1.5188673\]</span></p>
+<p><span class="math display">\[t = \frac{-0.038 - (-1.891)}{\text{SE}_{\overline{Y}_{placebo} - \overline{Y}_{noni}}},~~~\text{but how do we get } \text{SE}_{\overline{Y}_{placebo} - \overline{Y}_{noni}} \text{?}\]</span></p>
+</section>
+<section id="the-t-test-statistic-2" class="slide level2">
+<h2>2. The <span class="math inline">\(t\)</span> test statistic</h2>
+<p><span class="math display">\[
+\text{SE}_{\overline{Y}_{1} - \overline{Y}_{2}} = \sqrt{\frac{s_{pooled}^2}{n_{1}} + \frac{s_{pooled}^2}{n_{2}}}
+\]</span></p>
+<div class="fragment">
+<p><span class="math display">\[
+s_{pooled}^2 = \frac{\mathit{df}_1 s_1^2 + \mathit{df}_2 s_2^2}{\mathit{df}_1 +\mathit{df}_2}
+\]</span></p>
+</div>
+<div class="fragment">
+<p><span class="math display">\[\mathit{df}_1 = n_1 - 1;~~\mathit{df}_2 = n_2 - 1\]</span></p>
+</div>
 </section>
 <section id="the-t-distribution-is-the-sampling-distribution-for-t-2" class="slide level2">
 <h2>3. The <span class="math inline">\(t\)</span> distribution is the sampling distribution for <span class="math inline">\(t\)</span></h2>
 <p>Degrees of freedom: <span class="math inline">\(\mathit{df}_1 = n_1 - 1\)</span>; <span class="math inline">\(\mathit{df}_2 = n_2 - 1\)</span>;</p>
 <p>total degrees of freedom for <span class="math inline">\(t\)</span> distribution: <span class="math inline">\(\mathit{df} = \mathit{df}_1 +\mathit{df}_2\)</span></p>
-<p>For our study, <span class="math inline">\((15 - 1) + (16 - 1) = 29\)</span> degrees of freedom</p>
-<p>The <span class="math inline">\(t_{29}\)</span> distribution looks like this:</p>
+<p>For our study, <span class="math inline">\((100 - 1) + (100 - 1) = 198\)</span> degrees of freedom</p>
+<p>The <span class="math inline">\(t_{198}\)</span> distribution looks like this:</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="09-t-test-slides_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+<p><img data-src="09-t-test-slides_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
 </figure>
 </div>
 </div>
@@ -837,7 +770,7 @@ mean of x
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="09-t-test-slides_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+<p><img data-src="09-t-test-slides_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
 </figure>
 </div>
 </div>
@@ -848,21 +781,19 @@ mean of x
 <p>For a two-tailed test (most common)</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a>P_value <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">pt</span>(</span>
-<span id="cb9-2"><a href=""></a>  <span class="at">q =</span> <span class="fl">1.518867</span>,</span>
-<span id="cb9-3"><a href=""></a>  <span class="at">df =</span> <span class="dv">29</span>,</span>
-<span id="cb9-4"><a href=""></a>  <span class="at">lower.tail =</span> <span class="cn">FALSE</span></span>
-<span id="cb9-5"><a href=""></a>)</span>
-<span id="cb9-6"><a href=""></a></span>
-<span id="cb9-7"><a href=""></a>P_value</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-2"><a href=""></a>    <span class="at">q =</span> <span class="sc">-</span><span class="fl">14.114</span>,</span>
+<span id="cb9-3"><a href=""></a>    <span class="at">df =</span> <span class="dv">198</span></span>
+<span id="cb9-4"><a href=""></a>)</span>
+<span id="cb9-5"><a href=""></a></span>
+<span id="cb9-6"><a href=""></a>P_value</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.139624</code></pre>
+<pre><code>[1] 9.293562e-32</code></pre>
 </div>
 </div>
 </section>
 <section id="decide-1" class="slide level2">
 <h2>5. Decide</h2>
-<p>Since <span class="math inline">\(P = 0.14\)</span> is greater than <span class="math inline">\(\alpha = 0.05\)</span>, we fail to reject the null hypothesis.</p>
-<p>We don’t have enough evidence to conclude that susceptible genotypes of lettuc have greater fitness than resistant genotypes in the absence of aphids.</p>
+<p>Since <span class="math inline">\(P \approx 0\)</span> is less than <span class="math inline">\(\alpha = 0.05\)</span>, we reject the null hypothesis.</p>
 </section>
 <section id="difference-between-two-sample-t-test-and-welchs-t-test" class="slide level2">
 <h2>Difference between <span class="alert">Two-sample <span class="math inline">\(t\)</span>-test</span> and <span class="alert">Welch’s <span class="math inline">\(t\)</span>-test</span></h2>
@@ -871,24 +802,40 @@ mean of x
 <section id="difference-between-two-sample-t-test-and-welchs-t-test-1" class="slide level2">
 <h2>Difference between <span class="alert">Two-sample <span class="math inline">\(t\)</span>-test</span> and <span class="alert">Welch’s <span class="math inline">\(t\)</span>-test</span></h2>
 <p><span class="alert">Welch’s <span class="math inline">\(t\)</span>-test</span> is the default in <em>R</em></p>
+<div class="columns">
+<div class="column" style="width:30%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="fu">t.test</span>(dat<span class="sc">$</span>n_seeds <span class="sc">~</span> dat<span class="sc">$</span>genotype)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="fu">head</span>(noni_dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         sed     group
+1 -2.6264538 10mg noni
+2 -1.8163567 10mg noni
+3 -2.8356286 10mg noni
+4 -0.4047192 10mg noni
+5 -1.6704922 10mg noni
+6 -2.8204684 10mg noni</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:70%;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a><span class="fu">t.test</span>(sed <span class="sc">~</span> group, <span class="at">data =</span> noni_dat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Welch Two Sample t-test
 
-data:  dat$n_seeds by dat$genotype
-t = -1.5296, df = 28.39, p-value = 0.1372
-alternative hypothesis: true difference in means between group Resistant and group Susceptible is not equal to 0
+data:  sed by group
+t = -14.114, df = 197.19, p-value &lt; 2.2e-16
+alternative hypothesis: true difference in means between group 10mg noni and group placebo is not equal to 0
 95 percent confidence interval:
- -322.68656   46.68656
+ -2.112261 -1.594348
 sample estimates:
-  mean in group Resistant mean in group Susceptible 
-                      582                       720 </code></pre>
+mean in group 10mg noni   mean in group placebo 
+            -1.89111263             -0.03780808 </code></pre>
 </div>
 </div>
+</div></div>
 
-</section></section>
+</section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
