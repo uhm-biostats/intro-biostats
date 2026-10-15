@@ -15,11 +15,7 @@ library(stringr)
 library(tidyr)
 ```
 
-## La hua ʻōlelo o ka pule
 
-::: {style="text-align: center;"}
-[lapu]{.alert}
-:::
 
 ## Learning Objectives
 
@@ -481,75 +477,50 @@ The sample sizes do not have to be the same in each group.
 * "The numerical variable is normally distributed in each population"
 * "The standard deviation (and variance) of the numerical variable is the same in both populations" (we will eventually relax this assumption)
 
-## Cost of resistance to Aphids in lettuce
+## Effect of noni on inflamation
 
-* Some lettuce genotypes are *Susceptible* and others are
-*Resistant* to aphids.
-* Why isn't all lettuce resistant to aphids?
-* Let us test the hypothesis that resistant lettuce has
-lower fitness in the absence of aphids.
-* Fitness = number of seeds per plant
+```{r}
+set.seed(1)
+noni_dat <- data.frame(sed = c(rnorm(100, -2), rnorm(100)),
+                       group = c(rep("10mg noni", 100),
+                                 rep("placebo", 100)))
 
-| Genotype | $\overline{Y}_i$ | $s_i$ | $n_i$ |
+noni_summ <- summarize(noni_dat, 
+                       ybar = mean(sed), 
+                       s = sd(sed), 
+                       n = n(), 
+                       .by = group)
+
+
+ybar_p <- round(noni_summ[2, 2], 3)
+ybar_n <- round(noni_summ[1, 2], 3)
+
+s_p <- round(noni_summ[2, 3], 3)
+s_n <- round(noni_summ[1, 3], 3)
+
+n_p <- noni_summ[2, 4]
+n_n <- noni_summ[1, 4]
+```
+
+- Returning to a well-known hypothetical study
+- Does administering noni reduce inflammation as measured by a change in sedimentation rate?
+
+| Treatment | $\overline{Y}_i$ | $s_i$ | $n_i$ |
 |:--------:|:----------------:|:------|:-----:|
-| Susceptible | 720 | 223.6 | 15 |
-| Resistant | 582 | 277.3 | 16 |
+| placebo    | `r ybar_p` | `r s_p` | `r n_p` |
+| 10 mg noni | `r ybar_n` | `r s_n` | `r n_n` |
 
-# Parameter estimation and confidence intervals
 
-## Standard error of the difference in means
+## Hypothesis testing
 
-| Genotype | $\overline{Y}_i$ | $s_i$ | $n_i$ |
-|:--------:|:----------------:|:------|:-----:|
-| Susceptible | 720 | 223.6 | 15 |
-| Resistant | 582 | 277.3 | 16 |
+1. State null and alternative hypotheses
+2. Calculate test statistic
+2. Identify null distribution
+3. Calculate $P$-value
+4. Decide:
 
-The pooled sample variance is $s_p^2 = \frac{\mathit{df}_1 s_1^2 + \mathit{df}_2 s_2^2}{\mathit{df}_1 +\mathit{df}_2}$
-
-$s^2_1$ is the sample variance of sample 1
-
-$s^2_2$ is the sample variance of sample 2
-
-$\mathit{df}_1 = n_1 - 1$; $\mathit{df}_2 = n_2 - 1$;
-
-total degrees of freedom for $t$ distribution: $\mathit{df} = \mathit{df}_1 +\mathit{df}_2$
-
-$$s_p^2 = \frac{14 \times 223.6 ^2 + 15 \times 277.3^2}{14 + 15} = `r sprintf("%5f", (14 * 223.6 ^ 2 + 15 * 277.3 ^ 2)/29)`$$
-
-## Standard error of the difference in means
-
-| Genotype | $\overline{Y}_i$ | $s_i$ | $n_i$ |
-|:--------:|:----------------:|:------|:-----:|
-| Susceptible | 720 | 223.6 | 15 |
-| Resistant | 582 | 277.3 | 16 |
-
-The standard error of the difference in means is $\mathrm{SE}_{\overline{Y}_1 - \overline{Y}_2} = \sqrt{s_p^2 (\frac{1}{n_1} + \frac{1}{n_2})}$
-
-$$\mathrm{SE}_{\overline{Y}_1 - \overline{Y}_2} = \sqrt{63909.889310 (\frac{1}{15} + \frac{1}{16})} = `r sqrt(63909.889310 * (1/15 + 1/16))`$$
-
-## 95% confidence intervals for difference in means
-
-$$(\overline{Y}_1 - \overline{Y}_2)-t_{0.05(2),\mathit{df}} \text{SE}_{\overline{Y}_1 - \overline{Y}_2} < (\mu_1 - \mu_2) < (\overline{Y}_1 - \overline{Y}_2)+t_{0.05(2),\mathit{df}} \text{SE}_{\overline{Y}_1 - \overline{Y}_2}$$
-
-$\mathit{df} = 29$
-
-$t_{0.05(2),\mathit{29}} = `r qt(0.975, 29)`$
-
-Lower CI:
-
-$$(720 - 582) - `r qt(0.975, 29)` \times `r sqrt(63909.889310 * (1/15 + 1/16))` = `r (720 - 582) - qt(0.975, 29) * sqrt(63909.889310 * (1/15 + 1/16))`$$
-
-Upper CI:
-
-$$(720 - 582) + `r qt(0.975, 29)` \times `r sqrt(63909.889310 * (1/15 + 1/16))` = `r (720 - 582) + qt(0.975, 29) * sqrt(63909.889310 * (1/15 + 1/16))`$$
-
-## 95% confidence intervals for difference in means
-
-We estimated the susceptible genotypes produce an average of 720 - 582 = 138 more seeds, but our 95% CI is -48 to 324.
-
-0 difference in fitness between genotypes is within the plausible range of values given our data.
-
-# Hypothesis testing
+    - Reject null
+    - Fail to reject null
 
 ## 1. Null and alternative hypotheses
 
@@ -557,18 +528,35 @@ $H_0$: $\mu_1 = \mu_2$
 
 $H_A$: $\mu_1 \ne \mu_2$
 
-In our case, the mean fitness of resistant and susceptible lettuce genotypes is the same.
+In our case, $H_0$ is the mean change in sed rate is the same for the placebo and noni groups.
 
 ## 2. The $t$ test statistic
 
 $$t = \frac{\overline{Y}_1 - \overline{Y}_2}{\text{SE}_{\overline{Y}_1 - \overline{Y}_2}}$$
 
-| Genotype | $\overline{Y}_i$ | $s_i$ | $n_i$ |
+| Treatment | $\overline{Y}_i$ | $s_i$ | $n_i$ |
 |:--------:|:----------------:|:------|:-----:|
-| Susceptible | 720 | 223.6 | 15 |
-| Resistant | 582 | 277.3 | 16 |
+| placebo    | `r ybar_p` | `r s_p` | `r n_p` |
+| 10 mg noni | `r ybar_n` | `r s_n` | `r n_n` |
 
-$$t = \frac{720 - 582}{`r sqrt(63909.889310 * (1/15 + 1/16))`} = `r (720 - 582) / (sqrt(63909.889310 * (1/15 + 1/16)))`$$
+$$t = \frac{`r ybar_p` - (`r ybar_n`)}{\text{SE}_{\overline{Y}_{placebo} - \overline{Y}_{noni}}},~~~\text{but how do we get } \text{SE}_{\overline{Y}_{placebo} - \overline{Y}_{noni}} \text{?}$$
+
+
+## 2. The $t$ test statistic
+
+$$
+\text{SE}_{\overline{Y}_{1} - \overline{Y}_{2}} = \sqrt{\frac{s_{pooled}^2}{n_{1}} + \frac{s_{pooled}^2}{n_{2}}}
+$$
+
+::: {.fragment}
+$$
+s_{pooled}^2 = \frac{\mathit{df}_1 s_1^2 + \mathit{df}_2 s_2^2}{\mathit{df}_1 +\mathit{df}_2}
+$$
+:::
+
+:::{.fragment}
+$$\mathit{df}_1 = n_1 - 1;~~\mathit{df}_2 = n_2 - 1$$
+:::
 
 ## 3. The $t$ distribution is the sampling distribution for $t$
 
@@ -576,35 +564,36 @@ Degrees of freedom: $\mathit{df}_1 = n_1 - 1$; $\mathit{df}_2 = n_2 - 1$;
 
 total degrees of freedom for $t$ distribution: $\mathit{df} = \mathit{df}_1 +\mathit{df}_2$
 
-For our study, $(15 - 1) + (16 - 1) = 29$ degrees of freedom
+For our study, $(100 - 1) + (100 - 1) = 198$ degrees of freedom
 
-The $t_{29}$ distribution looks like this:
+The $t_{198}$ distribution looks like this:
 
 ```{r}
 #| fig-align: center
 #| out-width: "5in"
 
-test_stat <- (720 - 582) / (sqrt(63909.889310 * (1/15 + 1/16)))
 
-df <- tibble(t = seq(-4, 4, 0.01), y = dt(t, 29))
+test_stat <- -14.114
+
+df <- tibble(t = seq(-15, 15, 0.01), y = dt(t, 198))
 
 alpha <- 0.05
 critical_value <- qt(
-  p = alpha / 2,
-  df = 29,
-  lower.tail = FALSE
+    p = alpha / 2,
+    df = 198,
+    lower.tail = FALSE
 )
 
 ggplot(df, aes(t, y)) +
-  geom_line(size = 3) +
-  geom_vline(xintercept = test_stat, size = 2) +
-  xlab(expression(italic(t)[29])) +
-  ylab("Probability density") +
-  theme_cowplot() +
-  theme(
-    axis.text = element_text(size = 30),
-    axis.title = element_text(size = 36)
-  )
+    geom_line(size = 3) +
+    geom_vline(xintercept = test_stat, size = 2) +
+    xlab(expression(italic(t)[198])) +
+    ylab("Probability density") +
+    theme_cowplot() +
+    theme(
+        axis.text = element_text(size = 30),
+        axis.title = element_text(size = 36)
+    )
 ```
 
 ## 4. $P$-values
@@ -614,11 +603,11 @@ ggplot(df, aes(t, y)) +
 #| out-width: "5in"
 
 ggplot(df, aes(t, y)) +
-  geom_area(data = filter(df, t > test_stat), fill = "tomato") +
-  geom_area(data = filter(df, t < -test_stat), fill = "tomato") +
+  geom_area(data = filter(df, t < test_stat), fill = "tomato") +
+  geom_area(data = filter(df, t > -test_stat), fill = "tomato") +
   geom_vline(xintercept = c(test_stat, -test_stat), color = "grey", size = 2) +
   geom_line(size = 3) +
-  xlab(expression(italic(t)[29])) +
+  xlab(expression(italic(t)[198])) +
   ylab("Probability density") +
   theme_cowplot() +
   theme(
@@ -636,9 +625,8 @@ For a two-tailed test (most common)
 #| eval: true
 
 P_value <- 2 * pt(
-  q = 1.518867,
-  df = 29,
-  lower.tail = FALSE
+    q = -14.114,
+    df = 198
 )
 
 P_value
@@ -646,9 +634,8 @@ P_value
 
 ## 5. Decide
 
-Since $P = `r round(P_value, 3)`$ is greater than $\alpha = 0.05$, we fail to reject the null hypothesis.
+Since $P \approx 0$ is less than $\alpha = 0.05$, we reject the null hypothesis.
 
-We don't have enough evidence to conclude that susceptible genotypes of lettuc have greater fitness than resistant genotypes in the absence of aphids.
 
 ## Difference between [Two-sample $t$-test]{.alert} and [Welch's $t$-test]{.alert}
 
@@ -658,23 +645,27 @@ We don't have enough evidence to conclude that susceptible genotypes of lettuc h
 
 [Welch's $t$-test]{.alert} is the default in *R*
 
-```{r}
-#| echo: false
+::: {.columns}
 
-sus <- rnorm(15, 720, 223.6)
-sus <- (sus - mean(sus)) / sd(sus)
-sus <- sus * 223.6 + 720
 
-res <- rnorm(16, 582, 277.3)
-res <- (res - mean(res)) / sd(res)
-res <- res * 277.3 + 582
-
-dat <- data.frame(genotype = rep(c("Susceptible", "Resistant"), c(15, 16)),
-                  n_seeds = c(sus, res))
-```
+::: {.column width = "30%"}
 
 ```{r}
 #| echo: true
 
-t.test(dat$n_seeds ~ dat$genotype)
+head(noni_dat)
 ```
+
+:::
+
+::: {.column width = "70%"}
+
+```{r}
+#| echo: true
+
+t.test(sed ~ group, data = noni_dat)
+```
+
+:::
+
+:::
