@@ -209,7 +209,7 @@
 </ul>
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="../img/hylid_phylo.png" style="width:80.0%"></p>
+<p><img data-src="../img/hylid_phylo.png" style="width:50.0%"></p>
 <figcaption>from: Magnacca and Danforth (2006) Cladistics 22</figcaption>
 </figure>
 </div>
@@ -221,7 +221,7 @@
 </ul>
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="../img/drosoph_phylo.png" style="width:60.0%"></p>
+<p><img data-src="../img/drosoph_phylo.png" style="width:35.0%"></p>
 <figcaption>from: Church and Extavour (2022) Molecular Biology and Evolution, 39</figcaption>
 </figure>
 </div>
@@ -263,7 +263,228 @@
 </section>
 <section id="how-do-we-quantify-correlation" class="slide level2">
 <h2>How do we quantify correlation?</h2>
-<p>To the “whiteboard”</p>
+</section>
+<section id="positive-correlation" class="slide level2">
+<h2><span class="alert">Positive</span> correlation</h2>
+<p>Deviations from the means, <span class="math inline">\(\overline{X}\)</span> and <span class="math inline">\(\overline{Y}\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="10-correlation-slides_files/figure-revealjs/unnamed-chunk-2-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p><span class="alert">+</span> deviation of <span class="math inline">\(Y\)</span> <span class="math inline">\(\Longleftrightarrow\)</span> <span class="alert">+</span> deviation of <span class="math inline">\(X\)</span></p>
+</div>
+<div class="fragment">
+<p><span class="alert">−</span> deviation of <span class="math inline">\(Y\)</span> <span class="math inline">\(\Longleftrightarrow\)</span> <span class="alert">−</span> deviation of <span class="math inline">\(X\)</span></p>
+</div>
+</section>
+<section id="covariance-and-variance" class="slide level2">
+<h2><span class="alert">Covariance</span> and <span class="alert">variance</span></h2>
+<p><span class="alert">Covariance</span> of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span></p>
+<p><span class="math display">\[
+\frac{1}{n - 1} \sum_{i = 1}^{n} (X_i - \overline{X})(Y_i - \overline{Y})
+\]</span></p>
+<div class="fragment">
+<p><span class="alert">Variance</span> of <span class="math inline">\(Y\)</span></p>
+<p><span class="math display">\[
+\frac{1}{n - 1} \sum_{i = 1}^{n} (Y_i - \overline{Y})^2
+\]</span></p>
+</div>
+</section>
+<section id="variance-is-the-covariance-of-a-variable-with-itself" class="slide level2">
+<h2>Variance is the covariance of a variable with itself</h2>
+<p><span class="math display">\[
+\begin{aligned}
+\text{Variance of } Y &amp;= \frac{1}{n - 1} \sum_{i = 1}^{n} (Y_i - \overline{Y})^2 \\
+&amp;= \frac{1}{n - 1} \sum_{i = 1}^{n} (Y_i - \overline{Y})(Y_i - \overline{Y})
+\end{aligned}
+\]</span></p>
+<div class="fragment">
+<p>Compare to the covariance of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span></p>
+<p><span class="math display">\[
+\frac{1}{n - 1} \sum_{i = 1}^{n} (X_i - \overline{X})(Y_i - \overline{Y})
+\]</span></p>
+</div>
+</section>
+<section id="covariance-captures-deviations-in-the-same-direction" class="slide level2">
+<h2>Covariance captures deviations in the <span class="alert">same direction</span></h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="10-correlation-slides_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center" style="width:4.4in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p>Each point contributes <span class="math inline">\((X_i - \overline{X})(Y_i - \overline{Y})\)</span></p>
+<ul>
+<li class="fragment">upper right: <span class="math inline">\((+)(+) = +\)</span></li>
+<li class="fragment">lower left: <span class="math inline">\((-)(-) = +\)</span></li>
+</ul>
+<div class="fragment">
+<p>All positive contributions, so the sum and the covariance are <span class="alert">positive</span></p>
+</div>
+</div></div>
+</section>
+<section id="negative-correlation" class="slide level2">
+<h2><span class="alert">Negative</span> correlation</h2>
+<p>Deviations from the means, <span class="math inline">\(\overline{X}\)</span> and <span class="math inline">\(\overline{Y}\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="10-correlation-slides_files/figure-revealjs/unnamed-chunk-4-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p><span class="alert">+</span> deviation of <span class="math inline">\(Y\)</span> <span class="math inline">\(\Longleftrightarrow\)</span> <span class="alert">−</span> deviation of <span class="math inline">\(X\)</span></p>
+</div>
+<div class="fragment">
+<p><span class="alert">−</span> deviation of <span class="math inline">\(Y\)</span> <span class="math inline">\(\Longleftrightarrow\)</span> <span class="alert">+</span> deviation of <span class="math inline">\(X\)</span></p>
+</div>
+</section>
+<section id="covariance-captures-deviations-in-opposite-directions" class="slide level2">
+<h2>Covariance captures deviations in <span class="alert">opposite directions</span></h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="10-correlation-slides_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center" style="width:4.4in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p>Each point contributes <span class="math inline">\((X_i - \overline{X})(Y_i - \overline{Y})\)</span></p>
+<ul>
+<li class="fragment">upper left: <span class="math inline">\((-)(+) = -\)</span></li>
+<li class="fragment">lower right: <span class="math inline">\((+)(-) = -\)</span></li>
+</ul>
+<div class="fragment">
+<p>All negative contributions, so the sum and the covariance are <span class="alert">negative</span></p>
+</div>
+</div></div>
+</section>
+<section id="no-correlation" class="slide level2">
+<h2><span class="alert">No</span> correlation</h2>
+<p>Deviations from the means, <span class="math inline">\(\overline{X}\)</span> and <span class="math inline">\(\overline{Y}\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="10-correlation-slides_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p><span class="alert">+/−</span> deviation of <span class="math inline">\(Y\)</span> goes with <span class="alert">+/−</span> deviation of <span class="math inline">\(X\)</span></p>
+</div>
+<div class="fragment">
+<p>Knowing the direction of the deviation in <span class="math inline">\(X\)</span> tells us nothing about the direction in <span class="math inline">\(Y\)</span></p>
+</div>
+</section>
+<section id="covariance-captures-no-consistent-direction" class="slide level2">
+<h2>Covariance captures <span class="alert">no consistent direction</span></h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="10-correlation-slides_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center" style="width:4.4in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p>Each point contributes <span class="math inline">\((X_i - \overline{X})(Y_i - \overline{Y})\)</span></p>
+<ul>
+<li class="fragment"><span class="math inline">\((+)(+) = +\)</span></li>
+<li class="fragment"><span class="math inline">\((-)(-) = +\)</span></li>
+<li class="fragment"><span class="math inline">\((-)(+) = -\)</span></li>
+<li class="fragment"><span class="math inline">\((+)(-) = -\)</span></li>
+</ul>
+<div class="fragment">
+<p>Positive and negative contributions cancel, so the covariance is <span class="alert">zero</span></p>
+</div>
+</div></div>
+</section>
+<section id="covariance-depends-on-the-scale-of-the-data" class="slide level2">
+<h2>Covariance depends on the scale of the data</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="10-correlation-slides_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center" style="width:3.8in"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment" style="text-align: center;">
+<p>covariance = 0.072</p>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="10-correlation-slides_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center" style="width:3.8in"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment" style="text-align: center;">
+<p>covariance = 720</p>
+</div>
+</div></div>
+<div class="fragment" style="text-align: center;">
+<p><span class="alert">Scale should not matter!</span> We want the same test statistic for both</p>
+</div>
+</section>
+<section id="standardize-the-covariance" class="slide level2">
+<h2><span class="alert">Standardize</span> the covariance</h2>
+<p>Divide by the standard deviations of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> to get the <span class="alert">correlation coefficient</span></p>
+<p><span class="math display">\[
+r = \frac{\text{covariance}}{\text{SD}_X \, \text{SD}_Y}
+\]</span></p>
+<div class="fragment">
+<p>which is bounded</p>
+<p><span class="math display">\[
+-1 \le r \le 1
+\]</span></p>
+</div>
+</section>
+<section id="standardize-the-covariance-1" class="slide level2">
+<h2><span class="alert">Standardize</span> the covariance</h2>
+<div style="font-size: 0.65em;">
+<p><span class="math display">\[
+r = \frac{\frac{1}{n - 1} \sum_{i = 1}^{n} (X_i - \overline{X})(Y_i - \overline{Y})}{\sqrt{\frac{1}{n - 1} \sum_{i = 1}^{n} (X_i - \overline{X})^2} \sqrt{\frac{1}{n - 1} \sum_{i = 1}^{n} (Y_i - \overline{Y})^2}}
+\]</span></p>
+</div>
+<div class="fragment">
+<p>The <span class="math inline">\(\frac{1}{n - 1}\)</span> terms cancel</p>
+<div style="font-size: 0.85em;">
+<p><span class="math display">\[
+r = \frac{\sum_{i = 1}^{n} (X_i - \overline{X})(Y_i - \overline{Y})}{\sqrt{\sum_{i = 1}^{n} (X_i - \overline{X})^2} \sqrt{\sum_{i = 1}^{n} (Y_i - \overline{Y})^2}}
+\]</span></p>
+</div>
+</div>
 </section>
 <section id="how-do-we-quantify-correlation-1" class="slide level2">
 <h2>How do we quantify correlation?</h2>
@@ -291,7 +512,7 @@ r = \frac{\sum_i (X_i - \overline{X}) (Y_i - \overline{Y})}{\sqrt{\sum_i (X_i - 
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="10-correlation-slides_files/figure-revealjs/unnamed-chunk-2-1.png" class="quarto-figure quarto-figure-center" style="width:9in"></p>
+<p><img data-src="10-correlation-slides_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center" style="width:7in"></p>
 </figure>
 </div>
 </div>
@@ -303,31 +524,29 @@ r = \frac{\sum_i (X_i - \overline{X}) (Y_i - \overline{Y})}{\sqrt{\sum_i (X_i - 
 <p><span class="math display">\[
 r = \frac{\sum_i (X_i - \overline{X}) (Y_i - \overline{Y})}{\sqrt{\sum_i (X_i - \overline{X}) ^ 2 \sum_i (Y_i - \overline{Y}) ^ 2}}
 \]</span></p>
-<p>We see a big summation in the numerator. <span class="alert">Pause and Think:</span> what distribution do we expect for summations?</p>
-</section>
-<section id="quantifying-uncertanty-of-correlation-estimates-1" class="slide level2">
-<h2>Quantifying uncertanty of correlation estimates</h2>
-<p>Looking at the equation for estimated correlation:</p>
-<p><span class="math display">\[
-r = \frac{\sum_i (X_i - \overline{X}) (Y_i - \overline{Y})}{\sqrt{\sum_i (X_i - \overline{X}) ^ 2 \sum_i (Y_i - \overline{Y}) ^ 2}}
-\]</span></p>
-<p>We see a big summation in the numerator. <span class="alert">Pause and Think:</span> what distribution do we expect for summations?</p>
-<div style="text-align: center;">
-<p>A Normal Distribution!</p>
+<div class="pause-think">
+<div class="r-stack">
+<div class="fragment fade-out" data-fragment-index="0">
+<p>We see a big summation in the numerator. What distribution do we expect for summations?</p>
+</div>
+<div class="fragment" data-fragment-index="0">
+<p>We see a big summation in the numerator. What distribution do we expect for summations? A <strong><em>normal distribution!</em></strong></p>
+</div>
+</div>
 </div>
 </section>
-<section id="quantifying-uncertanty-of-correlation-estimates-2" class="slide level2">
+<section id="quantifying-uncertanty-of-correlation-estimates-1" class="slide level2">
 <h2>Quantifying uncertanty of correlation estimates</h2>
 <p>Because we are again <em>estimating</em> the standard deviation of the sampling distribution of <span class="math inline">\(r\)</span>, we have to use a <em>t</em> distribution</p>
 </section>
 <section id="null-hypothesis-testing-with-correlations" class="slide level2">
 <h2>Null hypothesis testing with correlations</h2>
 <ol type="1">
-<li><p>State null and alternative hypotheses</p></li>
-<li><p>Calculate test statistic</p></li>
-<li><p>Identify null distribution</p></li>
-<li><p>Calculate <span class="math inline">\(P\)</span>-value</p></li>
-<li><p>Decide:</p>
+<li>State null and alternative hypotheses</li>
+<li>Calculate test statistic</li>
+<li>Identify null distribution</li>
+<li>Calculate <span class="math inline">\(P\)</span>-value</li>
+<li>Decide:
 <ul>
 <li>Reject null</li>
 <li>Fail to reject null</li>
@@ -388,7 +607,7 @@ sample estimates:
 <h2>5. Decide</h2>
 <p>Because <span class="math inline">\(P = 0.0251\)</span> is less than <span class="math inline">\(\alpha = 0.05\)</span> we reject the null</p>
 </section>
-<section id="quantifying-uncertanty-of-correlation-estimates-3" class="slide level2">
+<section id="quantifying-uncertanty-of-correlation-estimates-2" class="slide level2">
 <h2>Quantifying uncertanty of correlation estimates</h2>
 <p>We also get the 95% confidence interval from <code>cor.test</code></p>
 <div class="cell">
@@ -430,52 +649,17 @@ sample estimates:
 <h2>Did you notice Pearson’s name?</h2>
 <p>Who do we choose to memorialize?</p>
 <div class="columns">
-<div class="column" style="width:50%;">
-<p><img data-src="../img/fisher_fall.png"></p>
-</div><div class="column" style="width:50%;">
-<p><code>Pearson's product-moment correlation</code></p>
+<div class="column" style="width:40%;">
+<p><img data-src="../img/fisher_fall.png" style="width:80.0%"></p>
+</div><div class="column" style="width:60%;">
+<p>Pearson’s product-moment correlation</p>
 <ul>
-<li>Doesn’t need Pearson’s name to make sense</li>
-<li>Others have proposed the same metric</li>
-<li>Names on concepts are intellectual monuments to those people</li>
-<li>Again, who do we want to memorialize?</li>
+<li class="fragment">Doesn’t need Pearson’s name to make sense</li>
+<li class="fragment">Others have proposed the same metric</li>
+<li class="fragment">Names on concepts are intellectual monuments to those people</li>
+<li class="fragment">Again, who do we want to memorialize?</li>
 </ul>
 </div></div>
-</section>
-<section id="what-do-to" class="slide level2">
-<h2>What do to?</h2>
-<p>Not a perfect list, but some ideas:</p>
-<ul>
-<li>De-memorialize colonizers and racists</li>
-</ul>
-</section>
-<section id="what-do-to-1" class="slide level2">
-<h2>What do to?</h2>
-<p>Not a perfect list, but some ideas:</p>
-<ul>
-<li>De-memorialize colonizers and racists</li>
-<li>Acknowledge and promote the fact that people from diverse backgrounds and lots of cultures have built and use statistics</li>
-</ul>
-<div style="text-align: center;">
-<p><img data-src="../img/anil_kumar_gain.png" style="width:30.0%"></p>
-<p><em>Anil Kumar Gain, Indian statistician</em></p>
-</div>
-</section>
-<section id="what-do-to-2" class="slide level2">
-<h2>What do to?</h2>
-<p>Not a perfect list, but some ideas:</p>
-<ul>
-<li>De-memorialize colonizers and racists</li>
-<li>Acknowledge and promote the fact that people from diverse backgrounds and lots of cultures have built and use statistics</li>
-<li>Acknowledge and promote the predictive processes developed in other knowledge systems, e.g., Hawaiian practice of kilo</li>
-<li>Negate <em>supremacy</em> of western practices</li>
-<li>Question your questions:
-<ul>
-<li>Is it your question to ask?</li>
-<li>What assumptions about the world are you making before you even ask the question?</li>
-<li>Where do those assumptions come from?</li>
-</ul></li>
-</ul>
 </section>
 <section id="assumptions-of-correlation-tests" class="slide level2">
 <h2>Assumptions of correlation tests</h2>
@@ -533,7 +717,7 @@ sample estimates:
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="10-correlation-slides_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center" style="width:6.5in"></p>
+<p><img data-src="10-correlation-slides_files/figure-revealjs/unnamed-chunk-17-1.png" class="quarto-figure quarto-figure-center" style="width:6in"></p>
 </figure>
 </div>
 </div>
@@ -595,7 +779,7 @@ sample estimates:
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="10-correlation-slides_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center" style="width:7in"></p>
+<p><img data-src="10-correlation-slides_files/figure-revealjs/unnamed-chunk-18-1.png" class="quarto-figure quarto-figure-center" style="width:7in"></p>
 </figure>
 </div>
 </div>
@@ -614,7 +798,7 @@ sample estimates:
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="10-correlation-slides_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center" style="width:9in"></p>
+<p><img data-src="10-correlation-slides_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center" style="width:9in"></p>
 </figure>
 </div>
 </div>
@@ -635,28 +819,31 @@ sample estimates:
 </section>
 <section id="are-older-insect-lineages-more-species-rich-in-hawaiʻi-2" class="slide level2">
 <h2>Are older insect lineages more species rich in Hawaiʻi?</h2>
-<p><span class="alert">Pause &amp; Think</span></p>
+<div class="columns">
+<div class="column" style="width:60%;">
+<div class="pause-think">
+<p>Are they <strong><em>really</em></strong> more diverse?</p>
+<ul>
+<li class="fragment">Could be, need more data</li>
+<li class="fragment">Correlation could be driven by a few outliers</li>
+<li class="fragment">Do we have a plausible causal mechanism?
+<ul>
+<li class="fragment">Yes (more time for speciation)</li>
+<li class="fragment">No (more time for extinction)</li>
+</ul></li>
+</ul>
+</div>
+</div><div class="column" style="width:40%;">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="10-correlation-slides_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center" style="width:6.5in"></p>
+<p><img data-src="10-correlation-slides_files/figure-revealjs/unnamed-chunk-20-1.png" class="quarto-figure quarto-figure-center" style="width:6.5in"></p>
 </figure>
 </div>
 </div>
 </div>
-</section>
-<section id="are-older-insect-lineages-more-species-rich-in-hawaiʻi-3" class="slide level2">
-<h2>Are older insect lineages more species rich in Hawaiʻi?</h2>
-<ul>
-<li>Could be, need more data</li>
-<li>Correlation could be driven by a few outliers</li>
-<li>Do we have a plausible causal mechanism?
-<ul>
-<li>Yes (more time for speciation)…and…</li>
-<li>No (more time for extinction)</li>
-</ul></li>
-</ul>
+</div></div>
 
 </section>
     </div>
