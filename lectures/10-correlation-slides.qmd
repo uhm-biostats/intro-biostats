@@ -26,7 +26,7 @@ library(magrittr)
 - 700,000 years
 - 60-ish species
 
-![from: Magnacca and Danforth (2006) Cladistics 22](/img/hylid_phylo.png){width="80%"}
+![from: Magnacca and Danforth (2006) Cladistics 22](/img/hylid_phylo.png){width="50%"}
 :::
 
 ::: {.column width="50%"}
@@ -35,7 +35,7 @@ Native *Drosophila*
 - 25 million years
 - possibly 1000 species
 
-![from: Church and Extavour (2022) Molecular Biology and Evolution, 39](/img/drosoph_phylo.png){width="60%"}
+![from: Church and Extavour (2022) Molecular Biology and Evolution, 39](/img/drosoph_phylo.png){width="35%"}
 :::
 :::
 
@@ -83,7 +83,381 @@ More fancy sounding:
 
 ## How do we quantify correlation?
 
-To the "whiteboard"
+```{r corr-whiteboard-helpers}
+#| include: false
+
+# colors for quadrants where the product of deviations is + (green) or - (blue)
+pos_col <- "#51B293"
+neg_col <- "#768FF5"
+
+# simulate n points whose sample correlation is exactly r
+set.seed(123)
+
+n_pnts <- 12
+
+pos_df <- data.frame(X = scale(rnorm(n_pnts))) |> 
+    mutate(Y = X + rnorm(n_pnts, 0, 0.4))
+neg_df <- mutate(pos_df, Y = -1 * Y)
+
+set.seed(1)
+zero_df <- mutate(pos_df, Y = scale(rnorm(n_pnts)))
+
+
+# helper function to make quadrant plots
+dev_plot <- function(df) {
+    xbar <- mean(df$X)
+    ybar <- mean(df$Y)
+    dx <- diff(range(df$X))
+    dy <- diff(range(df$Y))
+    pad <- 0.4
+    xl <- c(min(df$X) - pad * dx, max(df$X) + pad * dx)
+    yl <- c(min(df$Y) - pad * dy, max(df$Y) + pad * dy)
+    
+    p <- ggplot(df, aes(X, Y))
+    
+    p <- p +
+        annotate("rect", xmin = xbar, xmax = xl[2], ymin = ybar, ymax = yl[2],
+                 fill = pos_col, alpha = 0.25) +
+        annotate("rect", xmin = xl[1], xmax = xbar, ymin = ybar, ymax = yl[2],
+                 fill = neg_col, alpha = 0.25) +
+        annotate("rect", xmin = xl[1], xmax = xbar, ymin = yl[1], ymax = ybar,
+                 fill = pos_col, alpha = 0.25) +
+        annotate("rect", xmin = xbar, xmax = xl[2], ymin = yl[1], ymax = ybar,
+                 fill = neg_col, alpha = 0.25)
+    
+    
+    p <- p +
+        geom_hline(yintercept = ybar, linetype = "dashed") +
+        geom_vline(xintercept = xbar, linetype = "dashed") +
+        geom_point(size = 4) +
+        annotate("point", x = xbar, y = ybar, shape = 3, size = 6, stroke = 1.5)
+    
+    
+    ar <- arrow(length = unit(0.12, "in"), type = "closed")
+    p <- p +
+        annotate("segment", x = max(df$X) + 0.06 * dx, xend = xl[2] - 0.03 * dx,
+                 y = ybar, yend = ybar, arrow = ar, linewidth = 1.2) +
+        annotate("segment", x = min(df$X) - 0.06 * dx, xend = xl[1] + 0.03 * dx,
+                 y = ybar, yend = ybar, arrow = ar, linewidth = 1.2) +
+        annotate("segment", x = xbar, xend = xbar,
+                 y = max(df$Y) + 0.06 * dy, yend = yl[2] - 0.03 * dy,
+                 arrow = ar, linewidth = 1.2) +
+        annotate("segment", x = xbar, xend = xbar,
+                 y = min(df$Y) - 0.06 * dy, yend = yl[1] + 0.03 * dy,
+                 arrow = ar, linewidth = 1.2) +
+        annotate("text",
+                 x = c(mean(c(max(df$X), xl[2])), mean(c(min(df$X), xl[1])),
+                       xbar + 0.04 * dx, xbar + 0.04 * dx),
+                 y = c(ybar + 0.07 * dy, ybar + 0.07 * dy,
+                       mean(c(max(df$Y), yl[2])), mean(c(min(df$Y), yl[1]))),
+                 label = c("+", "-", "+", "-"),
+                 hjust = c(0.5, 0.5, 0, 0), vjust = c(0, 0, 0.5, 0.5),
+                 size = 12, fontface = "bold")
+    
+    
+    
+    qx <- 0.02 * diff(xl)
+    qy <- 0.02 * diff(yl)
+    p <- p +
+        annotate("text",
+                 x = c(xl[2] - qx, xl[1] + qx, xl[1] + qx, xl[2] - qx),
+                 y = c(yl[2] - qy, yl[2] - qy, yl[1] + qy, yl[1] + qy),
+                 label = c("(+)(+)", "(-)(+)", "(-)(-)", "(+)(-)"),
+                 hjust = c(1, 0, 0, 1), vjust = c(1, 1, 0, 0),
+                 size = 6, color = "grey20")
+    
+    
+    p +
+        scale_x_continuous(breaks = xbar, labels = expression(bar(X))) +
+        scale_y_continuous(breaks = ybar, labels = expression(bar(Y))) +
+        coord_cartesian(xlim = xl, ylim = yl, expand = FALSE) +
+        xlab(expression(italic(X))) +
+        ylab(expression(italic(Y))) +
+        theme_cowplot() +
+        theme(
+            axis.text = element_text(size = 18),
+            axis.title = element_text(size = 24)
+        )
+}
+
+# the same data on two different scales (0 to 1 and 0 to 100)
+rescale01 <- function(v) 0.05 + 0.9 * (v - min(v)) / (max(v) - min(v))
+scale_df_1 <- data.frame(X = rescale01(pos_df$X), Y = rescale01(pos_df$Y))
+scale_df_100 <- 100 * scale_df_1
+
+scale_plot <- function(df, top) {
+    ggplot(df, aes(X, Y)) +
+        geom_point(color = "tomato", size = 4) +
+        scale_x_continuous(limits = c(0, top), breaks = c(0, top)) +
+        scale_y_continuous(limits = c(0, top), breaks = c(0, top)) +
+        xlab(expression(italic(X))) +
+        ylab(expression(italic(Y))) +
+        theme_cowplot() +
+        theme(
+            axis.text = element_text(size = 18),
+            axis.title = element_text(size = 24)
+        )
+}
+```
+
+## [Positive]{.alert} correlation
+
+Deviations from the means, $\overline{X}$ and $\overline{Y}$
+
+```{r}
+#| fig-align: center
+#| fig-width: 5
+#| fig-height: 3.3
+#| out-width: "5in"
+
+dev_plot(pos_df)
+```
+
+::: {.fragment}
+[+]{.alert} deviation of $Y$ $\Longleftrightarrow$ [+]{.alert} deviation of $X$
+:::
+
+::: {.fragment}
+[−]{.alert} deviation of $Y$ $\Longleftrightarrow$ [−]{.alert} deviation of $X$
+:::
+
+## [Covariance]{.alert} and [variance]{.alert}
+
+[Covariance]{.alert} of $X$ and $Y$
+
+$$
+\frac{1}{n - 1} \sum_{i = 1}^{n} (X_i - \overline{X})(Y_i - \overline{Y})
+$$
+
+::: {.fragment}
+[Variance]{.alert} of $Y$
+
+$$
+\frac{1}{n - 1} \sum_{i = 1}^{n} (Y_i - \overline{Y})^2
+$$
+:::
+
+## Variance is the covariance of a variable with itself
+
+$$
+\begin{aligned}
+\text{Variance of } Y &= \frac{1}{n - 1} \sum_{i = 1}^{n} (Y_i - \overline{Y})^2 \\
+&= \frac{1}{n - 1} \sum_{i = 1}^{n} (Y_i - \overline{Y})(Y_i - \overline{Y})
+\end{aligned}
+$$
+
+::: {.fragment}
+Compare to the covariance of $X$ and $Y$
+
+$$
+\frac{1}{n - 1} \sum_{i = 1}^{n} (X_i - \overline{X})(Y_i - \overline{Y})
+$$
+:::
+
+
+
+## Covariance captures deviations in the [same direction]{.alert}
+
+::: {.columns style="align-items: center;"}
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-width: 5
+#| fig-height: 4.2
+#| out-width: "4.4in"
+
+dev_plot(pos_df)
+```
+:::
+
+::: {.column width="50%"}
+Each point contributes $(X_i - \overline{X})(Y_i - \overline{Y})$
+
+::: {.incremental}
+- upper right: $(+)(+) = +$
+- lower left: $(-)(-) = +$
+:::
+
+::: {.fragment}
+All positive contributions, so the sum and the covariance are [positive]{.alert}
+:::
+:::
+:::
+
+## [Negative]{.alert} correlation
+
+Deviations from the means, $\overline{X}$ and $\overline{Y}$
+
+```{r}
+#| fig-align: center
+#| fig-width: 5
+#| fig-height: 3.3
+#| out-width: "5in"
+
+dev_plot(neg_df)
+```
+
+::: {.fragment}
+[+]{.alert} deviation of $Y$ $\Longleftrightarrow$ [−]{.alert} deviation of $X$
+:::
+
+::: {.fragment}
+[−]{.alert} deviation of $Y$ $\Longleftrightarrow$ [+]{.alert} deviation of $X$
+:::
+
+## Covariance captures deviations in [opposite directions]{.alert}
+
+::: {.columns style="align-items: center;"}
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-width: 5
+#| fig-height: 4.2
+#| out-width: "4.4in"
+
+dev_plot(neg_df)
+```
+:::
+
+::: {.column width="50%"}
+Each point contributes $(X_i - \overline{X})(Y_i - \overline{Y})$
+
+::: {.incremental}
+- upper left: $(-)(+) = -$
+- lower right: $(+)(-) = -$
+:::
+
+::: {.fragment}
+All negative contributions, so the sum and the covariance are [negative]{.alert}
+:::
+:::
+:::
+
+## [No]{.alert} correlation
+
+Deviations from the means, $\overline{X}$ and $\overline{Y}$
+
+```{r}
+#| fig-align: center
+#| fig-width: 5
+#| fig-height: 3.3
+#| out-width: "5in"
+
+dev_plot(zero_df)
+```
+
+::: {.fragment}
+[+/−]{.alert} deviation of $Y$ goes with [+/−]{.alert} deviation of $X$
+:::
+
+::: {.fragment}
+Knowing the direction of the deviation in $X$ tells us nothing about the direction in $Y$
+:::
+
+## Covariance captures [no consistent direction]{.alert}
+
+::: {.columns style="align-items: center;"}
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-width: 5
+#| fig-height: 4.2
+#| out-width: "4.4in"
+
+dev_plot(zero_df)
+```
+:::
+
+::: {.column width="50%"}
+Each point contributes $(X_i - \overline{X})(Y_i - \overline{Y})$
+
+::: {.incremental}
+- $(+)(+) = +$
+- $(-)(-) = +$
+- $(-)(+) = -$
+- $(+)(-) = -$
+:::
+
+::: {.fragment}
+Positive and negative contributions cancel, so the covariance is [zero]{.alert}
+:::
+:::
+:::
+
+## Covariance depends on the scale of the data
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-width: 4
+#| fig-height: 3.6
+#| out-width: "3.8in"
+
+scale_plot(scale_df_1, 1)
+```
+
+::: {.fragment style="text-align: center;"}
+covariance = `r signif(cov(scale_df_1$X, scale_df_1$Y), 2)`
+:::
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-width: 4
+#| fig-height: 3.6
+#| out-width: "3.8in"
+
+scale_plot(scale_df_100, 100)
+```
+
+::: {.fragment style="text-align: center;"}
+covariance = `r signif(cov(scale_df_100$X, scale_df_100$Y), 2)`
+:::
+:::
+:::
+
+::: {.fragment style="text-align: center;"}
+[Scale should not matter!]{.alert} We want the same test statistic for both
+:::
+
+## [Standardize]{.alert} the covariance
+
+Divide by the standard deviations of $X$ and $Y$ to get the [correlation coefficient]{.alert}
+
+$$
+r = \frac{\text{covariance}}{\text{SD}_X \, \text{SD}_Y}
+$$
+
+::: {.fragment}
+which is bounded
+
+$$
+-1 \le r \le 1
+$$
+:::
+
+## [Standardize]{.alert} the covariance
+
+::: {style="font-size: 0.65em;"}
+$$
+r = \frac{\frac{1}{n - 1} \sum_{i = 1}^{n} (X_i - \overline{X})(Y_i - \overline{Y})}{\sqrt{\frac{1}{n - 1} \sum_{i = 1}^{n} (X_i - \overline{X})^2} \sqrt{\frac{1}{n - 1} \sum_{i = 1}^{n} (Y_i - \overline{Y})^2}}
+$$
+:::
+
+::: {.fragment}
+The $\frac{1}{n - 1}$ terms cancel
+
+::: {style="font-size: 0.85em;"}
+$$
+r = \frac{\sum_{i = 1}^{n} (X_i - \overline{X})(Y_i - \overline{Y})}{\sqrt{\sum_{i = 1}^{n} (X_i - \overline{X})^2} \sqrt{\sum_{i = 1}^{n} (Y_i - \overline{Y})^2}}
+$$
+:::
+:::
+
+
+
 
 ## How do we quantify correlation?
 
@@ -113,31 +487,31 @@ The correlation coefficient is bound between -1 and 1
 #| fig-align: center
 #| fig-width: 7
 #| fig-height: 5.5
-#| out-width: "9in"
+#| out-width: "7in"
 
 set.seed(20210420)
-df <- c(-0.9, 0, 0.5, 0.9) %>%
-  map_dfr(~ {
-    ret <- MASS::mvrnorm(25, rep(0, 2), matrix(c(1, .x, .x, 1), ncol = 2)) %>%
-  as_tibble(.name_repair = NULL) %>%
-  rename(X = V1, Y = V2) %>%
-  mutate(rho = .x)
-    ret$r <- cor(ret$X, ret$Y)
-    ret
-  }) %>%
-  mutate(label = str_c("list(rho==", rho, ",~italic(r)==", round(r, 2), ")"))
+df <- c(-0.9, 0, 0.5, 0.9) |>
+    map_dfr(~ {
+        ret <- MASS::mvrnorm(25, rep(0, 2), matrix(c(1, .x, .x, 1), ncol = 2)) |>
+            as_tibble(.name_repair = NULL) |>
+            rename(X = V1, Y = V2) |>
+            mutate(rho = .x)
+        ret$r <- cor(ret$X, ret$Y)
+        ret
+    }) |>
+    mutate(label = str_c("list(rho==", rho, ",~italic(r)==", round(r, 2), ")"))
 
 ggplot(df, aes(X, Y, label = label)) +
-  facet_wrap(label ~ ., nrow = 2, labeller = label_parsed) +
-  geom_point(color = "tomato", size = 4) +
-  xlab(expression(italic(X))) +
-  ylab(expression(italic(Y))) +
-  theme_cowplot() +
-  theme(
-    axis.text = element_text(size = 18),
-    axis.title = element_text(size = 24),
-    strip.text = element_text(size = 24)
-  )
+    facet_wrap(label ~ ., nrow = 2, labeller = label_parsed) +
+    geom_point(color = "tomato", size = 4) +
+    xlab(expression(italic(X))) +
+    ylab(expression(italic(Y))) +
+    theme_cowplot() +
+    theme(
+        axis.text = element_text(size = 18),
+        axis.title = element_text(size = 24),
+        strip.text = element_text(size = 24)
+    )
 ```
 
 ## Quantifying uncertanty of correlation estimates
@@ -148,21 +522,24 @@ $$
 r = \frac{\sum_i (X_i - \overline{X}) (Y_i - \overline{Y})}{\sqrt{\sum_i (X_i - \overline{X}) ^ 2 \sum_i (Y_i - \overline{Y}) ^ 2}}
 $$
 
-We see a big summation in the numerator. [Pause and Think:]{.alert} what distribution do we expect for summations?
+::: {.pause-think}
 
-## Quantifying uncertanty of correlation estimates
+::: {.r-stack}
 
-Looking at the equation for estimated correlation:
+:::: {.fragment .fade-out fragment-index="0"}
+We see a big summation in the numerator. What distribution do we expect for summations?
+::::
 
-$$
-r = \frac{\sum_i (X_i - \overline{X}) (Y_i - \overline{Y})}{\sqrt{\sum_i (X_i - \overline{X}) ^ 2 \sum_i (Y_i - \overline{Y}) ^ 2}}
-$$
+:::: {.fragment fragment-index="0"}
+We see a big summation in the numerator. What distribution do we expect for summations? A ***normal distribution!***
+::::
 
-We see a big summation in the numerator. [Pause and Think:]{.alert} what distribution do we expect for summations?
-
-::: {style="text-align: center;"}
-A Normal Distribution!
 :::
+
+:::
+
+
+
 
 ## Quantifying uncertanty of correlation estimates
 
@@ -175,7 +552,6 @@ Because we are again *estimating* the standard deviation of the sampling distrib
 2. Identify null distribution
 3. Calculate $P$-value
 4. Decide:
-
     - Reject null
     - Fail to reject null
 
@@ -243,51 +619,23 @@ cor.test(hi_insect$clade_age, hi_insect$clade_richness)
 Who do we choose to memorialize?
 
 ::: columns
-::: {.column width="50%"}
-![](/img/fisher_fall.png)
+::: {.column width="40%"}
+![](/img/fisher_fall.png){width="80%"}
 :::
 
-::: {.column width="50%"}
-`Pearson's product-moment correlation`
+::: {.column width="60%"}
+Pearson's product-moment correlation
 
+::: {.incremental}
 - Doesn't need Pearson's name to make sense
 - Others have proposed the same metric
 - Names on concepts are intellectual monuments to those people
 - Again, who do we want to memorialize?
 :::
+
+:::
 :::
 
-## What do to?
-
-Not a perfect list, but some ideas:
-
-- De-memorialize colonizers and racists
-
-## What do to?
-
-Not a perfect list, but some ideas:
-
-- De-memorialize colonizers and racists
-- Acknowledge and promote the fact that people from diverse backgrounds and lots of cultures have built and use statistics
-
-::: {style="text-align: center;"}
-![](/img/anil_kumar_gain.png){width="30%"}
-
-*Anil Kumar Gain, Indian statistician*
-:::
-
-## What do to?
-
-Not a perfect list, but some ideas:
-
-- De-memorialize colonizers and racists
-- Acknowledge and promote the fact that people from diverse backgrounds and lots of cultures have built and use statistics
-- Acknowledge and promote the predictive processes developed in other knowledge systems, e.g., Hawaiian practice of kilo
-- Negate *supremacy* of western practices
-- Question your questions:
-    - Is it your question to ask?
-    - What assumptions about the world are you making before you even ask the question?
-    - Where do those assumptions come from?
 
 ## Assumptions of correlation tests
 
@@ -332,8 +680,8 @@ Correlation measures *linear* association, you can have perfect *non*-linear ass
 ```{r}
 set.seed(20210420)
 df <- tibble(
-  X = runif(25, -2, 3),
-  Y = -1 + X + 2 * X ^ 2
+    X = runif(25, -2, 3),
+    Y = -1 + X + 2 * X ^ 2
 )
 ```
 
@@ -343,60 +691,61 @@ In this figure, $r = `r round(cor(df$X, df$Y), 2)`$
 #| fig-align: center
 #| fig-width: 5
 #| fig-height: 4
-#| out-width: "6.5in"
+#| out-width: "6in"
 
 ggplot(df, aes(X, Y)) +
-  geom_point(color = "tomato", size = 4) +
-  xlab(expression(italic(X))) +
-  ylab(expression(italic(Y))) +
-  theme_cowplot() +
-  theme(
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    axis.title = element_text(size = 24)
-  )
+    geom_point(color = "tomato", size = 4) +
+    xlab(expression(italic(X))) +
+    ylab(expression(italic(Y))) +
+    theme_cowplot() +
+    theme(
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_text(size = 24)
+    )
 ```
 
 ## Interpret correlation results with care
 
 Four data sets with identical summary statistics
 
- data set | $\bar{X}$ | $\bar{Y}$ | $s_X$ | $s_Y$ | $r_{x,y}$
+data set | $\bar{X}$ | $\bar{Y}$ | $s_X$ | $s_Y$ | $r_{x,y}$
 ----------|-----------|-----------|-------|-------|-----------
- A        | 9         | 7.5       | 3.32  | 2.03  | 0.82
- B        | 9         | 7.5       | 3.32  | 2.03  | 0.82
- C        | 9         | 7.5       | 3.32  | 2.03  | 0.82
- D        | 9         | 7.5       | 3.32  | 2.03  | 0.82
+A        | 9         | 7.5       | 3.32  | 2.03  | 0.82
+B        | 9         | 7.5       | 3.32  | 2.03  | 0.82
+C        | 9         | 7.5       | 3.32  | 2.03  | 0.82
+D        | 9         | 7.5       | 3.32  | 2.03  | 0.82
 
 ## Interpret correlation results with care
 
 ```{r}
 #| fig-align: center
 #| fig-width: 6
-#| fig-height: 6
+#| fig-height: 5
 #| out-width: "7in"
 
-anscombe_tidy <- anscombe %>%
-  mutate(observation = seq_len(n())) %>%
-  pivot_longer(-observation) %>%
-  separate(name, c("variable", "set"), 1, convert = TRUE) %>%
-  mutate(set = LETTERS[seq_len(4)][set]) %>%
-  pivot_wider(names_from = "variable", values_from = "value")
+anscombe_tidy <- anscombe |>
+    mutate(observation = seq_len(n())) |>
+    pivot_longer(-observation) |>
+    separate(name, c("variable", "set"), 1, convert = TRUE) |>
+    mutate(set = LETTERS[seq_len(4)][set]) |>
+    pivot_wider(names_from = "variable", values_from = "value")
 
 ggplot(anscombe_tidy, aes(x, y, color = set)) +
-  facet_wrap(vars(set)) +
-  geom_smooth(method = "lm", show.legend = FALSE, fullrange = TRUE,
-              size = 2, lineend = "round") +
-  geom_point(size = 5, alpha = 0.5, show.legend = FALSE) +
-  scale_x_continuous(limits = c(0, 20)) +
-  scale_y_continuous(limits = c(0, 20)) +
-  coord_equal() +
-  theme_cowplot() +
-  theme(
-    axis.text = element_text(size = 18),
-    axis.title = element_text(size = 20),
-    strip.text = element_text(size = 20)
-  )
+    facet_wrap(vars(set)) +
+    geom_smooth(method = "lm", show.legend = FALSE, fullrange = TRUE,
+                se = FALSE,
+                size = 2, lineend = "round") +
+    geom_point(size = 5, alpha = 0.5, show.legend = FALSE) +
+    scale_x_continuous(limits = c(0, 20)) +
+    scale_y_continuous(limits = c(0, 20)) +
+    coord_equal() +
+    theme_cowplot() +
+    theme(
+        axis.text = element_text(size = 18),
+        axis.title = element_text(size = 20),
+        strip.text = element_text(size = 20)
+    )
 ```
 
 ## Interpret correlation results with care
@@ -457,7 +806,28 @@ We can also build *models* based on this plausible mechanism and show that they 
 
 ## Are older insect lineages more species rich in Hawaiʻi?
 
-[Pause & Think]{.alert}
+::: {.columns}
+
+:::: {.column width="60%"}
+
+::: {.pause-think}
+Are they ***really*** more diverse?
+
+:::: {.incremental}
+
+- Could be, need more data
+- Correlation could be driven by a few outliers
+- Do we have a plausible causal mechanism?
+    - Yes (more time for speciation)
+    - No (more time for extinction)
+
+::::
+
+:::
+
+::::
+
+:::: {.column width="40%"}
 
 ```{r}
 #| fig-align: center
@@ -471,11 +841,10 @@ ggplot(hi_insect, aes(x = clade_age, y = clade_richness)) +
     xlab("Clade age (my)") +
     ylab("Number of species")
 ```
+::::
 
-## Are older insect lineages more species rich in Hawaiʻi?
+:::
 
-- Could be, need more data
-- Correlation could be driven by a few outliers
-- Do we have a plausible causal mechanism?
-    - Yes (more time for speciation)...and...
-    - No (more time for extinction)
+
+
+
