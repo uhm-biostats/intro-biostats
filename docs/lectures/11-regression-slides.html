@@ -209,7 +209,7 @@
 </ul>
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="../img/hylid_phylo.png" style="width:80.0%"></p>
+<p><img data-src="../img/hylid_phylo.png" style="width:40.0%"></p>
 <figcaption>from: Magnacca and Danforth (2006) Cladistics 22</figcaption>
 </figure>
 </div>
@@ -221,7 +221,7 @@
 </ul>
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="../img/drosoph_phylo.png" style="width:60.0%"></p>
+<p><img data-src="../img/drosoph_phylo.png" style="width:30.0%"></p>
 <figcaption>from: Church and Extavour (2022) Molecular Biology and Evolution, 39</figcaption>
 </figure>
 </div>
@@ -287,8 +287,785 @@ sample estimates:
 <li>Use diagnostic plots to evaluate if data meet assumptions of regression</li>
 </ol>
 </section>
-<section id="using-slides-from-supplemental-textbook" class="slide level2">
-<h2>Using slides from supplemental textbook…</h2>
+<section id="correlation-and-regression" class="slide level2">
+<h2><span class="alert">Correlation</span> and <span class="alert">regression</span></h2>
+<div class="fragment">
+<p><span class="alert">Correlation</span>: how well we can predict <span class="math inline">\(Y\)</span> from <span class="math inline">\(X\)</span></p>
+<p>Parameter: <span class="math inline">\(\rho\)</span> Estimate: <span class="math inline">\(r\)</span></p>
+</div>
+<div class="fragment">
+<p><span class="math inline">\(r\)</span> is bounded: <span class="math inline">\([-1, 1]\)</span></p>
+</div>
+<div class="fragment">
+<p><span class="alert">Regression</span>: how the expectation of <span class="math inline">\(Y\)</span> changes with a change in <span class="math inline">\(X\)</span></p>
+<p>Parameter: <span class="math inline">\(\beta\)</span> Estimate: <span class="math inline">\(b\)</span></p>
+</div>
+<div class="fragment">
+<p><span class="math inline">\(\beta\)</span> and <span class="math inline">\(b\)</span> are the <span class="alert">slope</span></p>
+</div>
+</section>
+<section id="correlation-vs-regression-r" class="slide level2">
+<h2>Correlation vs regression: <span class="alert"><span class="math inline">\(r\)</span></span></h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-4-1.png" class="quarto-figure quarto-figure-center" style="width:9in"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p><span class="math inline">\(r\)</span>: how much of the change in <span class="math inline">\(Y\)</span> is accounted for by the change in <span class="math inline">\(X\)</span></p>
+</div>
+</section>
+<section id="correlation-vs-regression-b" class="slide level2">
+<h2>Correlation vs regression: <span class="alert"><span class="math inline">\(b\)</span></span></h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center" style="width:9in"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p><span class="math inline">\(b\)</span> is the slope: <span class="math inline">\(\dfrac{\text{rise}}{\text{run}}\)</span>, the change in <span class="math inline">\(Y\)</span> for a one unit change in <span class="math inline">\(X\)</span></p>
+</div>
+</section>
+<section id="regression-vs-correlation" class="slide level2">
+<h2>Regression vs correlation</h2>
+<div style="font-size: 0.7em;">
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><span class="alert">Regression</span></p>
+</div><div class="column" style="width:50%;">
+<p><span class="alert">Correlation</span></p>
+</div></div>
+<div class="fragment">
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>is in the units of the original measures</p>
+</div><div class="column" style="width:50%;">
+<p>is unitless</p>
+</div></div>
+</div>
+<div class="fragment">
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>can take any value</p>
+</div><div class="column" style="width:50%;">
+<p>is bound between <span class="math inline">\(-1\)</span> and <span class="math inline">\(1\)</span></p>
+</div></div>
+</div>
+<div class="fragment">
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>has <span class="math inline">\(X\)</span> as the “explanatory” and <span class="math inline">\(Y\)</span> as the “response” variable</p>
+</div><div class="column" style="width:50%;">
+<p>has no “explanatory” or “response” variable</p>
+</div></div>
+</div>
+<div class="fragment">
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>generates a formula to predict <span class="math inline">\(Y\)</span> from <span class="math inline">\(X\)</span></p>
+</div><div class="column" style="width:50%;">
+<p>does not yield a formula to predict <span class="math inline">\(Y\)</span> from <span class="math inline">\(X\)</span></p>
+</div></div>
+</div>
+<div class="fragment">
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>does not (directly) measure how well <span class="math inline">\(X\)</span> predicts <span class="math inline">\(Y\)</span></p>
+</div><div class="column" style="width:50%;">
+<p>measures how reliably <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> move together</p>
+</div></div>
+</div>
+</div>
+</section>
+<section id="regression-nomenclature-overview" class="slide level2">
+<h2>Regression: <span class="alert">nomenclature</span> overview</h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:45%;">
+<p><span class="math display">\[
+\hat{Y}_i = a + bX_i
+\]</span></p>
+<ul>
+<li class="fragment"><span class="math inline">\(\hat{Y}_i\)</span> is on the <span class="math inline">\(Y\)</span> axis</li>
+<li class="fragment"><span class="math inline">\(X_i\)</span> is on the <span class="math inline">\(X\)</span> axis</li>
+<li class="fragment"><span class="math inline">\(a + bX_i\)</span> is the line</li>
+</ul>
+</div><div class="column" style="width:55%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center" style="width:4.8in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="regression-nomenclature" class="slide level2">
+<h2>Regression: <span class="alert">nomenclature</span></h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:45%;">
+<p>Each data point has an <span class="math inline">\(X_i\)</span> and a <span class="math inline">\(Y_i\)</span></p>
+<p>The circled point is the <span class="alert">observed</span> <span class="math inline">\(Y_i\)</span> at <span class="math inline">\(X_i\)</span></p>
+</div><div class="column" style="width:55%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center" style="width:4.8in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="regression-the-prediction" class="slide level2">
+<h2>Regression: the <span class="alert">prediction</span></h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:45%;">
+<p>The line gives a <span class="alert">prediction</span> for each <span class="math inline">\(X_i\)</span></p>
+<p><span class="math display">\[
+\hat{Y}_i = a + bX_i
+\]</span></p>
+<p><span class="math inline">\(\hat{Y}_i\)</span> is the predicted value of <span class="math inline">\(Y\)</span> at <span class="math inline">\(X_i\)</span></p>
+</div><div class="column" style="width:55%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center" style="width:4.8in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="regression-the-intercept" class="slide level2">
+<h2>Regression: the <span class="alert">intercept</span></h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:45%;">
+<p><span class="math inline">\(a\)</span> is the <span class="alert">intercept</span></p>
+<p>The “predicted” <span class="math inline">\(Y\)</span> for <span class="math inline">\(X = 0\)</span></p>
+</div><div class="column" style="width:55%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center" style="width:4.8in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="regression-the-slope" class="slide level2">
+<h2>Regression: the <span class="alert">slope</span></h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:45%;">
+<p><span class="math inline">\(b\)</span> is the <span class="alert">slope</span></p>
+<p>The unit increase in <span class="math inline">\(Y\)</span> for a one unit increase in <span class="math inline">\(X\)</span></p>
+</div><div class="column" style="width:55%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center" style="width:4.8in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="regression-the-residual" class="slide level2">
+<h2>Regression: the <span class="alert">residual</span></h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:45%;">
+<p><span class="math inline">\(e_i\)</span> is the “residual” deviation from the predicted value</p>
+<p><span class="math display">\[
+e_i = Y_i - \hat{Y}_i
+\]</span></p>
+<div class="fragment">
+<p><span class="math inline">\(Y_i\)</span> is the data point</p>
+</div>
+<div class="fragment">
+<p><span class="math inline">\(\hat{Y}_i\)</span> is the prediction for that point</p>
+</div>
+</div><div class="column" style="width:55%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center" style="width:4.8in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="zoom-in-on-a-residual" class="slide level2">
+<h2>Zoom in on a residual</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center" style="width:7in"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="regression-putting-it-together" class="slide level2">
+<h2>Regression: putting it together</h2>
+<p><span class="math display">\[
+Y_i = a + bX_i + e_i
+\]</span></p>
+<ul>
+<li class="fragment"><span class="math inline">\(a\)</span> is the intercept: the predicted <span class="math inline">\(Y\)</span> for <span class="math inline">\(X = 0\)</span></li>
+<li class="fragment"><span class="math inline">\(b\)</span> is the slope: the unit increase in <span class="math inline">\(Y\)</span> for a one unit increase in <span class="math inline">\(X\)</span></li>
+<li class="fragment"><span class="math inline">\(e_i\)</span> is the residual: <span class="math inline">\(e_i = Y_i - \hat{Y}_i\)</span>, where <span class="math inline">\(\hat{Y}_i = a + bX_i\)</span></li>
+</ul>
+</section>
+<section id="regression-goals-and-assumptions" class="slide level2">
+<h2>Regression: <span class="alert">goals</span> and <span class="alert">assumptions</span></h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><span class="alert">Goal</span>: predict <span class="math inline">\(Y\)</span> from <span class="math inline">\(X\)</span></p>
+<p><span class="alert">Assumptions</span></p>
+<ul>
+<li>Random sample</li>
+</ul>
+<ul>
+<li class="fragment"><span class="math inline">\(Y\)</span> is normally distributed with variance independent of <span class="math inline">\(X\)</span></li>
+</ul>
+<div class="fragment">
+<p>In other words, the <span class="alert">residuals are normal</span></p>
+</div>
+<ul>
+<li class="fragment">(Linear) regression assumes that the relationship between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> can be described by a line</li>
+</ul>
+<div class="fragment">
+<p>Regression does <strong>not</strong> assume that <span class="math inline">\(X\)</span> is normally distributed</p>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center" style="width:4.6in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="a-line-cannot-describe-every-relationship" class="slide level2">
+<h2>A line cannot describe every relationship</h2>
+<p><span class="math inline">\(Y = aX^b\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center" style="width:5.5in"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p>A line can’t capture this curve…we will come back to what we can do</p>
+</div>
+</section>
+<section id="residuals" class="slide level2">
+<h2><span class="alert">Residuals</span></h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:45%;">
+<p>The difference between the value (<span class="math inline">\(Y_i\)</span>) and the prediction (<span class="math inline">\(\hat{Y}_i\)</span>) is called the <span class="alert">residual</span> (<span class="math inline">\(e_i\)</span>)</p>
+<p><span class="math display">\[
+e_i = Y_i - \hat{Y}_i
+\]</span></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(i\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(X_i\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(Y_i\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\hat{Y}_i\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.8</td>
+<td style="text-align: center;">0.74</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1.28</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">2.2</td>
+<td style="text-align: center;">1.82</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">2.2</td>
+<td style="text-align: center;">2.36</td>
+</tr>
+</tbody>
+</table>
+</div><div class="column" style="width:55%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center" style="width:4.8in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="residuals-e_i-y_i---haty_i" class="slide level2">
+<h2><span class="alert">Residuals</span>: <span class="math inline">\(e_i = Y_i - \hat{Y}_i\)</span></h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:45%;">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(i\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(X_i\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(Y_i\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\hat{Y}_i\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(e_i\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">0.8</td>
+<td style="text-align: center;">0.74</td>
+<td style="text-align: center;">0.06</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1.28</td>
+<td style="text-align: center;">-0.28</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">2.2</td>
+<td style="text-align: center;">1.82</td>
+<td style="text-align: center;">0.38</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">2.2</td>
+<td style="text-align: center;">2.36</td>
+<td style="text-align: center;">-0.16</td>
+</tr>
+</tbody>
+</table>
+<div class="fragment">
+<p>Points above the line have positive residuals, points below have negative residuals</p>
+</div>
+</div><div class="column" style="width:55%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center" style="width:4.8in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="method-of-least-squares" class="slide level2">
+<h2>Method of <span class="alert">least squares</span></h2>
+<p>In linear regression, we find the line that “best fits” the data</p>
+<div class="fragment">
+<p>But what criterion defines the “best fit”?</p>
+</div>
+<div class="fragment">
+<p>The “best fit” line minimizes the <span class="alert">sum of squared residuals</span></p>
+<p><span class="math display">\[
+\text{minimize } \sum_{i = 1}^{n} (Y_i - \hat{Y}_i)^2 = \sum_{i = 1}^{n} e_i^2 = SS_{resid}
+\]</span></p>
+</div>
+<div class="fragment">
+<p>The equations on the following slides solve this</p>
+</div>
+</section>
+<section id="least-squares-attempt-1" class="slide level2">
+<h2>Least squares: attempt 1</h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:40%;">
+<p>A line with the wrong slope</p>
+<p>The residuals are large, so <span class="math inline">\(\sum e_i^2\)</span> is <span class="alert">large</span></p>
+<p><span class="math inline">\(SS_{resid} =\)</span> 518.7</p>
+</div><div class="column" style="width:60%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-17-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="least-squares-attempt-2" class="slide level2">
+<h2>Least squares: attempt 2</h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:40%;">
+<p>A flat line</p>
+<p>The residuals are smaller, so <span class="math inline">\(\sum e_i^2\)</span> is <span class="alert">mid</span></p>
+<p><span class="math inline">\(SS_{resid} =\)</span> 140.8</p>
+</div><div class="column" style="width:60%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-18-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="least-squares-attempt-3" class="slide level2">
+<h2>Least squares: attempt 3</h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:40%;">
+<p>A line close to every point</p>
+<p>The residuals are small, so <span class="math inline">\(\sum e_i^2\)</span> is <span class="alert">small</span></p>
+<p><span class="math inline">\(SS_{resid} =\)</span> 14.8</p>
+</div><div class="column" style="width:60%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="least-squares-the-best-slope-minimizes-ss_resid" class="slide level2">
+<h2>Least squares: the best slope minimizes <span class="math inline">\(SS_{resid}\)</span></h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-20-1.png" class="quarto-figure quarto-figure-center" style="width:7in"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="the-regression-coefficient-b" class="slide level2">
+<h2>The “regression coefficient”, <span class="math inline">\(b\)</span></h2>
+<p>The slope, <span class="math inline">\(b\)</span>, describes the expected change in the response variable for each change in the explanatory variable</p>
+<p><span class="math display">\[
+b = \frac{\overbrace{\text{sample covariance}_{X,Y}}^{\text{rise}}}{\underbrace{s_X^2}_{\text{run}}} = \frac{\sum_{i = 1}^{n} (X_i - \overline{X})(Y_i - \overline{Y})}{\sum_{i = 1}^{n} (X_i - \overline{X})^2}
+\]</span></p>
+</section>
+<section id="the-regression-coefficient-b-1" class="slide level2">
+<h2>The “regression coefficient”, <span class="math inline">\(b\)</span></h2>
+<p><span class="math inline">\(b\)</span> is an estimate of the true parameter, <span class="math inline">\(\beta\)</span></p>
+<p><span class="math display">\[
+\beta = \frac{\text{Cov}_{X,Y}}{\sigma_X^2}
+\]</span></p>
+<p><span class="alert"><span class="math inline">\(b\)</span> is an unbiased estimate of <span class="math inline">\(\beta\)</span></span></p>
+</section>
+<section id="compare-to-the-correlation-coefficient" class="slide level2">
+<h2>Compare to the correlation coefficient</h2>
+<p><span class="math display">\[
+r = \frac{\text{sample covariance}_{X,Y}}{s_X s_Y}
+\]</span></p>
+<div class="fragment">
+<p>Same numerator, different denominator</p>
+<p><span class="math display">\[
+b = r \, \frac{s_Y}{s_X}
+\]</span></p>
+</div>
+<div class="fragment">
+<p><span class="math inline">\(b\)</span> carries the units of <span class="math inline">\(Y\)</span> per unit of <span class="math inline">\(X\)</span>, <span class="math inline">\(r\)</span> is unitless</p>
+</div>
+</section>
+<section id="example-slopes" class="slide level2">
+<h2>Example slopes</h2>
+<p><span class="math inline">\(Y = \alpha + \beta X\)</span></p>
+<div class="columns">
+<div class="column" style="width:33%;">
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-21-1.png" class="quarto-figure quarto-figure-center" style="width:3in"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Positive slope, <span class="math inline">\(\beta &gt; 0\)</span></p>
+</div>
+</div><div class="column" style="width:33%;">
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-22-1.png" class="quarto-figure quarto-figure-center" style="width:3in"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Slope = 0, <span class="math inline">\(\beta = 0\)</span></p>
+</div>
+</div><div class="column" style="width:33%;">
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-23-1.png" class="quarto-figure quarto-figure-center" style="width:3in"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Negative slope, <span class="math inline">\(\beta &lt; 0\)</span></p>
+</div>
+</div></div>
+</section>
+<section id="example-intercepts" class="slide level2">
+<h2>Example intercepts</h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-24-1.png" class="quarto-figure quarto-figure-center" style="width:4.4in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p>Different intercepts, <span class="math inline">\(\alpha_1 &gt; \alpha_2\)</span></p>
+<div class="fragment">
+<p><span class="math display">\[
+Y_i = \begin{cases}
+a_1 + bX_i + e_i &amp; \text{if drug} \\
+a_2 + bX_i + e_i &amp; \text{if placebo}
+\end{cases}
+\]</span></p>
+</div>
+</div></div>
+</section>
+<section id="dating-a-lava-flow-with-radiocarbon" class="slide level2">
+<h2>Dating a lava flow with <span class="alert">radiocarbon</span></h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:45%;">
+<p>Charcoal from forests burned by Mauna Loa and Kīlauea lava holds <span class="math inline">\(^{14}\)</span>C</p>
+<p>After the trees die, <span class="math inline">\(^{14}\)</span>C decays: charcoal under older flows is more <span class="alert">depleted</span></p>
+<p>Can we predict the age of a flow from the <span class="math inline">\(^{14}\)</span>C depletion in charcoal buried beneath it?</p>
+<p><em>Simulated data</em></p>
+</div><div class="column" style="width:55%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-25-1.png" class="quarto-figure quarto-figure-center" style="width:4.8in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="predicting-the-age-of-a-flow" class="slide level2">
+<h2>Predicting the age of a flow</h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:45%;">
+<p>For a new flow we measure <span class="math inline">\(X\)</span>, the <span class="math inline">\(^{14}\)</span>C depletion</p>
+<p>We <span class="alert">need</span> <span class="math inline">\(\hat{Y}\)</span>, the predicted age</p>
+<div class="fragment">
+<p>The line gives us a way to get from <span class="math inline">\(X\)</span> to <span class="math inline">\(\hat{Y}\)</span></p>
+</div>
+</div><div class="column" style="width:55%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-26-1.png" class="quarto-figure quarto-figure-center" style="width:4.8in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="building-a-linear-model-in-r-with-lm" class="slide level2">
+<h2>Building a linear model in <em>R</em> with <code>lm()</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a>lava_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(eruption_age <span class="sc">~</span> c14_depletion, <span class="at">data =</span> lava_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li class="fragment"><code>eruption_age</code> is a column of the data (the response, <span class="math inline">\(Y\)</span>)</li>
+<li class="fragment"><code>c14_depletion</code> is a column of the data (the explanatory variable, <span class="math inline">\(X\)</span>)</li>
+<li class="fragment"><code>lava_data</code> is the <code>data.frame</code> holding both columns</li>
+</ul>
+</section>
+<section id="the-fitted-model" class="slide level2">
+<h2>The fitted model</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a>lava_model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = eruption_age ~ c14_depletion, data = lava_data)
+
+Coefficients:
+  (Intercept)  c14_depletion  
+       -9.153         86.148  </code></pre>
+</div>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+\hat{Y}_i = -9.2 + 86.1 X_i
+\]</span></p>
+</div>
+</section>
+<section id="predicting-y-from-x" class="slide level2">
+<h2>Predicting <span class="math inline">\(Y\)</span> from <span class="math inline">\(X\)</span></h2>
+<p>Predicted age <span class="math inline">\(=\)</span> -9.2 <span class="math inline">\(+\)</span> 86.1 <span class="math inline">\(\times\)</span> (<span class="math inline">\(^{14}\)</span>C depletion)</p>
+<p>We can think of the regression line as offering “predictions” (i.e., best guesses) for points not in our data set</p>
+<div class="pause-think">
+<p>If charcoal under an undated flow has <span class="math inline">\(^{14}\)</span>C depletion equal to <span class="alert">10</span>%, what is its predicted age? (check the graph)</p>
+</div>
+</section>
+<section id="predicting-y-from-x-1" class="slide level2">
+<h2>Predicting <span class="math inline">\(Y\)</span> from <span class="math inline">\(X\)</span></h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:45%;">
+<p>Plug <span class="math inline">\(X = 10\)</span> into the equation</p>
+<p><span class="math display">\[
+\hat{Y} = -9.2 + 86.1 \times 10 = 852
+\]</span></p>
+<p>The predicted age is about 852 years BP</p>
+</div><div class="column" style="width:55%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-29-1.png" class="quarto-figure quarto-figure-center" style="width:4.8in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="visualizing-residuals-lava-flow-data" class="slide level2">
+<h2>Visualizing residuals: lava flow data</h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:40%;">
+<p>The residual, <span class="math inline">\(e_i\)</span>, is the difference between an observed (<span class="math inline">\(Y_i\)</span>) and a predicted (<span class="math inline">\(\hat{Y}_i\)</span>) value</p>
+</div><div class="column" style="width:60%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-30-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="do-the-data-fit-regression-assumptions-1-of-2" class="slide level2">
+<h2>Do the data fit regression assumptions? (1 of 2)</h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:50%;">
+<p>Examine <span class="alert">residuals vs fitted values</span></p>
+<p>Are the residuals, and their variance, independent of the predictions, <span class="math inline">\(\hat{Y}\)</span>?</p>
+</div><div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-31-1.png" class="quarto-figure quarto-figure-center" style="width:4.4in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="residuals-vs-fitted-the-relationship-is-not-linear" class="slide level2">
+<h2>Residuals vs fitted: the relationship is not linear</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-32-1.png" class="quarto-figure quarto-figure-center" style="width:9.5in"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p>The residuals show a pattern: a line was the wrong shape</p>
+</div>
+</section>
+<section id="residuals-vs-fitted-the-variance-is-not-equal" class="slide level2">
+<h2>Residuals vs fitted: the variance is not equal</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-33-1.png" class="quarto-figure quarto-figure-center" style="width:9.5in"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p>The spread of the residuals changes with <span class="math inline">\(\hat{Y}\)</span>: unequal variance</p>
+</div>
+</section>
+<section id="do-the-data-fit-regression-assumptions-2-of-2" class="slide level2">
+<h2>Do the data fit regression assumptions? (2 of 2)</h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:50%;">
+<p>Examine the <span class="alert">QQ-plot</span></p>
+<p>Do the points (roughly) fall on a line?</p>
+</div><div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-34-1.png" class="quarto-figure quarto-figure-center" style="width:4.4in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
 </section>
 <section>
 <section id="break" class="title-slide slide level1 center">
@@ -299,29 +1076,29 @@ sample estimates:
 <h2>Showing steps for calculating regression models</h2>
 <p>Make some fake tooth decay data</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a><span class="co"># this makes all "random" numbers the same every time</span></span>
-<span id="cb2-2"><a href=""></a><span class="co"># we run this code</span></span>
-<span id="cb2-3"><a href=""></a><span class="fu">set.seed</span>(<span class="dv">12</span>)</span>
-<span id="cb2-4"><a href=""></a></span>
-<span id="cb2-5"><a href=""></a><span class="co"># random dates</span></span>
-<span id="cb2-6"><a href=""></a>deltaC14 <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">18</span>, <span class="dv">0</span>, <span class="dv">600</span>)</span>
-<span id="cb2-7"><a href=""></a></span>
-<span id="cb2-8"><a href=""></a><span class="co"># simulate date of birth from slope, intercept,</span></span>
-<span id="cb2-9"><a href=""></a><span class="co"># and residual error</span></span>
-<span id="cb2-10"><a href=""></a>dateOfBirth <span class="ot">&lt;-</span> <span class="fl">1992.27</span> <span class="sc">-</span> <span class="fl">0.05326</span> <span class="sc">*</span> deltaC14 <span class="sc">+</span></span>
-<span id="cb2-11"><a href=""></a>    <span class="fu">rnorm</span>(<span class="dv">18</span>, <span class="at">sd =</span> <span class="fl">10.99</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a><span class="co"># this makes all "random" numbers the same every time</span></span>
+<span id="cb5-2"><a href=""></a><span class="co"># we run this code</span></span>
+<span id="cb5-3"><a href=""></a><span class="fu">set.seed</span>(<span class="dv">12</span>)</span>
+<span id="cb5-4"><a href=""></a></span>
+<span id="cb5-5"><a href=""></a><span class="co"># random dates</span></span>
+<span id="cb5-6"><a href=""></a>deltaC14 <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">18</span>, <span class="dv">0</span>, <span class="dv">600</span>)</span>
+<span id="cb5-7"><a href=""></a></span>
+<span id="cb5-8"><a href=""></a><span class="co"># simulate date of birth from slope, intercept,</span></span>
+<span id="cb5-9"><a href=""></a><span class="co"># and residual error</span></span>
+<span id="cb5-10"><a href=""></a>dateOfBirth <span class="ot">&lt;-</span> <span class="fl">1992.27</span> <span class="sc">-</span> <span class="fl">0.05326</span> <span class="sc">*</span> deltaC14 <span class="sc">+</span></span>
+<span id="cb5-11"><a href=""></a>    <span class="fu">rnorm</span>(<span class="dv">18</span>, <span class="at">sd =</span> <span class="fl">10.99</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="showing-steps-for-calculating-regression-models-1" class="slide level2">
 <h2>Showing steps for calculating regression models</h2>
 <p>Make some fake tooth decay data</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="co"># combine into data.frame</span></span>
-<span id="cb3-2"><a href=""></a>tooth.data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">deltaC14 =</span> deltaC14,</span>
-<span id="cb3-3"><a href=""></a>                         <span class="at">dateOfBirth =</span> dateOfBirth)</span>
-<span id="cb3-4"><a href=""></a></span>
-<span id="cb3-5"><a href=""></a><span class="co"># have a look</span></span>
-<span id="cb3-6"><a href=""></a><span class="fu">head</span>(tooth.data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a><span class="co"># combine into data.frame</span></span>
+<span id="cb6-2"><a href=""></a>tooth.data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">deltaC14 =</span> deltaC14,</span>
+<span id="cb6-3"><a href=""></a>                         <span class="at">dateOfBirth =</span> dateOfBirth)</span>
+<span id="cb6-4"><a href=""></a></span>
+<span id="cb6-5"><a href=""></a><span class="co"># have a look</span></span>
+<span id="cb6-6"><a href=""></a><span class="fu">head</span>(tooth.data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   deltaC14 dateOfBirth
 1  41.61655    1994.757
@@ -337,12 +1114,12 @@ sample estimates:
 <h2>Showing steps for calculating regression models</h2>
 <p>Plot it</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a><span class="fu">ggplot</span>(tooth.data, <span class="fu">aes</span>(deltaC14, dateOfBirth)) <span class="sc">+</span></span>
-<span id="cb5-2"><a href=""></a>    <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a><span class="fu">ggplot</span>(tooth.data, <span class="fu">aes</span>(deltaC14, dateOfBirth)) <span class="sc">+</span></span>
+<span id="cb8-2"><a href=""></a>    <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center" style="width:5.5in"></p>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-37-1.png" class="quarto-figure quarto-figure-center" style="width:5.5in"></p>
 </figure>
 </div>
 </div>
@@ -352,15 +1129,15 @@ sample estimates:
 <h2>Showing steps for calculating regression models</h2>
 <p>Make a linear model</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a>tooth.model <span class="ot">&lt;-</span> <span class="fu">lm</span>(dateOfBirth <span class="sc">~</span> deltaC14,</span>
-<span id="cb6-2"><a href=""></a>                  <span class="at">data =</span> tooth.data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a>tooth.model <span class="ot">&lt;-</span> <span class="fu">lm</span>(dateOfBirth <span class="sc">~</span> deltaC14,</span>
+<span id="cb9-2"><a href=""></a>                  <span class="at">data =</span> tooth.data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="showing-steps-for-calculating-regression-models-4" class="slide level2">
 <h2>Showing steps for calculating regression models</h2>
 <p>Get info on null hypothesis tests</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a><span class="fu">summary</span>(tooth.model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a><span class="fu">summary</span>(tooth.model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
@@ -390,7 +1167,7 @@ F-statistic: 25.24 on 1 and 16 DF,  p-value: 0.0001247</code></pre>
 <h2>Showing steps for calculating regression models</h2>
 <p>Get confidence intervals of coefficient estimates</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a><span class="fu">confint</span>(tooth.model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a><span class="fu">confint</span>(tooth.model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                    2.5 %        97.5 %
 (Intercept) 1987.18909121 2002.72777337
