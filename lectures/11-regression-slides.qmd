@@ -146,12 +146,15 @@ cr_df <- rbind(
 )
 cr_df$panel <- factor(cr_df$panel, levels = panel_names)
 
+# rise and run span the whole range of x in each panel
 cr_tri <- data.frame(
     panel = factor(panel_names, levels = panel_names),
     b = c(0.33, 1.36)
 )
-cr_tri$y0 <- 15 + cr_tri$b
-cr_tri$y1 <- 15 + 2 * cr_tri$b
+cr_tri$x0 <- as.numeric(tapply(cr_df$x, cr_df$panel, min))
+cr_tri$x1 <- as.numeric(tapply(cr_df$x, cr_df$panel, max))
+cr_tri$y0 <- 15 + cr_tri$b * cr_tri$x0
+cr_tri$y1 <- 15 + cr_tri$b * cr_tri$x1
 
 cr_plot <- function(triangle = FALSE) {
     p <- ggplot(cr_df, aes(x, y)) +
@@ -161,17 +164,17 @@ cr_plot <- function(triangle = FALSE) {
                     color = "firebrick", linewidth = 1.5)
     if (triangle) {
         p <- p +
-            geom_segment(data = cr_tri, aes(x = 1, xend = 2, y = y0, yend = y0),
-                         linewidth = 1.3) +
-            geom_segment(data = cr_tri, aes(x = 2, xend = 2, y = y0, yend = y1),
-                         linewidth = 1.3, color = line_col) +
-            geom_text(data = cr_tri, aes(x = 1.5, y = y0 - 1.5, label = "run = 1"),
-                      size = 6) +
-            geom_text(data = cr_tri, aes(x = 2.15, y = (y0 + y1) / 2, label = "rise"),
-                      size = 6, hjust = 0, color = line_col)
+            geom_segment(data = cr_tri, aes(x = x0, xend = x1, y = y0, yend = y0),
+                         linewidth = 2.5) +
+            geom_segment(data = cr_tri, aes(x = x1, xend = x1, y = y0, yend = y1),
+                         linewidth = 2.5, color = line_col) +
+            geom_text(data = cr_tri, aes(x = (x0 + x1) / 2, y = y0 - 1.8, label = "run"),
+                      size = 7) +
+            geom_text(data = cr_tri, aes(x = x1 + 0.1, y = (y0 + y1) / 2, label = "rise"),
+                      size = 7, hjust = 0, color = line_col)
     }
     p +
-        coord_cartesian(ylim = c(3, 27)) +
+        coord_cartesian(xlim = c(-3.5, 3.9), ylim = c(3, 27)) +
         xlab(xlab_i) +
         ylab(ylab_i) +
         theme_slides()
@@ -244,7 +247,8 @@ nomen_plot <- function(stage = 1) {
     }
 
     p +
-        scale_x_continuous(breaks = xi, labels = expression(X[i])) +
+        scale_x_continuous(breaks = xi, labels = expression(X[i]), 
+                           expand = 0) +
         scale_y_continuous(breaks = ybreaks, labels = ylabs) +
         coord_cartesian(xlim = c(-0.5, 10.5), ylim = c(0, ymax), expand = FALSE) +
         xlab(xlab_i) +
@@ -343,7 +347,7 @@ assump_plot <- function() {
 # a relationship a line cannot describe: Y = a X^b
 set.seed(20211029)
 pow_df <- data.frame(x = seq(1, 10, length.out = 25))
-pow_df$y <- 0.8 * pow_df$x ^ 1.8 * exp(rnorm(25, sd = 0.1))
+pow_df$y <- 0.8 * pow_df$x ^ 2.8 * exp(rnorm(25, sd = 0.1))
 
 # ---- slopes and intercepts --------------------------------------------------
 
@@ -665,6 +669,7 @@ res_plot <- function(show_resid = FALSE) {
         theme_slides()
 }
 ```
+
 
 
 ## [Correlation]{.alert} and [regression]{.alert}
