@@ -8,13 +8,7 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE,
 
 library(cowplot)
 library(ggplot2)
-library(dplyr)
 library(viridis)
-library(glue)
-library(stringr)
-library(tidyr)
-library(purrr)
-library(magrittr)
 ```
 
 ## Are older insect lineages more species rich in Hawaiʻi?
@@ -438,15 +432,36 @@ lava_plot <- function(line = TRUE, resid = FALSE, band = FALSE,
         xk <- d$c14_depletion[k_lava]
         yk <- d$eruption_age[k_lava]
         fk <- d$fit[k_lava]
+        # labels go on the empty side of the line: above-left for a point above
+        # the line, below-right for a point below it
+        sgn <- sign(yk - fk)
+        x_far <- min(max(xk - sgn * 4, 3), 17)
+        x_near <- min(max(xk + sgn * 4, 3), 17)
+        y_lab <- min(max(yk + sgn * 350, 120), 1700)
+        yhat_lab <- min(max(fk - sgn * 350, 120), 1700)
+        # arrows from each label toward its point
+        toward <- function(x0, y0, x1, y1, from, to) {
+            c(x0 + from * (x1 - x0), y0 + from * (y1 - y0),
+              x0 + to * (x1 - x0), y0 + to * (y1 - y0))
+        }
+        a_y <- toward(x_far, y_lab, xk, yk, 0.3, 0.85)
+        a_f <- toward(x_near, yhat_lab, xk, fk, 0.3, 0.85)
         p <- p +
-            annotate("point", x = xk, y = fk, size = 5) +
-            annotate("text", x = xk + 0.5, y = yk, label = "Y[i]", parse = TRUE,
-                     size = 8, hjust = 0) +
-            annotate("text", x = xk + 0.5, y = fk, label = "hat(Y)[i]", parse = TRUE,
-                     size = 8, hjust = 0) +
-            annotate("text", x = xk - 0.5, y = (yk + fk) / 2,
-                     label = "e[i] == Y[i] - hat(Y)[i]", parse = TRUE,
-                     size = 7, hjust = 1, color = "firebrick")
+            annotate("segment", x = xk, xend = xk, y = fk, yend = yk,
+                     color = "firebrick", linewidth = 3) +
+            annotate("point", x = xk, y = yk, shape = 1, size = 9, stroke = 1.5) +
+            annotate("point", x = xk, y = fk, size = 6) +
+            annotate("segment", x = a_y[1], y = a_y[2], xend = a_y[3], yend = a_y[4],
+                     arrow = arrow(length = unit(0.12, "in"))) +
+            annotate("segment", x = a_f[1], y = a_f[2], xend = a_f[3], yend = a_f[4],
+                     arrow = arrow(length = unit(0.12, "in"))) +
+            annotate("text", x = x_far, y = y_lab, label = "Y[i]", parse = TRUE,
+                     size = 10) +
+            annotate("text", x = x_near, y = yhat_lab, label = "hat(Y)[i]",
+                     parse = TRUE, size = 10) +
+            annotate("text", x = xk - sgn * 0.4, y = (yk + fk) / 2, label = "e[i]",
+                     parse = TRUE, size = 10, color = "firebrick",
+                     hjust = ifelse(sgn > 0, 1, 0))
     }
     p +
         coord_cartesian(xlim = c(0, 20), ylim = c(0, 1800), expand = FALSE) +
@@ -666,6 +681,165 @@ res_plot <- function(show_resid = FALSE) {
         coord_cartesian(xlim = c(5.5, 9.6), ylim = c(0.3, 2.8)) +
         xlab(xlab_i) +
         ylab(ylab_i) +
+        theme_slides()
+}
+
+# ---- sums of squares: steep versus shallow slope ----------------------------
+
+set.seed(20211101)
+demo_x <- seq(1, 10, length.out = 20)
+demo_z <- 1.1 * as.numeric(scale(resid(lm(rnorm(20) ~ demo_x))))
+
+# same scatter around the line in both cases, only the slope changes
+ss_reg_demo <- function(b) {
+    d <- data.frame(x = demo_x)
+    d$y <- 5.5 + b * (d$x - mean(d$x)) + demo_z
+    d$fit <- fitted(lm(y ~ x, data = d))
+    ybar <- mean(d$y)
+    ss_reg_val <- sum((d$fit - ybar) ^ 2)
+    ggplot(d, aes(x, y)) +
+        geom_hline(yintercept = ybar, color = "firebrick") +
+        geom_segment(aes(xend = x, y = fit, yend = ybar), color = "grey40") +
+        geom_line(aes(y = fit), color = line_col, linewidth = 1.3) +
+        geom_point(color = pt_col, size = 3) +
+        annotate("text", x = 0.5, y = 10.6, hjust = 0, size = 7, parse = TRUE,
+                 label = paste0("SS[reg] == ", round(ss_reg_val, 1))) +
+        coord_cartesian(xlim = c(0, 11), ylim = c(0, 11)) +
+        xlab(xlab_i) +
+        ylab(ylab_i) +
+        theme_slides() +
+        theme(axis.text = element_blank(), axis.ticks = element_blank())
+}
+
+# ---- the three pieces on one plot -------------------------------------------
+
+# green: Y-hat to the mean of Y (regression); red: Y to Y-hat (error)
+ss_combo_plot <- function() {
+    d <- lava_data
+    d$fit <- fitted(lava_model)
+    ybar <- mean(d$eruption_age)
+    ggplot(d, aes(c14_depletion, eruption_age)) +
+        geom_hline(yintercept = ybar, linetype = "dashed", color = "grey40") +
+        geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = line_col,
+                    linewidth = 1.3) +
+        geom_segment(aes(xend = c14_depletion, y = ybar, yend = fit),
+                     color = "darkgreen", linewidth = 1.4) +
+        geom_segment(aes(xend = c14_depletion, y = fit, yend = eruption_age),
+                     color = "firebrick", linewidth = 1.4) +
+        geom_point(color = pt_col, size = 4) +
+        annotate("text", x = 19.8, y = ybar + 90, label = "bar(Y)", parse = TRUE,
+                 size = 8, hjust = 1) +
+        annotate("text", x = 19.8, y = a_lava + b_lava * 19.8 + 100,
+                 label = "hat(Y) == a + b * X", parse = TRUE, size = 8, hjust = 1,
+                 color = line_col) +
+        coord_cartesian(xlim = c(0, 20), ylim = c(0, 1800), expand = FALSE) +
+        xlab(lava_xlab) +
+        ylab(lava_ylab) +
+        theme_slides()
+}
+
+# ---- big, medium and small R^2 and F ----------------------------------------
+
+# n points with sample correlation exactly r and variance of Y exactly 1
+scen_r <- c(0.97, 0.71, 0.05)
+scen_words <- c("big", "medium", "small")
+scen_strip <- c("atop(SS[reg] > SS[error], MS[reg] > MS[error])",
+                "atop(SS[reg] %~~% SS[error], MS[reg] %~~% MS[error])",
+                "atop(SS[reg] < SS[error], MS[reg] < MS[error])")
+
+set.seed(20211102)
+scen_df <- do.call(rbind, lapply(seq_along(scen_r), function(i) {
+    x <- as.numeric(scale(rnorm(12)))
+    z <- as.numeric(scale(resid(lm(rnorm(12) ~ x))))
+    data.frame(panel = i, x = x,
+               y = -scen_r[i] * x + sqrt(1 - scen_r[i] ^ 2) * z)
+}))
+
+scen_stats <- do.call(rbind, lapply(1:3, function(i) {
+    m <- lm(y ~ x, data = scen_df[scen_df$panel == i, ])
+    data.frame(panel = i, r2 = summary(m)$r.squared,
+               f = unname(summary(m)$fstatistic[1]))
+}))
+scen_stats$r2_lab <- paste0('R^2 == "', sprintf("%.2f", scen_stats$r2), '" ~ "(',
+                            scen_words, ')"')
+scen_stats$f_lab <- paste0('F == "', sprintf("%.2f", scen_stats$f), '" ~ "(',
+                           scen_words, ')"')
+
+scen_df$panel <- factor(scen_df$panel, levels = 1:3, labels = scen_strip)
+scen_stats$panel <- factor(scen_stats$panel, levels = 1:3, labels = scen_strip)
+
+# stage 1: the lines and the SS and MS comparison; 2: add R^2; 3: add F
+scen_plot <- function(stage = 1) {
+    p <- ggplot(scen_df, aes(x, y)) +
+        facet_wrap(vars(panel), labeller = label_parsed) +
+        geom_smooth(method = "lm", formula = y ~ x, se = FALSE, color = line_col,
+                    linewidth = 1.3) +
+        geom_point(color = pt_col, size = 3)
+    if (stage >= 2) {
+        p <- p + geom_text(data = scen_stats, aes(x = 0, y = -3.5, label = r2_lab),
+                           parse = TRUE, size = 7)
+    }
+    if (stage >= 3) {
+        p <- p + geom_text(data = scen_stats, aes(x = 0, y = -4.5, label = f_lab),
+                           parse = TRUE, size = 7)
+    }
+    p +
+        coord_cartesian(xlim = c(-2.6, 2.6), ylim = c(-5, 2.6)) +
+        xlab(xlab_i) +
+        ylab(ylab_i) +
+        theme_slides() +
+        theme(axis.text = element_blank(), axis.ticks = element_blank())
+}
+
+# ---- the F distribution under H0 --------------------------------------------
+
+f_plot <- function(f_obs, df1, df2, xmax) {
+    d <- data.frame(x = seq(0.02, xmax, length.out = 600))
+    d$y <- df(d$x, df1, df2)
+    tail_d <- d[d$x >= f_obs, ]
+    ggplot(d, aes(x, y)) +
+        geom_area(data = tail_d, fill = "firebrick", alpha = 0.7) +
+        geom_line(linewidth = 1.3) +
+        geom_vline(xintercept = f_obs, color = line_col, linewidth = 1.3) +
+        annotate("text", x = f_obs - 0.02 * xmax, y = 0.85, label = "observed F",
+                 hjust = 1, size = 7, color = line_col) +
+        annotate("text", x = f_obs + 0.1 * xmax, y = 0.25, label = "P-value",
+                 hjust = 0.5, size = 7, color = "firebrick") +
+        annotate("segment", x = f_obs + 0.1 * xmax, xend = f_obs + 0.04 * xmax,
+                 y = 0.2, yend = 0.02, color = "firebrick",
+                 arrow = arrow(length = unit(0.12, "in"))) +
+        coord_cartesian(xlim = c(0, xmax), ylim = c(0, 1)) +
+        xlab("F") +
+        ylab("Density") +
+        theme_slides()
+}
+
+
+# t distribution with both tails beyond +/- t_obs shaded (the two-sided P-value)
+t_plot <- function(t_obs, df) {
+    t_abs <- abs(t_obs)
+    xmax <- t_abs + 2
+    d <- data.frame(x = seq(-xmax, xmax, length.out = 800))
+    d$y <- dt(d$x, df)
+    ymax <- max(d$y)
+    ggplot(d, aes(x, y)) +
+        geom_area(data = d[d$x <= -t_abs, ], fill = "firebrick", alpha = 0.7) +
+        geom_area(data = d[d$x >= t_abs, ], fill = "firebrick", alpha = 0.7) +
+        geom_line(linewidth = 1.3) +
+        geom_vline(xintercept = c(-t_abs, t_abs), color = line_col, linewidth = 1.3,
+                   linetype = "dashed") +
+        annotate("text", x = t_abs - 0.15, y = 0.8 * ymax, label = "observed~t",
+                 parse = TRUE, hjust = 1, size = 7, color = line_col) +
+        annotate("text", x = -t_abs + 0.15, y = 0.8 * ymax, label = "-observed~t",
+                 parse = TRUE, hjust = 0, size = 7, color = line_col) +
+        annotate("text", x = c(-t_abs, t_abs), y = 0.3 * ymax, label = "P / 2",
+                 hjust = 0.5, size = 7, color = "firebrick") +
+        annotate("segment", x = c(-t_abs, t_abs), xend = c(-t_abs, t_abs),
+                 y = 0.24 * ymax, yend = 0.03 * ymax, color = "firebrick",
+                 arrow = arrow(length = unit(0.12, "in"))) +
+        coord_cartesian(xlim = c(-xmax, xmax)) +
+        xlab("t") +
+        ylab("Density") +
         theme_slides()
 }
 ```
@@ -1415,32 +1589,80 @@ lava_plot(predict_x = 10)
 :::
 :::
 
-## Visualizing residuals: lava flow data
 
-::: {.columns style="align-items: center;"}
-::: {.column width="40%"}
-The residual, $e_i$, is the difference between an observed ($Y_i$) and a predicted ($\hat{Y}_i$) value
+# Break!
+
+## Recall regression assumptions
+
+::: columns
+::: {.column width="50%"}
+[Assumptions]{.alert}
+
+- Random sample
+- $Y$ is normally distributed with variance independent of $X$
+- The relationship between $X$ and $Y$ can be described by a line
+
+Regression does **not** assume that $X$ is normally distributed
 :::
 
-::: {.column width="60%"}
+::: {.column width="50%"}
 ```{r}
 #| fig-align: center
 #| fig-width: 5
 #| fig-height: 4
-#| out-width: "5in"
+#| out-width: "4.4in"
+
+assump_plot()
+```
+:::
+:::
+
+::: {.fragment}
+Next: check each assumption, using the residuals
+:::
+
+## Visualizing residuals: lava flow data
+
+::: {.columns style="align-items: center;"}
+::: {.column width="30%"}
+The residual, $e_i$, is the difference between an observed ($Y_i$) and a predicted ($\hat{Y}_i$) value
+
+::: {.fragment}
+$e_i = Y_i - \hat{Y}_i$
+:::
+:::
+
+::: {.column width="70%"}
+```{r}
+#| fig-align: center
+#| fig-width: 6.5
+#| fig-height: 5
+#| out-width: "6.4in"
 
 lava_plot(resid = TRUE, mark_i = TRUE)
 ```
 :::
 :::
 
-## Do the data fit regression assumptions? (1 of 2)
+## Do the data fit regression assumptions? (1 of 4)
+
+[Random sample]{.alert}
+
+::: {.incremental}
+- Each observation is an independent draw from the population
+- No diagnostic plot checks this: it comes from how the data were collected
+- Ask: how were the lava flows chosen? Could observations be related to each other?
+:::
+
+## Do the data fit regression assumptions? (2 of 4)
+
+[A line describes the relationship between $X$ and $Y$]{.alert}
 
 ::: {.columns style="align-items: center;"}
 ::: {.column width="50%"}
 Examine [residuals vs fitted values]{.alert}
 
-Are the residuals, and their variance, independent of the predictions, $\hat{Y}$?
+Do the residuals bounce randomly about zero, with no pattern?
 :::
 
 ::: {.column width="50%"}
@@ -1455,7 +1677,7 @@ resid_plot(lava_model)
 :::
 :::
 
-## Residuals vs fitted: the relationship is not linear
+## Linear relationship: not met
 
 ```{r}
 #| fig-align: center
@@ -1470,7 +1692,30 @@ plot_grid(data_plot(nl_df), resid_plot(nl_model), nrow = 1)
 The residuals show a pattern: a line was the wrong shape
 :::
 
-## Residuals vs fitted: the variance is not equal
+## Do the data fit regression assumptions? (3 of 4)
+
+[$Y$ has variance independent of $X$]{.alert}
+
+::: {.columns style="align-items: center;"}
+::: {.column width="50%"}
+Examine [residuals vs fitted values]{.alert}
+
+Is the spread of the residuals the same for small and large $\hat{Y}$?
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-width: 5
+#| fig-height: 4
+#| out-width: "4.4in"
+
+resid_plot(lava_model)
+```
+:::
+:::
+
+## Equal variance: not met
 
 ```{r}
 #| fig-align: center
@@ -1485,7 +1730,9 @@ plot_grid(data_plot(hv_df), resid_plot(hv_model), nrow = 1)
 The spread of the residuals changes with $\hat{Y}$: unequal variance
 :::
 
-## Do the data fit regression assumptions? (2 of 2)
+## Do the data fit regression assumptions? (4 of 4)
+
+[$Y$ is normally distributed: the residuals are normal]{.alert}
 
 ::: {.columns style="align-items: center;"}
 ::: {.column width="50%"}
@@ -1506,42 +1753,198 @@ qq_plot(lava_model)
 :::
 :::
 
+## Normal residuals: not met
 
-# Break!
+```{r}
+#| fig-align: center
+#| fig-width: 9
+#| fig-height: 3.4
+#| out-width: "9.5in"
+
+plot_grid(data_plot(bad_df), qq_plot(bad_model), nrow = 1)
+```
+
+::: {.fragment}
+The points leave the line: the residuals are not normal
+:::
+
+
+## Extrapolation and transformations
+
+***Example: mass $\times$ body length***
+
+::: {.columns style="align-items: center;"}
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-width: 5
+#| fig-height: 4
+#| out-width: "4.4in"
+
+arth_plot(1)
+```
+
+*Simulated arthropod data*
+:::
+
+::: {.column width="50%"}
+Arthropod mass increases with body length ($P =$ `r signif(arth_p, 2)`)
+
+$\text{mass} =$ `r round(arth_a, 2)` $+$ `r round(arth_b, 2)` $\times$ length
+
+::: {.fragment}
+What if we extrapolate to guess the mass of a 40 mm arthropod?
+:::
+:::
+:::
+
+## A risky approach
+
+::: {.columns style="align-items: center;"}
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-width: 5
+#| fig-height: 4
+#| out-width: "4.4in"
+
+arth_plot(2)
+```
+:::
+
+::: {.column width="50%"}
+$\text{mass} =$ `r round(arth_a, 2)` $+$ `r round(arth_b, 2)` $\times$ 40 $=$ `r round(arth_pred, 1)` mg
+:::
+:::
+
+::: {.fragment}
+How does this compare to the actual data?
+:::
+
+## We have data from larger arthropods
+
+::: {.columns style="align-items: center;"}
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-width: 5
+#| fig-height: 4
+#| out-width: "4.4in"
+
+arth_plot(3)
+```
+:::
+
+::: {.column width="50%"}
+Mass is **poorly** predicted by linear extrapolation from the small arthropods
+
+The regression from the small arthropods does not do a good job of predicting our observations of larger arthropods
+:::
+:::
+
+::: {.fragment}
+[Lesson:]{.alert} DO NOT extrapolate from your model: predictions are only valid within the range of $X$ that the data came from
+:::
+
+## Mass $\times$ body length revisited
+
+The linear model of this larger data set violates assumptions
+
+```{r}
+#| fig-align: center
+#| fig-width: 12
+#| fig-height: 3.6
+#| out-width: "10.5in"
+
+plot_grid(arth_scatter(), resid_plot(arth_full_model), qq_plot(arth_full_model),
+          nrow = 1)
+```
+
+## When data don't meet assumptions
+
+If data do not meet assumptions we can:
+
+::: {.incremental}
+1. Ignore violations (if slight)
+2. **Transform**
+3. Use more appropriate models
+    - **Polynomial regression**
+    - **Generalized linear models** (e.g., logistic regression, Poisson regression)
+    - Non-parametric curve fits (e.g., splines, loess)
+4. Permute / bootstrap
+:::
+
+## Common transformations
+
+::: {.incremental}
+- If $Y = aX^b$ then $\ln(Y) = \ln(a) + b \ln(X)$
+- If $Y = ab^X$ then $\ln(Y) = \ln(a) + X \ln(b)$
+- If $Y = a + b/X$ then set $X' = 1/X$, and calculate $Y = a + bX'$
+:::
+
+::: {.fragment}
+All equations above have the form $Y = a + bX$
+:::
+
+## A log transformation improves this model
+
+Mass is a power law of length, $Y = aX^b$, so $\log(Y) = \log(a) + b \log(X)$
+
+```{r}
+#| fig-align: center
+#| fig-width: 12
+#| fig-height: 3.6
+#| out-width: "10.5in"
+
+plot_grid(arth_scatter(log_scale = TRUE), resid_plot(arth_log_model),
+          qq_plot(arth_log_model), nrow = 1)
+```
+
+
+
+<!-- ```{r} -->
+<!-- #| echo: true -->
+
+<!-- round(coef(summary(arth_log_model)), 3) -->
+<!-- ``` -->
+
+
 
 ## Showing steps for calculating regression models
 
-Make some fake tooth decay data
+So far we used `lava_data` and `lava_model` without seeing how they were made. Here are the steps
+
+Make some simulated lava flow data
 
 ```{r}
 #| echo: true
 
 # this makes all "random" numbers the same every time
 # we run this code
-set.seed(12)
+set.seed(20211028)
 
-# random dates
-deltaC14 <- runif(18, 0, 600)
+# random flow ages in years before present
+eruption_age <- sort(round(runif(16, 150, 1600)))
 
-# simulate date of birth from slope, intercept,
-# and residual error
-dateOfBirth <- 1992.27 - 0.05326 * deltaC14 +
-    rnorm(18, sd = 10.99)
+# 14C depletion rises with age, plus lab measurement
+# error
+c14_depletion <- round(100 * (1 - exp(-eruption_age / 8033)) +
+                           rnorm(16, sd = 0.6), 2)
 ```
 
 ## Showing steps for calculating regression models
 
-Make some fake tooth decay data
+Make some simulated lava flow data
 
 ```{r}
 #| echo: true
 
 # combine into data.frame
-tooth.data <- data.frame(deltaC14 = deltaC14,
-                         dateOfBirth = dateOfBirth)
+lava_data <- data.frame(c14_depletion = c14_depletion,
+                        eruption_age = eruption_age)
 
 # have a look
-head(tooth.data)
+head(lava_data)
 ```
 
 ## Showing steps for calculating regression models
@@ -1555,7 +1958,7 @@ Plot it
 #| fig-height: 3
 #| out-width: "5.5in"
 
-ggplot(tooth.data, aes(deltaC14, dateOfBirth)) +
+ggplot(lava_data, aes(c14_depletion, eruption_age)) +
     geom_point()
 ```
 
@@ -1566,9 +1969,30 @@ Make a linear model
 ```{r}
 #| echo: true
 
-tooth.model <- lm(dateOfBirth ~ deltaC14,
-                  data = tooth.data)
+lava_model <- lm(eruption_age ~ c14_depletion,
+                 data = lava_data)
 ```
+
+```{r}
+#| include: false
+
+# quantities used on later slides
+n_lava <- nrow(lava_data)
+lava_df <- n_lava - 2
+a_lava <- unname(coef(lava_model)[1])
+b_lava <- unname(coef(lava_model)[2])
+ss_resid <- sum(residuals(lava_model) ^ 2)
+ms_resid <- ss_resid / lava_df
+ss_x <- sum((lava_data$c14_depletion - mean(lava_data$c14_depletion)) ^ 2)
+se_b <- sqrt(ms_resid / ss_x)
+t_b <- b_lava / se_b
+p_b <- 2 * pt(q = t_b, df = lava_df, lower.tail = FALSE)
+t_crit <- qt(p = 0.05 / 2, df = lava_df, lower.tail = FALSE)
+ci_lo <- b_lava - t_crit * se_b
+ci_hi <- b_lava + t_crit * se_b
+k_lava <- which.max(abs(residuals(lava_model)))
+```
+
 
 ## Showing steps for calculating regression models
 
@@ -1578,16 +2002,185 @@ Get info on null hypothesis tests
 #| eval: false
 #| echo: true
 
-summary(tooth.model)
+summary(lava_model)
 ```
 
 ```{r}
 #| echo: false
 
-summary(tooth.model)
+summary(lava_model)
 ```
 
-Notice that `F-statistics` stuff, we'll get there! But not yet
+Notice the `R-squared` and `F-statistic` lines: we build both from sums of squares, but first the slope rows
+
+## The coefficient table
+
+```{r}
+#| echo: false
+
+round(coef(summary(lava_model)), 4)
+```
+
+::: {.incremental}
+- `Estimate`: the intercept $a$ and the slope $b$
+- `Std. Error`: the standard error of each estimate
+- `t value`: the estimate divided by its standard error
+- `Pr(>|t|)`: the P-value for $H_0$: the true value is $0$
+:::
+
+::: {.fragment}
+Let's rebuild the slope row by hand
+:::
+
+## Hypotheses about the slope
+
+::: columns
+::: {.column width="50%"}
+::: {.fragment}
+$H_A$: $\beta \neq 0$
+
+```{r}
+#| fig-align: center
+#| fig-width: 4
+#| fig-height: 3.5
+#| out-width: "4in"
+
+hyp_plot(0.6, 1)
+```
+:::
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+$H_0$: $\beta = 0$
+
+```{r}
+#| fig-align: center
+#| fig-width: 4
+#| fig-height: 3.5
+#| out-width: "4in"
+
+hyp_plot(0, 2)
+```
+:::
+:::
+:::
+
+## Mean squares: $MS_{error}$
+
+::: {.columns style="align-items: center;"}
+::: {.column width="50%"}
+$$
+\begin{aligned}
+MS_{error} &= \frac{SS_{error}}{df_{error}} \\
+&= \frac{1}{n - 2} \sum (Y_i - \hat{Y}_i)^2
+\end{aligned}
+$$
+
+::: {.fragment}
+The average squared residual: the $SS_{resid}$ that least squares minimized, divided by $df_{error}$
+:::
+
+::: {.fragment}
+$df_{error} = n - 2$: the [intercept]{.alert} and the [slope]{.alert} are estimated from the data
+:::
+:::
+
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-width: 5
+#| fig-height: 4
+#| out-width: "4.4in"
+
+lava_plot(resid = TRUE)
+```
+:::
+:::
+
+## Mean squares: $MS_{error}$ in *R*
+
+We could find all $\hat{Y}_i$ by hand, or we can get the residuals from *R*
+
+```{r}
+#| echo: true
+
+ss_error <- sum(residuals(lava_model) ^ 2)
+ms_error <- ss_error / (n_lava - 2)
+ms_error
+```
+
+## Standard error of the slope
+
+$b$ is *t*-distributed with standard error
+
+$$
+SE_b = \sqrt{\frac{MS_{error}}{\sum (X_i - \overline{X})^2}}
+$$
+
+::: {.fragment}
+Compare to the standard error of a mean, $SE = s / \sqrt{n}$: variation in the data on top, the amount of $X$ information on the bottom
+:::
+
+## Standard error of the slope
+
+So in the lava flow example:
+
+$$
+SE_b = \sqrt{\frac{`r round(ms_error)`}{`r round(ss_x, 1)`}} = `r round(se_b, 2)`
+$$
+
+::: {.fragment}
+This is the `Std. Error` of the slope in `summary()`
+:::
+
+## Testing $H_0$
+
+$H_0$: $\beta = 0$ $\qquad$ $H_A$: $\beta \neq 0$
+
+Remember,
+
+$$
+t = \frac{b - b_{H_0}}{SE_b} = \frac{`r round(b_lava, 2)` - 0}{`r round(se_b, 2)`} = `r round(t_b, 2)`
+$$
+
+::: {.fragment}
+with $n - 2 =$ `r n_lava` $- 2 =$ `r lava_df` degrees of freedom
+:::
+
+## Testing $H_0$
+
+::: {.columns style="align-items: center;"}
+::: {.column width="50%"}
+```{r}
+#| echo: true
+
+## Finding the P-value in R
+2 * pt(q = t_b, df = lava_df, lower.tail = FALSE)
+```
+
+::: {.fragment}
+`q` is our $t$ statistic, `df` is $n - 2$
+
+We reject $H_0$ and conclude that flow age increases with the amount of $^{14}$C depletion
+:::
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+```{r}
+#| fig-align: center
+#| fig-width: 5.5
+#| fig-height: 4.2
+#| out-width: "4.8in"
+
+t_plot(t_b, lava_df)
+```
+
+The [P-value]{.alert} is the area in both tails beyond $\pm t$, from a $t$-distribution with `r lava_df` degrees of freedom
+:::
+:::
+:::
 
 ## Showing steps for calculating regression models
 
@@ -1596,5 +2189,432 @@ Get confidence intervals of coefficient estimates
 ```{r}
 #| echo: true
 
-confint(tooth.model)
+confint(lava_model)
 ```
+
+## Confidence intervals
+
+$$
+95\% \text{CI}_\beta = b \pm t_{crit} SE_b
+$$
+
+With `r lava_df` degrees of freedom, $t_{crit}$ for a 95% confidence interval is `r round(t_crit, 3)`
+
+$$
+95\% \text{CI}_\beta = `r round(b_lava, 2)` \pm `r round(t_crit, 3)` \times `r round(se_b, 2)`
+$$
+
+::: {.fragment}
+We are 95% confident that the true slope is between `r round(ci_lo, 1)` and `r round(ci_hi, 1)` years per percent of $^{14}$C depletion
+:::
+
+## Confidence intervals
+
+```{r}
+#| echo: true
+
+## Finding t-crit with R
+qt(p = 0.05 / 2, df = lava_df, lower.tail = FALSE)
+```
+
+::: {.fragment}
+```{r}
+#| echo: true
+
+## The same interval from confint()
+confint(lava_model)
+```
+:::
+
+## Confidence bands
+
+Confidence bands represent uncertainty in $\hat{Y}_i$
+
+```{r}
+#| fig-align: center
+#| fig-width: 5
+#| fig-height: 3.8
+#| out-width: "5.5in"
+
+lava_plot(band = TRUE)
+```
+
+
+
+
+# Partitioning variation
+
+## Sum of squares
+
+::: {style="font-size: 0.8em;"}
+::: columns
+::: {.column width="33%"}
+::: {.fragment}
+$SS_Y$ $=$
+
+```{r}
+#| fig-align: center
+#| fig-width: 3.3
+#| fig-height: 3
+#| out-width: "3.2in"
+
+ss_panel("total")
+```
+
+$\sum (Y_i - \overline{Y})^2$
+:::
+:::
+
+::: {.column width="33%"}
+::: {.fragment}
+$SS_{regression}$ $+$
+
+```{r}
+#| fig-align: center
+#| fig-width: 3.3
+#| fig-height: 3
+#| out-width: "3.2in"
+
+ss_panel("regression")
+```
+
+$\sum (\hat{Y}_i - \overline{Y})^2$
+:::
+:::
+
+::: {.column width="33%"}
+::: {.fragment}
+$SS_{error}$
+
+```{r}
+#| fig-align: center
+#| fig-width: 3.3
+#| fig-height: 3
+#| out-width: "3.2in"
+
+ss_panel("error")
+```
+
+$\sum (Y_i - \hat{Y}_i)^2$
+:::
+:::
+:::
+:::
+
+::: {.fragment}
+$SS_{error}$ is the $SS_{resid}$ that least squares minimized
+:::
+
+## Sum of squares: $SS_{regression}$
+
+$SS_{regression}$ measures how far the line's predictions are from $\overline{Y}$
+
+::: columns
+::: {.column width="50%"}
+::: {.fragment}
+$SS_{reg}$ is [big]{.alert}, so the slope is [steep]{.alert}
+
+```{r}
+#| fig-align: center
+#| fig-width: 4
+#| fig-height: 3.5
+#| out-width: "4in"
+
+ss_reg_demo(0.6)
+```
+:::
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+$SS_{reg}$ is [small]{.alert}, so the slope is [shallow]{.alert}
+
+```{r}
+#| fig-align: center
+#| fig-width: 4
+#| fig-height: 3.5
+#| out-width: "4in"
+
+ss_reg_demo(0.1)
+```
+:::
+:::
+:::
+
+## Sum of squares: all together
+
+::: {.columns style="align-items: center;"}
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-width: 5.5
+#| fig-height: 4.4
+#| out-width: "5in"
+
+ss_combo_plot()
+```
+:::
+
+::: {.column width="50%"}
+::: {style="font-size: 0.8em;"}
+$SS_Y = \sum (Y_i - \overline{Y})^2$
+
+::: {.fragment}
+[$SS_{reg} = \sum (\hat{Y}_i - \overline{Y})^2$]{style="color: darkgreen;"}
+:::
+
+::: {.fragment}
+[$SS_{error} = \sum (Y_i - \hat{Y}_i)^2$]{style="color: firebrick;"}
+:::
+
+::: {.fragment}
+$$
+SS_Y = SS_{reg} + SS_{error}
+$$
+:::
+:::
+:::
+:::
+
+## Sum of squares in *R*
+
+```{r}
+#| echo: true
+
+y_bar <- mean(lava_data$eruption_age)
+y_hat <- fitted(lava_model)
+
+ss_y <- sum((lava_data$eruption_age - y_bar) ^ 2)
+ss_reg <- sum((y_hat - y_bar) ^ 2)
+ss_error <- sum((lava_data$eruption_age - y_hat) ^ 2)
+
+c(ss_y = ss_y, ss_reg_plus_ss_error = ss_reg + ss_error)
+```
+
+## From sum of squares to mean squares
+
+A sum of squares gets bigger with every data point we add
+
+::: {.fragment}
+Dividing by (about) $N$ gives an average squared deviation: a [mean square]{.alert}
+:::
+
+::: {.fragment}
+$$
+MS_Y = \frac{SS_Y}{df_Y} \qquad
+MS_{reg} = \frac{SS_{reg}}{df_{reg}} \qquad
+MS_{error} = \frac{SS_{error}}{df_{error}}
+$$
+:::
+
+## Degrees of freedom
+
+::: {.incremental}
+- $df_Y = n - 1$ and $MS_Y$ is just the variance of $Y$
+- $df_{reg} = 1$: we estimate one slope
+- $df_{error} = n - 2$: the [intercept]{.alert} and the [slope]{.alert}
+:::
+
+::: {.fragment}
+For the lava flows: $df_Y =$ `r n_lava - 1`, $df_{reg} =$ 1, $df_{error} =$ `r lava_df`
+
+$$
+df_Y = df_{reg} + df_{error}
+$$
+:::
+
+## Mean squares in *R*
+
+```{r}
+#| echo: true
+
+ms_y <- ss_y / (n_lava - 1)
+ms_reg <- ss_reg / 1
+ms_error <- ss_error / (n_lava - 2)
+
+c(ms_y = ms_y, ms_reg = ms_reg, ms_error = ms_error)
+```
+
+::: {.fragment}
+`ms_y` is the same as `var(lava_data$eruption_age)`
+:::
+
+
+## Comparing $SS_{regression}$ to $SS_{error}$
+
+If the line explains a lot, $SS_{reg}$ and $MS_{reg}$ are big compared to the error
+
+```{r}
+#| fig-align: center
+#| fig-width: 12
+#| fig-height: 4.4
+#| out-width: "10.5in"
+
+scen_plot(1)
+```
+
+## $R^2$
+
+$$
+R^2 = \frac{SS_{reg}}{SS_Y}
+$$
+
+::: {.fragment}
+The proportion of the variation in $Y$ that the regression explains, bounded $[0, 1]$
+:::
+
+```{r}
+#| fig-align: center
+#| fig-width: 12
+#| fig-height: 4.4
+#| out-width: "9.5in"
+
+scen_plot(2)
+```
+
+## $F$
+
+$$
+F = \frac{MS_{reg}}{MS_{error}}
+$$
+
+::: {.fragment}
+How many times bigger the regression mean square is than the error mean square, bounded $[0, \infty)$
+:::
+
+```{r}
+#| fig-align: center
+#| fig-width: 12
+#| fig-height: 4.4
+#| out-width: "9.5in"
+
+scen_plot(3)
+```
+
+## $R^2$ and $F$ in the lava flow example
+
+```{r}
+#| echo: true
+
+r_squared <- ss_reg / ss_y
+f_lava <- ms_reg / ms_error
+
+c(r_squared = r_squared, f = f_lava)
+```
+
+::: {.fragment}
+These are `Multiple R-squared` and `F-statistic` at the bottom of `summary()`
+:::
+
+::: {.fragment}
+In simple regression, $R^2$ is the square of the correlation coefficient, $r^2$
+:::
+
+
+
+## Null hypothesis test with $F$
+
+$H_0$: $MS_{reg} \leq MS_{error}$
+
+$H_A$: $MS_{reg} > MS_{error}$
+
+::: {.fragment}
+If $H_0$ is true, $F$ follows an [F-distribution]{.alert} with $df_{reg}$ and $df_{error}$ degrees of freedom
+:::
+
+## Null hypothesis test with $F$
+
+::: {.columns style="align-items: center;"}
+::: {.column width="55%"}
+```{r}
+#| fig-align: center
+#| fig-width: 5.5
+#| fig-height: 4.2
+#| out-width: "5in"
+
+f_plot(scen_stats$f[2], 1, 10, 16)
+```
+:::
+
+::: {.column width="45%"}
+The [P-value]{.alert} is the probability of an $F$ at least as big as the observed $F$, if $H_0$ is true
+
+::: {.fragment}
+If $P \leq 0.05$: reject $H_0$
+
+If $P > 0.05$: fail to reject $H_0$
+:::
+:::
+:::
+
+::: {.fragment}
+*The medium example from before: $F =$ `r round(scen_stats$f[2], 1)` with 1 and 10 degrees of freedom*
+:::
+
+## Testing $H_0$ with $F$: lava flows
+
+::: {.columns style="align-items: center;"}
+::: {.column width="50%"}
+```{r}
+#| fig-align: center
+#| fig-width: 5.5
+#| fig-height: 4.2
+#| out-width: "4.6in"
+
+f_plot(f_lava, 1, lava_df, f_lava * 1.2)
+```
+:::
+
+::: {.column width="50%"}
+$F =$ `r round(f_lava, 1)` with `r 1` and `r lava_df` degrees of freedom
+
+::: {.fragment}
+The observed $F$ is so far out in the tail that the [P-value]{.alert} is too thin to see
+:::
+:::
+:::
+
+## Finding the P-value for $F$ in *R*
+
+```{r}
+#| echo: true
+
+pf(q = f_lava, df1 = 1, df2 = lava_df, lower.tail = FALSE)
+```
+
+::: {.fragment}
+`q` is our $F$ statistic, `df1` is $df_{reg}$, `df2` is $df_{error}$
+
+$P < 0.05$, so we reject $H_0$
+:::
+
+## The ANOVA table
+
+```{r}
+#| echo: true
+
+anova(lava_model)
+```
+
+::: {.incremental}
+- `Sum Sq` holds $SS_{reg}$ (the `c14_depletion` row) and $SS_{error}$ (the `Residuals` row)
+- `Mean Sq` $=$ `Sum Sq` $/$ `Df`
+- `F value` $= MS_{reg} / MS_{error}$ and `Pr(>F)` is its P-value
+:::
+
+## $F$ and $t$ agree
+
+```{r}
+#| echo: true
+
+# with one slope, F is the square of t
+c(t_squared = t_b ^ 2, f = f_lava)
+```
+
+::: {.fragment}
+The $F$ test and the $t$ test of the slope give the same P-value in simple regression
+:::
+
+::: {.fragment}
+$F$ becomes more useful when a model has more than one explanatory variable
+:::
