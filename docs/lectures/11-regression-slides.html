@@ -984,58 +984,87 @@ Coefficients:
 </div>
 </div></div>
 </section>
-<section id="visualizing-residuals-lava-flow-data" class="slide level2">
-<h2>Visualizing residuals: lava flow data</h2>
-<div class="columns" style="align-items: center;">
-<div class="column" style="width:40%;">
-<p>The residual, <span class="math inline">\(e_i\)</span>, is the difference between an observed (<span class="math inline">\(Y_i\)</span>) and a predicted (<span class="math inline">\(\hat{Y}_i\)</span>) value</p>
-</div><div class="column" style="width:60%;">
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-30-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
-</figure>
-</div>
-</div>
-</div>
-</div></div>
+<section>
+<section id="break" class="title-slide slide level1 center">
+<h1>Break!</h1>
+
 </section>
-<section id="do-the-data-fit-regression-assumptions-1-of-2" class="slide level2">
-<h2>Do the data fit regression assumptions? (1 of 2)</h2>
-<div class="columns" style="align-items: center;">
+<section id="recall-regression-assumptions" class="slide level2">
+<h2>Recall regression assumptions</h2>
+<div class="columns">
 <div class="column" style="width:50%;">
-<p>Examine <span class="alert">residuals vs fitted values</span></p>
-<p>Are the residuals, and their variance, independent of the predictions, <span class="math inline">\(\hat{Y}\)</span>?</p>
+<p><span class="alert">Assumptions</span></p>
+<ul>
+<li>Random sample</li>
+<li><span class="math inline">\(Y\)</span> is normally distributed with variance independent of <span class="math inline">\(X\)</span></li>
+<li>The relationship between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> can be described by a line</li>
+</ul>
+<p>Regression does <strong>not</strong> assume that <span class="math inline">\(X\)</span> is normally distributed</p>
 </div><div class="column" style="width:50%;">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-31-1.png" class="quarto-figure quarto-figure-center" style="width:4.4in"></p>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-30-1.png" class="quarto-figure quarto-figure-center" style="width:4.4in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+<div class="fragment">
+<p>Next: check each assumption, using the residuals</p>
+</div>
+</section>
+<section id="visualizing-residuals-lava-flow-data" class="slide level2">
+<h2>Visualizing residuals: lava flow data</h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:30%;">
+<p>The residual, <span class="math inline">\(e_i\)</span>, is the difference between an observed (<span class="math inline">\(Y_i\)</span>) and a predicted (<span class="math inline">\(\hat{Y}_i\)</span>) value</p>
+<div class="fragment">
+<p><span class="math inline">\(e_i = Y_i - \hat{Y}_i\)</span></p>
+</div>
+</div><div class="column" style="width:70%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-31-1.png" class="quarto-figure quarto-figure-center" style="width:6.4in"></p>
 </figure>
 </div>
 </div>
 </div>
 </div></div>
 </section>
-<section id="residuals-vs-fitted-the-relationship-is-not-linear" class="slide level2">
-<h2>Residuals vs fitted: the relationship is not linear</h2>
+<section id="do-the-data-fit-regression-assumptions-1-of-4" class="slide level2">
+<h2>Do the data fit regression assumptions? (1 of 4)</h2>
+<p><span class="alert">Random sample</span></p>
+<ul>
+<li class="fragment">Each observation is an independent draw from the population</li>
+<li class="fragment">No diagnostic plot checks this: it comes from how the data were collected</li>
+<li class="fragment">Ask: how were the lava flows chosen? Could observations be related to each other?</li>
+</ul>
+</section>
+<section id="do-the-data-fit-regression-assumptions-2-of-4" class="slide level2">
+<h2>Do the data fit regression assumptions? (2 of 4)</h2>
+<p><span class="alert">A line describes the relationship between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span></span></p>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:50%;">
+<p>Examine <span class="alert">residuals vs fitted values</span></p>
+<p>Do the residuals bounce randomly about zero, with no pattern?</p>
+</div><div class="column" style="width:50%;">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-32-1.png" class="quarto-figure quarto-figure-center" style="width:9.5in"></p>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-32-1.png" class="quarto-figure quarto-figure-center" style="width:4.4in"></p>
 </figure>
 </div>
 </div>
 </div>
-<div class="fragment">
-<p>The residuals show a pattern: a line was the wrong shape</p>
-</div>
+</div></div>
 </section>
-<section id="residuals-vs-fitted-the-variance-is-not-equal" class="slide level2">
-<h2>Residuals vs fitted: the variance is not equal</h2>
+<section id="linear-relationship-not-met" class="slide level2">
+<h2>Linear relationship: not met</h2>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -1046,15 +1075,16 @@ Coefficients:
 </div>
 </div>
 <div class="fragment">
-<p>The spread of the residuals changes with <span class="math inline">\(\hat{Y}\)</span>: unequal variance</p>
+<p>The residuals show a pattern: a line was the wrong shape</p>
 </div>
 </section>
-<section id="do-the-data-fit-regression-assumptions-2-of-2" class="slide level2">
-<h2>Do the data fit regression assumptions? (2 of 2)</h2>
+<section id="do-the-data-fit-regression-assumptions-3-of-4" class="slide level2">
+<h2>Do the data fit regression assumptions? (3 of 4)</h2>
+<p><span class="alert"><span class="math inline">\(Y\)</span> has variance independent of <span class="math inline">\(X\)</span></span></p>
 <div class="columns" style="align-items: center;">
 <div class="column" style="width:50%;">
-<p>Examine the <span class="alert">QQ-plot</span></p>
-<p>Do the points (roughly) fall on a line?</p>
+<p>Examine <span class="alert">residuals vs fitted values</span></p>
+<p>Is the spread of the residuals the same for small and large <span class="math inline">\(\hat{Y}\)</span>?</p>
 </div><div class="column" style="width:50%;">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -1067,46 +1097,211 @@ Coefficients:
 </div>
 </div></div>
 </section>
-<section>
-<section id="break" class="title-slide slide level1 center">
-<h1>Break!</h1>
-
+<section id="equal-variance-not-met" class="slide level2">
+<h2>Equal variance: not met</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-35-1.png" class="quarto-figure quarto-figure-center" style="width:9.5in"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p>The spread of the residuals changes with <span class="math inline">\(\hat{Y}\)</span>: unequal variance</p>
+</div>
+</section>
+<section id="do-the-data-fit-regression-assumptions-4-of-4" class="slide level2">
+<h2>Do the data fit regression assumptions? (4 of 4)</h2>
+<p><span class="alert"><span class="math inline">\(Y\)</span> is normally distributed: the residuals are normal</span></p>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:50%;">
+<p>Examine the <span class="alert">QQ-plot</span></p>
+<p>Do the points (roughly) fall on a line?</p>
+</div><div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-36-1.png" class="quarto-figure quarto-figure-center" style="width:4.4in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="normal-residuals-not-met" class="slide level2">
+<h2>Normal residuals: not met</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-37-1.png" class="quarto-figure quarto-figure-center" style="width:9.5in"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p>The points leave the line: the residuals are not normal</p>
+</div>
+</section>
+<section id="extrapolation-and-transformations" class="slide level2">
+<h2>Extrapolation and transformations</h2>
+<p><strong><em>Example: mass <span class="math inline">\(\times\)</span> body length</em></strong></p>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-38-1.png" class="quarto-figure quarto-figure-center" style="width:4.4in"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><em>Simulated arthropod data</em></p>
+</div><div class="column" style="width:50%;">
+<p>Arthropod mass increases with body length (<span class="math inline">\(P =\)</span> 2.6^{-6})</p>
+<p><span class="math inline">\(\text{mass} =\)</span> -5.79 <span class="math inline">\(+\)</span> 2.14 <span class="math inline">\(\times\)</span> length</p>
+<div class="fragment">
+<p>What if we extrapolate to guess the mass of a 40 mm arthropod?</p>
+</div>
+</div></div>
+</section>
+<section id="a-risky-approach" class="slide level2">
+<h2>A risky approach</h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-39-1.png" class="quarto-figure quarto-figure-center" style="width:4.4in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p><span class="math inline">\(\text{mass} =\)</span> -5.79 <span class="math inline">\(+\)</span> 2.14 <span class="math inline">\(\times\)</span> 40 <span class="math inline">\(=\)</span> 79.7 mg</p>
+</div></div>
+<div class="fragment">
+<p>How does this compare to the actual data?</p>
+</div>
+</section>
+<section id="we-have-data-from-larger-arthropods" class="slide level2">
+<h2>We have data from larger arthropods</h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-40-1.png" class="quarto-figure quarto-figure-center" style="width:4.4in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p>Mass is <strong>poorly</strong> predicted by linear extrapolation from the small arthropods</p>
+<p>The regression from the small arthropods does not do a good job of predicting our observations of larger arthropods</p>
+</div></div>
+<div class="fragment">
+<p><span class="alert">Lesson:</span> DO NOT extrapolate from your model: predictions are only valid within the range of <span class="math inline">\(X\)</span> that the data came from</p>
+</div>
+</section>
+<section id="mass-times-body-length-revisited" class="slide level2">
+<h2>Mass <span class="math inline">\(\times\)</span> body length revisited</h2>
+<p>The linear model of this larger data set violates assumptions</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-41-1.png" class="quarto-figure quarto-figure-center" style="width:10.5in"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="when-data-dont-meet-assumptions" class="slide level2">
+<h2>When data don’t meet assumptions</h2>
+<p>If data do not meet assumptions we can:</p>
+<ol type="1">
+<li class="fragment">Ignore violations (if slight)</li>
+<li class="fragment"><strong>Transform</strong></li>
+<li class="fragment">Use more appropriate models
+<ul>
+<li class="fragment"><strong>Polynomial regression</strong></li>
+<li class="fragment"><strong>Generalized linear models</strong> (e.g., logistic regression, Poisson regression)</li>
+<li class="fragment">Non-parametric curve fits (e.g., splines, loess)</li>
+</ul></li>
+<li class="fragment">Permute / bootstrap</li>
+</ol>
+</section>
+<section id="common-transformations" class="slide level2">
+<h2>Common transformations</h2>
+<ul>
+<li class="fragment">If <span class="math inline">\(Y = aX^b\)</span> then <span class="math inline">\(\ln(Y) = \ln(a) + b \ln(X)\)</span></li>
+<li class="fragment">If <span class="math inline">\(Y = ab^X\)</span> then <span class="math inline">\(\ln(Y) = \ln(a) + X \ln(b)\)</span></li>
+<li class="fragment">If <span class="math inline">\(Y = a + b/X\)</span> then set <span class="math inline">\(X' = 1/X\)</span>, and calculate <span class="math inline">\(Y = a + bX'\)</span></li>
+</ul>
+<div class="fragment">
+<p>All equations above have the form <span class="math inline">\(Y = a + bX\)</span></p>
+</div>
+</section>
+<section id="a-log-transformation-improves-this-model" class="slide level2">
+<h2>A log transformation improves this model</h2>
+<p>Mass is a power law of length, <span class="math inline">\(Y = aX^b\)</span>, so <span class="math inline">\(\log(Y) = \log(a) + b \log(X)\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-42-1.png" class="quarto-figure quarto-figure-center" style="width:10.5in"></p>
+</figure>
+</div>
+</div>
+</div>
+<!-- ```{r} -->
+<!-- #| echo: true -->
+<!-- round(coef(summary(arth_log_model)), 3) -->
+<!-- ``` -->
 </section>
 <section id="showing-steps-for-calculating-regression-models" class="slide level2">
 <h2>Showing steps for calculating regression models</h2>
-<p>Make some fake tooth decay data</p>
+<p>So far we used <code>lava_data</code> and <code>lava_model</code> without seeing how they were made. Here are the steps</p>
+<p>Make some simulated lava flow data</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a><span class="co"># this makes all "random" numbers the same every time</span></span>
 <span id="cb5-2"><a href=""></a><span class="co"># we run this code</span></span>
-<span id="cb5-3"><a href=""></a><span class="fu">set.seed</span>(<span class="dv">12</span>)</span>
+<span id="cb5-3"><a href=""></a><span class="fu">set.seed</span>(<span class="dv">20211028</span>)</span>
 <span id="cb5-4"><a href=""></a></span>
-<span id="cb5-5"><a href=""></a><span class="co"># random dates</span></span>
-<span id="cb5-6"><a href=""></a>deltaC14 <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">18</span>, <span class="dv">0</span>, <span class="dv">600</span>)</span>
+<span id="cb5-5"><a href=""></a><span class="co"># random flow ages in years before present</span></span>
+<span id="cb5-6"><a href=""></a>eruption_age <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">round</span>(<span class="fu">runif</span>(<span class="dv">16</span>, <span class="dv">150</span>, <span class="dv">1600</span>)))</span>
 <span id="cb5-7"><a href=""></a></span>
-<span id="cb5-8"><a href=""></a><span class="co"># simulate date of birth from slope, intercept,</span></span>
-<span id="cb5-9"><a href=""></a><span class="co"># and residual error</span></span>
-<span id="cb5-10"><a href=""></a>dateOfBirth <span class="ot">&lt;-</span> <span class="fl">1992.27</span> <span class="sc">-</span> <span class="fl">0.05326</span> <span class="sc">*</span> deltaC14 <span class="sc">+</span></span>
-<span id="cb5-11"><a href=""></a>    <span class="fu">rnorm</span>(<span class="dv">18</span>, <span class="at">sd =</span> <span class="fl">10.99</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-8"><a href=""></a><span class="co"># 14C depletion rises with age, plus lab measurement</span></span>
+<span id="cb5-9"><a href=""></a><span class="co"># error</span></span>
+<span id="cb5-10"><a href=""></a>c14_depletion <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">exp</span>(<span class="sc">-</span>eruption_age <span class="sc">/</span> <span class="dv">8033</span>)) <span class="sc">+</span></span>
+<span id="cb5-11"><a href=""></a>                           <span class="fu">rnorm</span>(<span class="dv">16</span>, <span class="at">sd =</span> <span class="fl">0.6</span>), <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="showing-steps-for-calculating-regression-models-1" class="slide level2">
 <h2>Showing steps for calculating regression models</h2>
-<p>Make some fake tooth decay data</p>
+<p>Make some simulated lava flow data</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a><span class="co"># combine into data.frame</span></span>
-<span id="cb6-2"><a href=""></a>tooth.data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">deltaC14 =</span> deltaC14,</span>
-<span id="cb6-3"><a href=""></a>                         <span class="at">dateOfBirth =</span> dateOfBirth)</span>
+<span id="cb6-2"><a href=""></a>lava_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">c14_depletion =</span> c14_depletion,</span>
+<span id="cb6-3"><a href=""></a>                        <span class="at">eruption_age =</span> eruption_age)</span>
 <span id="cb6-4"><a href=""></a></span>
 <span id="cb6-5"><a href=""></a><span class="co"># have a look</span></span>
-<span id="cb6-6"><a href=""></a><span class="fu">head</span>(tooth.data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-6"><a href=""></a><span class="fu">head</span>(lava_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>   deltaC14 dateOfBirth
-1  41.61655    1994.757
-2 490.66512    1957.590
-3 565.57304    1947.928
-4 161.62913    1975.094
-5 101.60887    1986.990
-6  20.33737    1989.512</code></pre>
+<pre><code>  c14_depletion eruption_age
+1          3.45          247
+2          4.47          340
+3          4.68          394
+4          7.59          705
+5          9.96          817
+6         10.12          854</code></pre>
 </div>
 </div>
 </section>
@@ -1114,12 +1309,12 @@ Coefficients:
 <h2>Showing steps for calculating regression models</h2>
 <p>Plot it</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a><span class="fu">ggplot</span>(tooth.data, <span class="fu">aes</span>(deltaC14, dateOfBirth)) <span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a><span class="fu">ggplot</span>(lava_data, <span class="fu">aes</span>(c14_depletion, eruption_age)) <span class="sc">+</span></span>
 <span id="cb8-2"><a href=""></a>    <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-37-1.png" class="quarto-figure quarto-figure-center" style="width:5.5in"></p>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-45-1.png" class="quarto-figure quarto-figure-center" style="width:5.5in"></p>
 </figure>
 </div>
 </div>
@@ -1129,50 +1324,600 @@ Coefficients:
 <h2>Showing steps for calculating regression models</h2>
 <p>Make a linear model</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a>tooth.model <span class="ot">&lt;-</span> <span class="fu">lm</span>(dateOfBirth <span class="sc">~</span> deltaC14,</span>
-<span id="cb9-2"><a href=""></a>                  <span class="at">data =</span> tooth.data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a>lava_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(eruption_age <span class="sc">~</span> c14_depletion,</span>
+<span id="cb9-2"><a href=""></a>                 <span class="at">data =</span> lava_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="showing-steps-for-calculating-regression-models-4" class="slide level2">
 <h2>Showing steps for calculating regression models</h2>
 <p>Get info on null hypothesis tests</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a><span class="fu">summary</span>(tooth.model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a><span class="fu">summary</span>(lava_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
-lm(formula = dateOfBirth ~ deltaC14, data = tooth.data)
+lm(formula = eruption_age ~ c14_depletion, data = lava_data)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--10.785  -5.030  -1.830   2.836  22.086 
+-87.224 -32.889  -4.837  13.712 103.797 
 
 Coefficients:
               Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept) 1994.95843    3.66495 544.335  &lt; 2e-16 ***
-deltaC14      -0.06529    0.01300  -5.024 0.000125 ***
+(Intercept)     -9.153     38.681  -0.237    0.816    
+c14_depletion   86.148      3.490  24.685  6.1e-13 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 9.202 on 16 degrees of freedom
-Multiple R-squared:  0.612, Adjusted R-squared:  0.5878 
-F-statistic: 25.24 on 1 and 16 DF,  p-value: 0.0001247</code></pre>
+Residual standard error: 52.38 on 14 degrees of freedom
+Multiple R-squared:  0.9775,    Adjusted R-squared:  0.9759 
+F-statistic: 609.4 on 1 and 14 DF,  p-value: 6.098e-13</code></pre>
 </div>
 </div>
-<p>Notice that <code>F-statistics</code> stuff, we’ll get there! But not yet</p>
+<p>Notice the <code>R-squared</code> and <code>F-statistic</code> lines: we build both from sums of squares, but first the slope rows</p>
+</section>
+<section id="the-coefficient-table" class="slide level2">
+<h2>The coefficient table</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>              Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)    -9.1532    38.6810 -0.2366   0.8164
+c14_depletion  86.1476     3.4898 24.6852   0.0000</code></pre>
+</div>
+</div>
+<ul>
+<li class="fragment"><code>Estimate</code>: the intercept <span class="math inline">\(a\)</span> and the slope <span class="math inline">\(b\)</span></li>
+<li class="fragment"><code>Std. Error</code>: the standard error of each estimate</li>
+<li class="fragment"><code>t value</code>: the estimate divided by its standard error</li>
+<li class="fragment"><code>Pr(&gt;|t|)</code>: the P-value for <span class="math inline">\(H_0\)</span>: the true value is <span class="math inline">\(0\)</span></li>
+</ul>
+<div class="fragment">
+<p>Let’s rebuild the slope row by hand</p>
+</div>
+</section>
+<section id="hypotheses-about-the-slope" class="slide level2">
+<h2>Hypotheses about the slope</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="fragment">
+<p><span class="math inline">\(H_A\)</span>: <span class="math inline">\(\beta \neq 0\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-51-1.png" class="quarto-figure quarto-figure-center" style="width:4in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="fragment">
+<p><span class="math inline">\(H_0\)</span>: <span class="math inline">\(\beta = 0\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-52-1.png" class="quarto-figure quarto-figure-center" style="width:4in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="mean-squares-ms_error" class="slide level2">
+<h2>Mean squares: <span class="math inline">\(MS_{error}\)</span></h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:50%;">
+<p><span class="math display">\[
+\begin{aligned}
+MS_{error} &amp;= \frac{SS_{error}}{df_{error}} \\
+&amp;= \frac{1}{n - 2} \sum (Y_i - \hat{Y}_i)^2
+\end{aligned}
+\]</span></p>
+<div class="fragment">
+<p>The average squared residual: the <span class="math inline">\(SS_{resid}\)</span> that least squares minimized, divided by <span class="math inline">\(df_{error}\)</span></p>
+</div>
+<div class="fragment">
+<p><span class="math inline">\(df_{error} = n - 2\)</span>: the <span class="alert">intercept</span> and the <span class="alert">slope</span> are estimated from the data</p>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-53-1.png" class="quarto-figure quarto-figure-center" style="width:4.4in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="mean-squares-ms_error-in-r" class="slide level2">
+<h2>Mean squares: <span class="math inline">\(MS_{error}\)</span> in <em>R</em></h2>
+<p>We could find all <span class="math inline">\(\hat{Y}_i\)</span> by hand, or we can get the residuals from <em>R</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>ss_error <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">residuals</span>(lava_model) <span class="sc">^</span> <span class="dv">2</span>)</span>
+<span id="cb13-2"><a href=""></a>ms_error <span class="ot">&lt;-</span> ss_error <span class="sc">/</span> (n_lava <span class="sc">-</span> <span class="dv">2</span>)</span>
+<span id="cb13-3"><a href=""></a>ms_error</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2743.867</code></pre>
+</div>
+</div>
+</section>
+<section id="standard-error-of-the-slope" class="slide level2">
+<h2>Standard error of the slope</h2>
+<p><span class="math inline">\(b\)</span> is <em>t</em>-distributed with standard error</p>
+<p><span class="math display">\[
+SE_b = \sqrt{\frac{MS_{error}}{\sum (X_i - \overline{X})^2}}
+\]</span></p>
+<div class="fragment">
+<p>Compare to the standard error of a mean, <span class="math inline">\(SE = s / \sqrt{n}\)</span>: variation in the data on top, the amount of <span class="math inline">\(X\)</span> information on the bottom</p>
+</div>
+</section>
+<section id="standard-error-of-the-slope-1" class="slide level2">
+<h2>Standard error of the slope</h2>
+<p>So in the lava flow example:</p>
+<p><span class="math display">\[
+SE_b = \sqrt{\frac{2744}{225.3}} = 3.49
+\]</span></p>
+<div class="fragment">
+<p>This is the <code>Std. Error</code> of the slope in <code>summary()</code></p>
+</div>
+</section>
+<section id="testing-h_0" class="slide level2">
+<h2>Testing <span class="math inline">\(H_0\)</span></h2>
+<p><span class="math inline">\(H_0\)</span>: <span class="math inline">\(\beta = 0\)</span> <span class="math inline">\(\qquad\)</span> <span class="math inline">\(H_A\)</span>: <span class="math inline">\(\beta \neq 0\)</span></p>
+<p>Remember,</p>
+<p><span class="math display">\[
+t = \frac{b - b_{H_0}}{SE_b} = \frac{86.15 - 0}{3.49} = 24.69
+\]</span></p>
+<div class="fragment">
+<p>with <span class="math inline">\(n - 2 =\)</span> 16 <span class="math inline">\(- 2 =\)</span> 14 degrees of freedom</p>
+</div>
+</section>
+<section id="testing-h_0-1" class="slide level2">
+<h2>Testing <span class="math inline">\(H_0\)</span></h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a><span class="do">## Finding the P-value in R</span></span>
+<span id="cb15-2"><a href=""></a><span class="dv">2</span> <span class="sc">*</span> <span class="fu">pt</span>(<span class="at">q =</span> t_b, <span class="at">df =</span> lava_df, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6.097536e-13</code></pre>
+</div>
+</div>
+<div class="fragment">
+<p><code>q</code> is our <span class="math inline">\(t\)</span> statistic, <code>df</code> is <span class="math inline">\(n - 2\)</span></p>
+<p>We reject <span class="math inline">\(H_0\)</span> and conclude that flow age increases with the amount of <span class="math inline">\(^{14}\)</span>C depletion</p>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-56-1.png" class="quarto-figure quarto-figure-center" style="width:4.8in"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The <span class="alert">P-value</span> is the area in both tails beyond <span class="math inline">\(\pm t\)</span>, from a <span class="math inline">\(t\)</span>-distribution with 14 degrees of freedom</p>
+</div>
+</div></div>
 </section>
 <section id="showing-steps-for-calculating-regression-models-5" class="slide level2">
 <h2>Showing steps for calculating regression models</h2>
 <p>Get confidence intervals of coefficient estimates</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a><span class="fu">confint</span>(tooth.model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href=""></a><span class="fu">confint</span>(lava_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                    2.5 %        97.5 %
-(Intercept) 1987.18909121 2002.72777337
-deltaC14      -0.09283629   -0.03773976</code></pre>
+<pre><code>                  2.5 %   97.5 %
+(Intercept)   -92.11579 73.80940
+c14_depletion  78.66264 93.63257</code></pre>
 </div>
+</div>
+</section>
+<section id="confidence-intervals" class="slide level2">
+<h2>Confidence intervals</h2>
+<p><span class="math display">\[
+95\% \text{CI}_\beta = b \pm t_{crit} SE_b
+\]</span></p>
+<p>With 14 degrees of freedom, <span class="math inline">\(t_{crit}\)</span> for a 95% confidence interval is 2.145</p>
+<p><span class="math display">\[
+95\% \text{CI}_\beta = 86.15 \pm 2.145 \times 3.49
+\]</span></p>
+<div class="fragment">
+<p>We are 95% confident that the true slope is between 78.7 and 93.6 years per percent of <span class="math inline">\(^{14}\)</span>C depletion</p>
+</div>
+</section>
+<section id="confidence-intervals-1" class="slide level2">
+<h2>Confidence intervals</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href=""></a><span class="do">## Finding t-crit with R</span></span>
+<span id="cb19-2"><a href=""></a><span class="fu">qt</span>(<span class="at">p =</span> <span class="fl">0.05</span> <span class="sc">/</span> <span class="dv">2</span>, <span class="at">df =</span> lava_df, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.144787</code></pre>
+</div>
+</div>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href=""></a><span class="do">## The same interval from confint()</span></span>
+<span id="cb21-2"><a href=""></a><span class="fu">confint</span>(lava_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                  2.5 %   97.5 %
+(Intercept)   -92.11579 73.80940
+c14_depletion  78.66264 93.63257</code></pre>
+</div>
+</div>
+</div>
+</section>
+<section id="confidence-bands" class="slide level2">
+<h2>Confidence bands</h2>
+<p>Confidence bands represent uncertainty in <span class="math inline">\(\hat{Y}_i\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-60-1.png" class="quarto-figure quarto-figure-center" style="width:5.5in"></p>
+</figure>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="partitioning-variation" class="title-slide slide level1 center">
+<h1>Partitioning variation</h1>
+
+</section>
+<section id="sum-of-squares" class="slide level2">
+<h2>Sum of squares</h2>
+<div style="font-size: 0.8em;">
+<div class="columns">
+<div class="column" style="width:33%;">
+<div class="fragment">
+<p><span class="math inline">\(SS_Y\)</span> <span class="math inline">\(=\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-61-1.png" class="quarto-figure quarto-figure-center" style="width:3.2in"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><span class="math inline">\(\sum (Y_i - \overline{Y})^2\)</span></p>
+</div>
+</div><div class="column" style="width:33%;">
+<div class="fragment">
+<p><span class="math inline">\(SS_{regression}\)</span> <span class="math inline">\(+\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-62-1.png" class="quarto-figure quarto-figure-center" style="width:3.2in"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><span class="math inline">\(\sum (\hat{Y}_i - \overline{Y})^2\)</span></p>
+</div>
+</div><div class="column" style="width:33%;">
+<div class="fragment">
+<p><span class="math inline">\(SS_{error}\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-63-1.png" class="quarto-figure quarto-figure-center" style="width:3.2in"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><span class="math inline">\(\sum (Y_i - \hat{Y}_i)^2\)</span></p>
+</div>
+</div></div>
+</div>
+<div class="fragment">
+<p><span class="math inline">\(SS_{error}\)</span> is the <span class="math inline">\(SS_{resid}\)</span> that least squares minimized</p>
+</div>
+</section>
+<section id="sum-of-squares-ss_regression" class="slide level2">
+<h2>Sum of squares: <span class="math inline">\(SS_{regression}\)</span></h2>
+<p><span class="math inline">\(SS_{regression}\)</span> measures how far the line’s predictions are from <span class="math inline">\(\overline{Y}\)</span></p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="fragment">
+<p><span class="math inline">\(SS_{reg}\)</span> is <span class="alert">big</span>, so the slope is <span class="alert">steep</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-64-1.png" class="quarto-figure quarto-figure-center" style="width:4in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="fragment">
+<p><span class="math inline">\(SS_{reg}\)</span> is <span class="alert">small</span>, so the slope is <span class="alert">shallow</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-65-1.png" class="quarto-figure quarto-figure-center" style="width:4in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="sum-of-squares-all-together" class="slide level2">
+<h2>Sum of squares: all together</h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-66-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div style="font-size: 0.8em;">
+<p><span class="math inline">\(SS_Y = \sum (Y_i - \overline{Y})^2\)</span></p>
+<div class="fragment">
+<p><span style="color: darkgreen;"><span class="math inline">\(SS_{reg} = \sum (\hat{Y}_i - \overline{Y})^2\)</span></span></p>
+</div>
+<div class="fragment">
+<p><span style="color: firebrick;"><span class="math inline">\(SS_{error} = \sum (Y_i - \hat{Y}_i)^2\)</span></span></p>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+SS_Y = SS_{reg} + SS_{error}
+\]</span></p>
+</div>
+</div>
+</div></div>
+</section>
+<section id="sum-of-squares-in-r" class="slide level2">
+<h2>Sum of squares in <em>R</em></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href=""></a>y_bar <span class="ot">&lt;-</span> <span class="fu">mean</span>(lava_data<span class="sc">$</span>eruption_age)</span>
+<span id="cb23-2"><a href=""></a>y_hat <span class="ot">&lt;-</span> <span class="fu">fitted</span>(lava_model)</span>
+<span id="cb23-3"><a href=""></a></span>
+<span id="cb23-4"><a href=""></a>ss_y <span class="ot">&lt;-</span> <span class="fu">sum</span>((lava_data<span class="sc">$</span>eruption_age <span class="sc">-</span> y_bar) <span class="sc">^</span> <span class="dv">2</span>)</span>
+<span id="cb23-5"><a href=""></a>ss_reg <span class="ot">&lt;-</span> <span class="fu">sum</span>((y_hat <span class="sc">-</span> y_bar) <span class="sc">^</span> <span class="dv">2</span>)</span>
+<span id="cb23-6"><a href=""></a>ss_error <span class="ot">&lt;-</span> <span class="fu">sum</span>((lava_data<span class="sc">$</span>eruption_age <span class="sc">-</span> y_hat) <span class="sc">^</span> <span class="dv">2</span>)</span>
+<span id="cb23-7"><a href=""></a></span>
+<span id="cb23-8"><a href=""></a><span class="fu">c</span>(<span class="at">ss_y =</span> ss_y, <span class="at">ss_reg_plus_ss_error =</span> ss_reg <span class="sc">+</span> ss_error)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                ss_y ss_reg_plus_ss_error 
+             1710421              1710421 </code></pre>
+</div>
+</div>
+</section>
+<section id="from-sum-of-squares-to-mean-squares" class="slide level2">
+<h2>From sum of squares to mean squares</h2>
+<p>A sum of squares gets bigger with every data point we add</p>
+<div class="fragment">
+<p>Dividing by (about) <span class="math inline">\(N\)</span> gives an average squared deviation: a <span class="alert">mean square</span></p>
+</div>
+<div class="fragment">
+<p><span class="math display">\[
+MS_Y = \frac{SS_Y}{df_Y} \qquad
+MS_{reg} = \frac{SS_{reg}}{df_{reg}} \qquad
+MS_{error} = \frac{SS_{error}}{df_{error}}
+\]</span></p>
+</div>
+</section>
+<section id="degrees-of-freedom" class="slide level2">
+<h2>Degrees of freedom</h2>
+<ul>
+<li class="fragment"><span class="math inline">\(df_Y = n - 1\)</span> and <span class="math inline">\(MS_Y\)</span> is just the variance of <span class="math inline">\(Y\)</span></li>
+<li class="fragment"><span class="math inline">\(df_{reg} = 1\)</span>: we estimate one slope</li>
+<li class="fragment"><span class="math inline">\(df_{error} = n - 2\)</span>: the <span class="alert">intercept</span> and the <span class="alert">slope</span></li>
+</ul>
+<div class="fragment">
+<p>For the lava flows: <span class="math inline">\(df_Y =\)</span> 15, <span class="math inline">\(df_{reg} =\)</span> 1, <span class="math inline">\(df_{error} =\)</span> 14</p>
+<p><span class="math display">\[
+df_Y = df_{reg} + df_{error}
+\]</span></p>
+</div>
+</section>
+<section id="mean-squares-in-r" class="slide level2">
+<h2>Mean squares in <em>R</em></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a>ms_y <span class="ot">&lt;-</span> ss_y <span class="sc">/</span> (n_lava <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb25-2"><a href=""></a>ms_reg <span class="ot">&lt;-</span> ss_reg <span class="sc">/</span> <span class="dv">1</span></span>
+<span id="cb25-3"><a href=""></a>ms_error <span class="ot">&lt;-</span> ss_error <span class="sc">/</span> (n_lava <span class="sc">-</span> <span class="dv">2</span>)</span>
+<span id="cb25-4"><a href=""></a></span>
+<span id="cb25-5"><a href=""></a><span class="fu">c</span>(<span class="at">ms_y =</span> ms_y, <span class="at">ms_reg =</span> ms_reg, <span class="at">ms_error =</span> ms_error)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       ms_y      ms_reg    ms_error 
+ 114028.096 1672007.293    2743.867 </code></pre>
+</div>
+</div>
+<div class="fragment">
+<p><code>ms_y</code> is the same as <code>var(lava_data$eruption_age)</code></p>
+</div>
+</section>
+<section id="comparing-ss_regression-to-ss_error" class="slide level2">
+<h2>Comparing <span class="math inline">\(SS_{regression}\)</span> to <span class="math inline">\(SS_{error}\)</span></h2>
+<p>If the line explains a lot, <span class="math inline">\(SS_{reg}\)</span> and <span class="math inline">\(MS_{reg}\)</span> are big compared to the error</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-69-1.png" class="quarto-figure quarto-figure-center" style="width:10.5in"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="r2" class="slide level2">
+<h2><span class="math inline">\(R^2\)</span></h2>
+<p><span class="math display">\[
+R^2 = \frac{SS_{reg}}{SS_Y}
+\]</span></p>
+<div class="fragment">
+<p>The proportion of the variation in <span class="math inline">\(Y\)</span> that the regression explains, bounded <span class="math inline">\([0, 1]\)</span></p>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-70-1.png" class="quarto-figure quarto-figure-center" style="width:9.5in"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="f" class="slide level2">
+<h2><span class="math inline">\(F\)</span></h2>
+<p><span class="math display">\[
+F = \frac{MS_{reg}}{MS_{error}}
+\]</span></p>
+<div class="fragment">
+<p>How many times bigger the regression mean square is than the error mean square, bounded <span class="math inline">\([0, \infty)\)</span></p>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-71-1.png" class="quarto-figure quarto-figure-center" style="width:9.5in"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="r2-and-f-in-the-lava-flow-example" class="slide level2">
+<h2><span class="math inline">\(R^2\)</span> and <span class="math inline">\(F\)</span> in the lava flow example</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href=""></a>r_squared <span class="ot">&lt;-</span> ss_reg <span class="sc">/</span> ss_y</span>
+<span id="cb27-2"><a href=""></a>f_lava <span class="ot">&lt;-</span> ms_reg <span class="sc">/</span> ms_error</span>
+<span id="cb27-3"><a href=""></a></span>
+<span id="cb27-4"><a href=""></a><span class="fu">c</span>(<span class="at">r_squared =</span> r_squared, <span class="at">f =</span> f_lava)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  r_squared           f 
+  0.9775411 609.3615328 </code></pre>
+</div>
+</div>
+<div class="fragment">
+<p>These are <code>Multiple R-squared</code> and <code>F-statistic</code> at the bottom of <code>summary()</code></p>
+</div>
+<div class="fragment">
+<p>In simple regression, <span class="math inline">\(R^2\)</span> is the square of the correlation coefficient, <span class="math inline">\(r^2\)</span></p>
+</div>
+</section>
+<section id="null-hypothesis-test-with-f" class="slide level2">
+<h2>Null hypothesis test with <span class="math inline">\(F\)</span></h2>
+<p><span class="math inline">\(H_0\)</span>: <span class="math inline">\(MS_{reg} \leq MS_{error}\)</span></p>
+<p><span class="math inline">\(H_A\)</span>: <span class="math inline">\(MS_{reg} &gt; MS_{error}\)</span></p>
+<div class="fragment">
+<p>If <span class="math inline">\(H_0\)</span> is true, <span class="math inline">\(F\)</span> follows an <span class="alert">F-distribution</span> with <span class="math inline">\(df_{reg}\)</span> and <span class="math inline">\(df_{error}\)</span> degrees of freedom</p>
+</div>
+</section>
+<section id="null-hypothesis-test-with-f-1" class="slide level2">
+<h2>Null hypothesis test with <span class="math inline">\(F\)</span></h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:55%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-73-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:45%;">
+<p>The <span class="alert">P-value</span> is the probability of an <span class="math inline">\(F\)</span> at least as big as the observed <span class="math inline">\(F\)</span>, if <span class="math inline">\(H_0\)</span> is true</p>
+<div class="fragment">
+<p>If <span class="math inline">\(P \leq 0.05\)</span>: reject <span class="math inline">\(H_0\)</span></p>
+<p>If <span class="math inline">\(P &gt; 0.05\)</span>: fail to reject <span class="math inline">\(H_0\)</span></p>
+</div>
+</div></div>
+<div class="fragment">
+<p><em>The medium example from before: <span class="math inline">\(F =\)</span> 10.2 with 1 and 10 degrees of freedom</em></p>
+</div>
+</section>
+<section id="testing-h_0-with-f-lava-flows" class="slide level2">
+<h2>Testing <span class="math inline">\(H_0\)</span> with <span class="math inline">\(F\)</span>: lava flows</h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="11-regression-slides_files/figure-revealjs/unnamed-chunk-74-1.png" class="quarto-figure quarto-figure-center" style="width:4.6in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<p><span class="math inline">\(F =\)</span> 609.4 with 1 and 14 degrees of freedom</p>
+<div class="fragment">
+<p>The observed <span class="math inline">\(F\)</span> is so far out in the tail that the <span class="alert">P-value</span> is too thin to see</p>
+</div>
+</div></div>
+</section>
+<section id="finding-the-p-value-for-f-in-r" class="slide level2">
+<h2>Finding the P-value for <span class="math inline">\(F\)</span> in <em>R</em></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href=""></a><span class="fu">pf</span>(<span class="at">q =</span> f_lava, <span class="at">df1 =</span> <span class="dv">1</span>, <span class="at">df2 =</span> lava_df, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6.097536e-13</code></pre>
+</div>
+</div>
+<div class="fragment">
+<p><code>q</code> is our <span class="math inline">\(F\)</span> statistic, <code>df1</code> is <span class="math inline">\(df_{reg}\)</span>, <code>df2</code> is <span class="math inline">\(df_{error}\)</span></p>
+<p><span class="math inline">\(P &lt; 0.05\)</span>, so we reject <span class="math inline">\(H_0\)</span></p>
+</div>
+</section>
+<section id="the-anova-table" class="slide level2">
+<h2>The ANOVA table</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href=""></a><span class="fu">anova</span>(lava_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: eruption_age
+              Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+c14_depletion  1 1672007 1672007  609.36 6.098e-13 ***
+Residuals     14   38414    2744                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<ul>
+<li class="fragment"><code>Sum Sq</code> holds <span class="math inline">\(SS_{reg}\)</span> (the <code>c14_depletion</code> row) and <span class="math inline">\(SS_{error}\)</span> (the <code>Residuals</code> row)</li>
+<li class="fragment"><code>Mean Sq</code> <span class="math inline">\(=\)</span> <code>Sum Sq</code> <span class="math inline">\(/\)</span> <code>Df</code></li>
+<li class="fragment"><code>F value</code> <span class="math inline">\(= MS_{reg} / MS_{error}\)</span> and <code>Pr(&gt;F)</code> is its P-value</li>
+</ul>
+</section>
+<section id="f-and-t-agree" class="slide level2">
+<h2><span class="math inline">\(F\)</span> and <span class="math inline">\(t\)</span> agree</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href=""></a><span class="co"># with one slope, F is the square of t</span></span>
+<span id="cb33-2"><a href=""></a><span class="fu">c</span>(<span class="at">t_squared =</span> t_b <span class="sc">^</span> <span class="dv">2</span>, <span class="at">f =</span> f_lava)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>t_squared         f 
+ 609.3615  609.3615 </code></pre>
+</div>
+</div>
+<div class="fragment">
+<p>The <span class="math inline">\(F\)</span> test and the <span class="math inline">\(t\)</span> test of the slope give the same P-value in simple regression</p>
+</div>
+<div class="fragment">
+<p><span class="math inline">\(F\)</span> becomes more useful when a model has more than one explanatory variable</p>
 </div>
 
 </section></section>
