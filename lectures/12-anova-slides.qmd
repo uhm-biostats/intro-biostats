@@ -26,6 +26,520 @@ library(magrittr)
 
 # To the board...
 
+```{r anova-board-helpers}
+#| include: false
+
+# ---- shared look ------------------------------------------------------------
+
+line_col <- "steelblue"
+pt_col <- "tomato"
+
+theme_slides <- function() {
+    theme_cowplot() +
+        theme(
+            axis.text = element_text(size = 18),
+            axis.title = element_text(size = 22),
+            strip.text = element_text(size = 20),
+            plot.title = element_text(size = 22, hjust = 0.5)
+        )
+}
+
+ylab_i <- expression(italic(Y))
+
+# write a small number as TeX scientific notation, e.g. 1.2 \times 10^{-5}
+sci_tex <- function(x, digits = 2) {
+    if (x >= 0.001) {
+        return(as.character(signif(x, digits)))
+    }
+    expo <- floor(log10(x))
+    mant <- signif(x / 10 ^ expo, digits)
+    paste0("$", mant, " \\times 10^{", expo, "}$")
+}
+
+# ---- two small examples: three groups, five observations each ---------------
+
+# the same within-group deviations, shuffled differently in each group
+make_groups <- function(means, w) {
+    data.frame(group = rep(LETTERS[1:3], each = 5),
+               y = rep(means, each = 5) +
+                   c(w, w[c(3, 1, 5, 2, 4)], w[c(2, 4, 1, 5, 3)]))
+}
+
+# group means far apart compared to the spread within groups
+small_data <- make_groups(c(1.2, 2.4, 3.6), c(-0.5, 0.3, 0.6, -0.4, 0))
+
+# group means close together compared to the spread within groups
+overlap_data <- make_groups(c(3.2, 3.6, 4.0), c(-1.3, 0.8, 0.3, 1.4, -1.2))
+
+anova_parts <- function(d) {
+    y_bar <- mean(d$y)
+    group_mean <- ave(d$y, d$group)
+    n_groups <- nlevels(factor(d$group))
+    ss_group <- sum((group_mean - y_bar) ^ 2)
+    ss_error <- sum((d$y - group_mean) ^ 2)
+    df_group <- n_groups - 1
+    df_error <- nrow(d) - n_groups
+    f <- (ss_group / df_group) / (ss_error / df_error)
+    list(ss_y = sum((d$y - y_bar) ^ 2),
+         ss_group = ss_group,
+         ss_error = ss_error,
+         df_group = df_group,
+         df_error = df_error,
+         f = f,
+         p = pf(f, df_group, df_error, lower.tail = FALSE))
+}
+
+small_parts <- anova_parts(small_data)
+overlap_parts <- anova_parts(overlap_data)
+
+# type: "raw" (data and overall mean), "total" (Y to the overall mean),
+#       "group" (group means to the overall mean), "error" (Y to its group mean),
+#       "means" (data, group means and overall mean)
+groups_plot <- function(d, type = "raw", title = NULL, f_label = NULL,
+                        small = FALSE) {
+    txt <- ifelse(small, 5, 7)
+    d$x_pos <- as.numeric(factor(d$group)) + rep(c(-0.24, -0.12, 0, 0.12, 0.24), 3)
+    d$g_mean <- ave(d$y, d$group)
+    y_bar <- mean(d$y)
+    g <- data.frame(x = 1:3, g_mean = tapply(d$y, d$group, mean))
+
+    p <- ggplot(d, aes(x_pos, y)) +
+        geom_hline(yintercept = y_bar, linetype = "dashed", color = "grey40")
+    if (type == "total") {
+        p <- p + geom_segment(aes(xend = x_pos, yend = y_bar), color = "black",
+                              linewidth = 1.2)
+    }
+    if (type == "group") {
+        p <- p + geom_segment(aes(y = g_mean, xend = x_pos, yend = y_bar),
+                              color = line_col, linewidth = 1.2)
+    }
+    if (type == "error") {
+        p <- p + geom_segment(aes(xend = x_pos, yend = g_mean), color = "firebrick",
+                              linewidth = 1.2)
+    }
+    if (type %in% c("group", "error", "means")) {
+        p <- p + geom_segment(data = g, aes(x = x - 0.34, xend = x + 0.34,
+                                            y = g_mean, yend = g_mean),
+                              inherit.aes = FALSE, color = line_col, linewidth = 2.5)
+        p <- p + annotate("text", x = 3.4, y = g$g_mean[3], label = "hat(Y)[j]",
+                          parse = TRUE, hjust = 0, size = txt, color = line_col)
+    }
+    p <- p +
+        geom_point(color = pt_col, size = ifelse(small, 3, 4),
+                   alpha = ifelse(type == "group", 0.35, 1)) +
+        annotate("text", x = 3.95, y = y_bar - 0.3, label = "bar(Y)", parse = TRUE,
+                 hjust = 1, size = txt)
+    if (!is.null(f_label)) {
+        p <- p + annotate("text", x = 0.5, y = 5.3, label = f_label, parse = TRUE,
+                          hjust = 0, size = 7)
+    }
+    if (!is.null(title)) {
+        p <- p + ggtitle(title)
+    }
+    p <- p +
+        scale_x_continuous(breaks = 1:3, labels = LETTERS[1:3]) +
+        coord_cartesian(xlim = c(0.4, 3.95), ylim = c(0, 5.6)) +
+        xlab("Group") +
+        ylab(ylab_i) +
+        theme_slides()
+    if (small) {
+        p <- p + theme(axis.text = element_text(size = 12),
+                       axis.title = element_text(size = 14))
+    }
+    p
+}
+
+# ---- the F distribution under H0 --------------------------------------------
+
+anova_f_plot <- function(f_obs, df1, df2, xmax, label_left = TRUE) {
+    d <- data.frame(x = seq(0.02, xmax, length.out = 600))
+    d$y <- df(d$x, df1, df2)
+    tail_d <- d[d$x >= f_obs, ]
+    x_t <- f_obs + 0.2 * (xmax - f_obs)
+    y_t <- max(0.5 * df(x_t, df1, df2), 0.02)
+    ggplot(d, aes(x, y)) +
+        geom_area(data = tail_d, fill = "firebrick", alpha = 0.7) +
+        geom_line(linewidth = 1.3) +
+        geom_vline(xintercept = f_obs, color = line_col, linewidth = 1.3) +
+        annotate("text", x = f_obs + ifelse(label_left, -1, 1) * 0.02 * xmax, y = 0.9,
+                 label = "observed F", hjust = ifelse(label_left, 1, 0), size = 7,
+                 color = line_col) +
+        annotate("text", x = f_obs + 0.35 * (xmax - f_obs), y = 0.4, label = "P-value",
+                 size = 7, color = "firebrick") +
+        annotate("segment", x = f_obs + 0.35 * (xmax - f_obs), xend = x_t, y = 0.34,
+                 yend = y_t, color = "firebrick",
+                 arrow = arrow(length = unit(0.12, "in"))) +
+        coord_cartesian(xlim = c(0, xmax), ylim = c(0, 1.05)) +
+        xlab(expression(F == MS[group] / MS[error])) +
+        ylab("Density") +
+        theme_slides()
+}
+```
+
+## [Analysis of variance]{.alert}: do the group means differ?
+
+::: {.columns style="align-items: center;"}
+::: {.column width="45%"}
+Is the mean of $Y$ the same in every group?
+
+A small example: three groups, five observations each
+
+::: {.fragment}
+ANOVA splits the variation in $Y$ into two sources: variation [among]{.alert} the group means and variation [within]{.alert} the groups
+:::
+:::
+
+::: {.column width="55%"}
+```{r}
+#| fig-align: center
+#| fig-width: 5.5
+#| fig-height: 4.2
+#| out-width: "5in"
+
+groups_plot(small_data, "raw")
+```
+:::
+:::
+
+## Sum of squares: $SS_Y$ {.top-align}
+
+::: columns
+::: {.column width="45%"}
+$$
+SS_Y = \sum (Y_i - \overline{Y})^2
+$$
+
+The total variation in $Y$: how far every observation is from the overall mean, $\overline{Y}$
+:::
+
+::: {.column width="55%"}
+```{r}
+#| fig-align: center
+#| fig-width: 5.5
+#| fig-height: 4.2
+#| out-width: "5in"
+
+groups_plot(small_data, "total")
+```
+:::
+:::
+
+## Sum of squares: $SS_{group}$ {.top-align}
+
+::: columns
+::: {.column width="45%"}
+$$
+SS_{group} = \sum n_j (\hat{Y}_j - \overline{Y})^2
+$$
+
+::: {.incremental}
+- $\hat{Y}_j$ is the mean of group $j$: the prediction for every observation in that group
+- $n_j$ is the number of observations in group $j$
+:::
+
+::: {.fragment}
+$SS_{group}$ is [big]{.alert} when the group means are far from $\overline{Y}$
+:::
+:::
+
+::: {.column width="55%"}
+```{r}
+#| fig-align: center
+#| fig-width: 5.5
+#| fig-height: 4.2
+#| out-width: "5in"
+
+groups_plot(small_data, "group")
+```
+:::
+:::
+
+## Sum of squares: $SS_{error}$ {.top-align}
+
+::: columns
+::: {.column width="45%"}
+$$
+SS_{error} = \sum (Y_i - \hat{Y}_j)^2
+$$
+
+Compare each data point to the mean of its [own group]{.alert}
+
+::: {.fragment}
+The variation within groups: what the groups do not explain
+:::
+:::
+
+::: {.column width="55%"}
+```{r}
+#| fig-align: center
+#| fig-width: 5.5
+#| fig-height: 4.2
+#| out-width: "5in"
+
+groups_plot(small_data, "error")
+```
+:::
+:::
+
+## Sum of squares: all together
+
+::: {style="font-size: 0.8em;"}
+::: columns
+::: {.column width="33%"}
+::: {.fragment}
+$SS_Y$ $=$
+
+```{r}
+#| fig-align: center
+#| fig-width: 3.3
+#| fig-height: 3
+#| out-width: "3.2in"
+
+groups_plot(small_data, "total", small = TRUE)
+```
+
+$\sum (Y_i - \overline{Y})^2$
+:::
+:::
+
+::: {.column width="33%"}
+::: {.fragment}
+$SS_{group}$ $+$
+
+```{r}
+#| fig-align: center
+#| fig-width: 3.3
+#| fig-height: 3
+#| out-width: "3.2in"
+
+groups_plot(small_data, "group", small = TRUE)
+```
+
+$\sum n_j (\hat{Y}_j - \overline{Y})^2$
+:::
+:::
+
+::: {.column width="33%"}
+::: {.fragment}
+$SS_{error}$
+
+```{r}
+#| fig-align: center
+#| fig-width: 3.3
+#| fig-height: 3
+#| out-width: "3.2in"
+
+groups_plot(small_data, "error", small = TRUE)
+```
+
+$\sum (Y_i - \hat{Y}_j)^2$
+:::
+:::
+:::
+:::
+
+## Mean squares
+
+A sum of squares gets bigger with every data point we add, so we divide by the degrees of freedom to get a [mean square]{.alert}
+
+$$
+MS_{group} = \frac{SS_{group}}{df_{group}} \qquad\qquad MS_{error} = \frac{SS_{error}}{df_{error}}
+$$
+
+::: {.incremental}
+- $df_{group} = (\text{number of groups}) - 1$
+- $df_{error} = N - (\text{number of groups})$: we estimate one mean for each group
+:::
+
+::: {.fragment}
+In our example, 3 groups and $N =$ 15: $df_{group} =$ `r small_parts$df_group` and $df_{error} =$ `r small_parts$df_error`
+:::
+
+## Sum of squares and mean squares in *R*
+
+```{r}
+#| echo: true
+
+y_bar <- mean(small_data$y)
+group_mean <- ave(small_data$y, small_data$group)
+
+ss_y <- sum((small_data$y - y_bar) ^ 2)
+ss_group <- sum((group_mean - y_bar) ^ 2)
+ss_error <- sum((small_data$y - group_mean) ^ 2)
+
+ss_y
+ss_group + ss_error
+
+ms_group <- ss_group / (3 - 1)
+ms_error <- ss_error / (15 - 3)
+
+ms_group
+ms_error
+```
+
+## Comparing $MS_{group}$ to $MS_{error}$
+
+```{r}
+#| fig-align: center
+#| fig-width: 11
+#| fig-height: 4.4
+#| out-width: "10in"
+
+plot_grid(groups_plot(small_data, "means", title = expression(MS[group] > MS[error])),
+          groups_plot(overlap_data, "means", title = expression(MS[group] < MS[error])),
+          nrow = 1)
+```
+
+::: {.columns}
+::: {.column width="50%"}
+::: {.fragment}
+The group means are far apart compared to the spread within each group
+:::
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+The group means are close together compared to the spread within each group
+:::
+:::
+:::
+
+## $F$-statistic {.top-align}
+
+$$
+F = \frac{MS_{group}}{MS_{error}}
+$$
+
+::: {style="margin-top: -0.6em;"}
+How much more variation between groups ($MS_{group}$) compared to variation in "residuals" ($MS_{error}$), bounded $[0, \infty)$
+:::
+
+```{r}
+#| fig-align: center
+#| fig-width: 11
+#| fig-height: 4.4
+#| out-width: "8.8in"
+
+f_small <- paste0('F == "', sprintf("%.2f", small_parts$f), '" ~ "(big)"')
+f_overlap <- paste0('F == "', sprintf("%.2f", overlap_parts$f), '" ~ "(small)"')
+
+plot_grid(groups_plot(small_data, "means", title = expression(MS[group] > MS[error]),
+                      f_label = f_small),
+          groups_plot(overlap_data, "means", title = expression(MS[group] < MS[error]),
+                      f_label = f_overlap),
+          nrow = 1)
+```
+
+## The null hypothesis
+
+::: {.incremental}
+- $H_0$: $\mu_A = \mu_B = \mu_C$, all of the group means are equal
+- $H_A$: not all of the means are equal
+:::
+
+::: {.fragment}
+For any number of groups, $k$: $H_0$: $\mu_1 = \mu_2 = \dots = \mu_k$
+:::
+
+::: {.fragment}
+If $H_0$ is true, $MS_{group}$ and $MS_{error}$ both estimate the variation within groups, so $F \approx 1$
+:::
+
+::: {.fragment}
+If some means differ, $MS_{group}$ gets bigger than $MS_{error}$ and $F$ gets big
+:::
+
+## Null hypothesis test with $F$
+
+If $H_0$ is true, $F$ follows an [F-distribution]{.alert} with $df_{group}$ and $df_{error}$ degrees of freedom
+
+::: {.columns style="align-items: center;"}
+::: {.column width="50%"}
+::: {.fragment}
+```{r}
+#| fig-align: center
+#| fig-width: 5.5
+#| fig-height: 4
+#| out-width: "4.6in"
+
+anova_f_plot(overlap_parts$f, overlap_parts$df_group, overlap_parts$df_error,
+             xmax = 6, label_left = FALSE)
+```
+
+$F_{`r overlap_parts$df_group`,`r overlap_parts$df_error`} =$ `r round(overlap_parts$f, 2)`, $P =$ `r round(overlap_parts$p, 2)`
+
+$df_{group} =$ `r overlap_parts$df_group`, $df_{error} =$ `r overlap_parts$df_error`
+:::
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+```{r}
+#| fig-align: center
+#| fig-width: 5.5
+#| fig-height: 4
+#| out-width: "4.6in"
+
+anova_f_plot(small_parts$f, small_parts$df_group, small_parts$df_error,
+             xmax = 40)
+```
+
+$F_{`r small_parts$df_group`,`r small_parts$df_error`} =$ `r round(small_parts$f, 1)`, $P =$ `r sci_tex(small_parts$p)`
+
+$df_{group} =$ `r small_parts$df_group`, $df_{error} =$ `r small_parts$df_error`
+:::
+:::
+:::
+
+## Null hypothesis test with $F$
+
+The [P-value]{.alert} is the probability of an $F$ at least as big as the observed $F$, if $H_0$ is true
+
+::: {.fragment}
+If $P \leq 0.05$: reject $H_0$
+
+If $P > 0.05$: fail to reject $H_0$
+:::
+
+::: {.fragment}
+If we reject $H_0$: at least one group mean is different from the others
+:::
+
+## Finding $F$ and the P-value in *R*
+
+```{r}
+#| echo: true
+
+f_stat <- ms_group / ms_error
+f_stat
+
+pf(q = f_stat, df1 = 3 - 1, df2 = 15 - 3, lower.tail = FALSE)
+```
+
+::: {.fragment}
+`q` is our $F$ statistic, `df1` is $df_{group}$, `df2` is $df_{error}$
+
+$P < 0.05$, so we reject $H_0$: at least one group mean is different from the others
+:::
+
+<!-- ## The ANOVA table -->
+
+<!-- ```{r} -->
+<!-- #| echo: true -->
+
+<!-- anova(lm(y ~ group, data = small_data)) -->
+<!-- ``` -->
+
+<!-- ::: {.incremental} -->
+<!-- - `Sum Sq` holds $SS_{group}$ (the `group` row) and $SS_{error}$ (the `Residuals` row) -->
+<!-- - `Mean Sq` $=$ `Sum Sq` $/$ `Df` -->
+<!-- - `F value` $= MS_{group} / MS_{error}$ and `Pr(>F)` is its P-value -->
+<!-- ::: -->
+
+<!-- ::: {.fragment} -->
+<!-- Next, the same analysis on a bigger example -->
+<!-- ::: -->
+
 ## Example ANOVA for multiple groups in *R*
 
 ```{r}
@@ -45,7 +559,7 @@ head(dat_groups, n = 3)
 ```{r}
 #| echo: true
 #| fig-align: center
-#| fig-width: 3
+#| fig-width: 4
 #| fig-height: 3
 #| out-width: "5in"
 
@@ -57,12 +571,13 @@ ggplot(dat_groups, aes(x = group, y = y)) + geom_boxplot()
 ```{r}
 #| echo: true
 #| fig-align: center
-#| fig-width: 3
-#| fig-height: 2
+#| fig-width: 4
+#| fig-height: 3
 #| out-width: "5in"
 
 ggplot(dat_groups, aes(x = group, y = y)) +
-    geom_jitter(aes(color = group))
+    geom_jitter(aes(color = group)) +
+    scale_color_discrete(palette = c("tomato", "purple4", "dodgerblue3"))
 ```
 
 ## Example ANOVA for multiple groups in *R*
@@ -93,7 +608,7 @@ ANOVA does not tell you which group(s) is/are different!  Just that a difference
 ```{r}
 #| echo: false
 #| fig-align: center
-#| fig-width: 3
+#| fig-width: 4
 #| fig-height: 3
 #| out-width: "5in"
 
@@ -111,7 +626,7 @@ If we want to know which groups are different, we need to do a "post hoc" test
 
 Which groups are different?  Just do $t$-tests between all pairwise comparisons, right?
 
-- The problem is that doing multiple $t$-tests leads to a false positive rate $> \alpha$
+- The problem: doing multiple $t$-tests leads to a false positive rate $> \alpha$
 - If we do 3 pairwise comparisons with $t$-tests and $\alpha = 0.05$ for each one, then probability of at least 1 false positive is:
 
 ```{r}
@@ -137,7 +652,7 @@ Each $t$-test is like a coin toss with "heads = false positive", the more you do
 So we use a post hoc test:
 
 ```{r}
-#| echo: true
+#| echo: false
 
 # annoying, but we have to pass the model through the `aov` function
 aov_group <- aov(mod_group)
@@ -146,6 +661,9 @@ aov_group <- aov(mod_group)
 ```{r}
 #| echo: true
 #| eval: false
+
+# annoying, but we have to pass the model through the `aov` function
+aov_group <- aov(mod_group)
 
 # "Tukey Honest Significant Difference"
 TukeyHSD(aov_group)

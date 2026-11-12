@@ -212,28 +212,37 @@
 <h1>To the board…</h1>
 
 </section>
-<section id="example-anova-for-multiple-groups-in-r" class="slide level2">
-<h2>Example ANOVA for multiple groups in <em>R</em></h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a><span class="co"># make some pretend data</span></span>
-<span id="cb1-2"><a href=""></a>groups <span class="ot">&lt;-</span> <span class="fu">rep</span>(LETTERS[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="at">each =</span> <span class="dv">10</span>)</span>
-<span id="cb1-3"><a href=""></a>y <span class="ot">&lt;-</span> <span class="fl">1.2</span> <span class="sc">*</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(groups)) <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">30</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fl">0.5</span>)</span>
-<span id="cb1-4"><a href=""></a></span>
-<span id="cb1-5"><a href=""></a>dat_groups <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">group =</span> groups, <span class="at">y =</span> y)</span>
-<span id="cb1-6"><a href=""></a></span>
-<span id="cb1-7"><a href=""></a><span class="fu">head</span>(dat_groups, <span class="at">n =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  group         y
-1     A 0.9802452
-2     A 1.3257619
-3     A 0.6975986</code></pre>
+<section id="analysis-of-variance-do-the-group-means-differ" class="slide level2">
+<h2><span class="alert">Analysis of variance</span>: do the group means differ?</h2>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:45%;">
+<p>Is the mean of <span class="math inline">\(Y\)</span> the same in every group?</p>
+<p>A small example: three groups, five observations each</p>
+<div class="fragment">
+<p>ANOVA splits the variation in <span class="math inline">\(Y\)</span> into two sources: variation <span class="alert">among</span> the group means and variation <span class="alert">within</span> the groups</p>
 </div>
-</div>
-</section>
-<section id="example-anova-for-multiple-groups-in-r-1" class="slide level2">
-<h2>Example ANOVA for multiple groups in <em>R</em></h2>
+</div><div class="column" style="width:55%;">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="fu">ggplot</span>(dat_groups, <span class="fu">aes</span>(<span class="at">x =</span> group, <span class="at">y =</span> y)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-1-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="sum-of-squares-ss_y" class="slide level2 top-align">
+<h2>Sum of squares: <span class="math inline">\(SS_Y\)</span></h2>
+<div class="columns">
+<div class="column" style="width:45%;">
+<p><span class="math display">\[
+SS_Y = \sum (Y_i - \overline{Y})^2
+\]</span></p>
+<p>The total variation in <span class="math inline">\(Y\)</span>: how far every observation is from the overall mean, <span class="math inline">\(\overline{Y}\)</span></p>
+</div><div class="column" style="width:55%;">
+<div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -242,12 +251,24 @@
 </div>
 </div>
 </div>
+</div></div>
 </section>
-<section id="example-anova-for-multiple-groups-in-r-2" class="slide level2">
-<h2>Example ANOVA for multiple groups in <em>R</em></h2>
+<section id="sum-of-squares-ss_group" class="slide level2 top-align">
+<h2>Sum of squares: <span class="math inline">\(SS_{group}\)</span></h2>
+<div class="columns">
+<div class="column" style="width:45%;">
+<p><span class="math display">\[
+SS_{group} = \sum n_j (\hat{Y}_j - \overline{Y})^2
+\]</span></p>
+<ul>
+<li class="fragment"><span class="math inline">\(\hat{Y}_j\)</span> is the mean of group <span class="math inline">\(j\)</span>: the prediction for every observation in that group</li>
+<li class="fragment"><span class="math inline">\(n_j\)</span> is the number of observations in group <span class="math inline">\(j\)</span></li>
+</ul>
+<div class="fragment">
+<p><span class="math inline">\(SS_{group}\)</span> is <span class="alert">big</span> when the group means are far from <span class="math inline">\(\overline{Y}\)</span></p>
+</div>
+</div><div class="column" style="width:55%;">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a><span class="fu">ggplot</span>(dat_groups, <span class="fu">aes</span>(<span class="at">x =</span> group, <span class="at">y =</span> y)) <span class="sc">+</span></span>
-<span id="cb4-2"><a href=""></a>    <span class="fu">geom_jitter</span>(<span class="fu">aes</span>(<span class="at">color =</span> group))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -256,19 +277,315 @@
 </div>
 </div>
 </div>
+</div></div>
+</section>
+<section id="sum-of-squares-ss_error" class="slide level2 top-align">
+<h2>Sum of squares: <span class="math inline">\(SS_{error}\)</span></h2>
+<div class="columns">
+<div class="column" style="width:45%;">
+<p><span class="math display">\[
+SS_{error} = \sum (Y_i - \hat{Y}_j)^2
+\]</span></p>
+<p>Compare each data point to the mean of its <span class="alert">own group</span></p>
+<div class="fragment">
+<p>The variation within groups: what the groups do not explain</p>
+</div>
+</div><div class="column" style="width:55%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-4-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+</figure>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="sum-of-squares-all-together" class="slide level2">
+<h2>Sum of squares: all together</h2>
+<div style="font-size: 0.8em;">
+<div class="columns">
+<div class="column" style="width:33%;">
+<div class="fragment">
+<p><span class="math inline">\(SS_Y\)</span> <span class="math inline">\(=\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center" style="width:3.2in"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><span class="math inline">\(\sum (Y_i - \overline{Y})^2\)</span></p>
+</div>
+</div><div class="column" style="width:33%;">
+<div class="fragment">
+<p><span class="math inline">\(SS_{group}\)</span> <span class="math inline">\(+\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center" style="width:3.2in"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><span class="math inline">\(\sum n_j (\hat{Y}_j - \overline{Y})^2\)</span></p>
+</div>
+</div><div class="column" style="width:33%;">
+<div class="fragment">
+<p><span class="math inline">\(SS_{error}\)</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center" style="width:3.2in"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><span class="math inline">\(\sum (Y_i - \hat{Y}_j)^2\)</span></p>
+</div>
+</div></div>
+</div>
+</section>
+<section id="mean-squares" class="slide level2">
+<h2>Mean squares</h2>
+<p>A sum of squares gets bigger with every data point we add, so we divide by the degrees of freedom to get a <span class="alert">mean square</span></p>
+<p><span class="math display">\[
+MS_{group} = \frac{SS_{group}}{df_{group}} \qquad\qquad MS_{error} = \frac{SS_{error}}{df_{error}}
+\]</span></p>
+<ul>
+<li class="fragment"><span class="math inline">\(df_{group} = (\text{number of groups}) - 1\)</span></li>
+<li class="fragment"><span class="math inline">\(df_{error} = N - (\text{number of groups})\)</span>: we estimate one mean for each group</li>
+</ul>
+<div class="fragment">
+<p>In our example, 3 groups and <span class="math inline">\(N =\)</span> 15: <span class="math inline">\(df_{group} =\)</span> 2 and <span class="math inline">\(df_{error} =\)</span> 12</p>
+</div>
+</section>
+<section id="sum-of-squares-and-mean-squares-in-r" class="slide level2">
+<h2>Sum of squares and mean squares in <em>R</em></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>y_bar <span class="ot">&lt;-</span> <span class="fu">mean</span>(small_data<span class="sc">$</span>y)</span>
+<span id="cb1-2"><a href=""></a>group_mean <span class="ot">&lt;-</span> <span class="fu">ave</span>(small_data<span class="sc">$</span>y, small_data<span class="sc">$</span>group)</span>
+<span id="cb1-3"><a href=""></a></span>
+<span id="cb1-4"><a href=""></a>ss_y <span class="ot">&lt;-</span> <span class="fu">sum</span>((small_data<span class="sc">$</span>y <span class="sc">-</span> y_bar) <span class="sc">^</span> <span class="dv">2</span>)</span>
+<span id="cb1-5"><a href=""></a>ss_group <span class="ot">&lt;-</span> <span class="fu">sum</span>((group_mean <span class="sc">-</span> y_bar) <span class="sc">^</span> <span class="dv">2</span>)</span>
+<span id="cb1-6"><a href=""></a>ss_error <span class="ot">&lt;-</span> <span class="fu">sum</span>((small_data<span class="sc">$</span>y <span class="sc">-</span> group_mean) <span class="sc">^</span> <span class="dv">2</span>)</span>
+<span id="cb1-7"><a href=""></a></span>
+<span id="cb1-8"><a href=""></a>ss_y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 16.98</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a>ss_group <span class="sc">+</span> ss_error</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 16.98</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a>ms_group <span class="ot">&lt;-</span> ss_group <span class="sc">/</span> (<span class="dv">3</span> <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb5-2"><a href=""></a>ms_error <span class="ot">&lt;-</span> ss_error <span class="sc">/</span> (<span class="dv">15</span> <span class="sc">-</span> <span class="dv">3</span>)</span>
+<span id="cb5-3"><a href=""></a></span>
+<span id="cb5-4"><a href=""></a>ms_group</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 7.2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a>ms_error</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.215</code></pre>
+</div>
+</div>
+</section>
+<section id="comparing-ms_group-to-ms_error" class="slide level2">
+<h2>Comparing <span class="math inline">\(MS_{group}\)</span> to <span class="math inline">\(MS_{error}\)</span></h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-9-1.png" class="quarto-figure quarto-figure-center" style="width:10in"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="fragment">
+<p>The group means are far apart compared to the spread within each group</p>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="fragment">
+<p>The group means are close together compared to the spread within each group</p>
+</div>
+</div></div>
+</section>
+<section id="f-statistic" class="slide level2 top-align">
+<h2><span class="math inline">\(F\)</span>-statistic</h2>
+<p><span class="math display">\[
+F = \frac{MS_{group}}{MS_{error}}
+\]</span></p>
+<div style="margin-top: -0.6em;">
+<p>How much more variation between groups (<span class="math inline">\(MS_{group}\)</span>) compared to variation in “residuals” (<span class="math inline">\(MS_{error}\)</span>), bounded <span class="math inline">\([0, \infty)\)</span></p>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center" style="width:8.8in"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="the-null-hypothesis" class="slide level2">
+<h2>The null hypothesis</h2>
+<ul>
+<li class="fragment"><span class="math inline">\(H_0\)</span>: <span class="math inline">\(\mu_A = \mu_B = \mu_C\)</span>, all of the group means are equal</li>
+<li class="fragment"><span class="math inline">\(H_A\)</span>: not all of the means are equal</li>
+</ul>
+<div class="fragment">
+<p>For any number of groups, <span class="math inline">\(k\)</span>: <span class="math inline">\(H_0\)</span>: <span class="math inline">\(\mu_1 = \mu_2 = \dots = \mu_k\)</span></p>
+</div>
+<div class="fragment">
+<p>If <span class="math inline">\(H_0\)</span> is true, <span class="math inline">\(MS_{group}\)</span> and <span class="math inline">\(MS_{error}\)</span> both estimate the variation within groups, so <span class="math inline">\(F \approx 1\)</span></p>
+</div>
+<div class="fragment">
+<p>If some means differ, <span class="math inline">\(MS_{group}\)</span> gets bigger than <span class="math inline">\(MS_{error}\)</span> and <span class="math inline">\(F\)</span> gets big</p>
+</div>
+</section>
+<section id="null-hypothesis-test-with-f" class="slide level2">
+<h2>Null hypothesis test with <span class="math inline">\(F\)</span></h2>
+<p>If <span class="math inline">\(H_0\)</span> is true, <span class="math inline">\(F\)</span> follows an <span class="alert">F-distribution</span> with <span class="math inline">\(df_{group}\)</span> and <span class="math inline">\(df_{error}\)</span> degrees of freedom</p>
+<div class="columns" style="align-items: center;">
+<div class="column" style="width:50%;">
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center" style="width:4.6in"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><span class="math inline">\(F_{2,12} =\)</span> 0.55, <span class="math inline">\(P =\)</span> 0.59</p>
+<p><span class="math inline">\(df_{group} =\)</span> 2, <span class="math inline">\(df_{error} =\)</span> 12</p>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="fragment">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center" style="width:4.6in"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><span class="math inline">\(F_{2,12} =\)</span> 33.5, <span class="math inline">\(P =\)</span> <span class="math inline">\(1.2 \times 10^{-5}\)</span></p>
+<p><span class="math inline">\(df_{group} =\)</span> 2, <span class="math inline">\(df_{error} =\)</span> 12</p>
+</div>
+</div></div>
+</section>
+<section id="null-hypothesis-test-with-f-1" class="slide level2">
+<h2>Null hypothesis test with <span class="math inline">\(F\)</span></h2>
+<p>The <span class="alert">P-value</span> is the probability of an <span class="math inline">\(F\)</span> at least as big as the observed <span class="math inline">\(F\)</span>, if <span class="math inline">\(H_0\)</span> is true</p>
+<div class="fragment">
+<p>If <span class="math inline">\(P \leq 0.05\)</span>: reject <span class="math inline">\(H_0\)</span></p>
+<p>If <span class="math inline">\(P &gt; 0.05\)</span>: fail to reject <span class="math inline">\(H_0\)</span></p>
+</div>
+<div class="fragment">
+<p>If we reject <span class="math inline">\(H_0\)</span>: at least one group mean is different from the others</p>
+</div>
+</section>
+<section id="finding-f-and-the-p-value-in-r" class="slide level2">
+<h2>Finding <span class="math inline">\(F\)</span> and the P-value in <em>R</em></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a>f_stat <span class="ot">&lt;-</span> ms_group <span class="sc">/</span> ms_error</span>
+<span id="cb9-2"><a href=""></a>f_stat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 33.48837</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="fu">pf</span>(<span class="at">q =</span> f_stat, <span class="at">df1 =</span> <span class="dv">3</span> <span class="sc">-</span> <span class="dv">1</span>, <span class="at">df2 =</span> <span class="dv">15</span> <span class="sc">-</span> <span class="dv">3</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.23053e-05</code></pre>
+</div>
+</div>
+<div class="fragment">
+<p><code>q</code> is our <span class="math inline">\(F\)</span> statistic, <code>df1</code> is <span class="math inline">\(df_{group}\)</span>, <code>df2</code> is <span class="math inline">\(df_{error}\)</span></p>
+<p><span class="math inline">\(P &lt; 0.05\)</span>, so we reject <span class="math inline">\(H_0\)</span>: at least one group mean is different from the others</p>
+</div>
+<!-- ## The ANOVA table -->
+<!-- ```{r} -->
+<!-- #| echo: true -->
+<!-- anova(lm(y ~ group, data = small_data)) -->
+<!-- ``` -->
+<!-- ::: {.incremental} -->
+<!-- - `Sum Sq` holds $SS_{group}$ (the `group` row) and $SS_{error}$ (the `Residuals` row) -->
+<!-- - `Mean Sq` $=$ `Sum Sq` $/$ `Df` -->
+<!-- - `F value` $= MS_{group} / MS_{error}$ and `Pr(>F)` is its P-value -->
+<!-- ::: -->
+<!-- ::: {.fragment} -->
+<!-- Next, the same analysis on a bigger example -->
+<!-- ::: -->
+</section>
+<section id="example-anova-for-multiple-groups-in-r" class="slide level2">
+<h2>Example ANOVA for multiple groups in <em>R</em></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a><span class="co"># make some pretend data</span></span>
+<span id="cb13-2"><a href=""></a>groups <span class="ot">&lt;-</span> <span class="fu">rep</span>(LETTERS[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="at">each =</span> <span class="dv">10</span>)</span>
+<span id="cb13-3"><a href=""></a>y <span class="ot">&lt;-</span> <span class="fl">1.2</span> <span class="sc">*</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(groups)) <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">30</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fl">0.5</span>)</span>
+<span id="cb13-4"><a href=""></a></span>
+<span id="cb13-5"><a href=""></a>dat_groups <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">group =</span> groups, <span class="at">y =</span> y)</span>
+<span id="cb13-6"><a href=""></a></span>
+<span id="cb13-7"><a href=""></a><span class="fu">head</span>(dat_groups, <span class="at">n =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  group         y
+1     A 1.2218022
+2     A 0.9340506
+3     A 1.0216734</code></pre>
+</div>
+</div>
+</section>
+<section id="example-anova-for-multiple-groups-in-r-1" class="slide level2">
+<h2>Example ANOVA for multiple groups in <em>R</em></h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a><span class="fu">ggplot</span>(dat_groups, <span class="fu">aes</span>(<span class="at">x =</span> group, <span class="at">y =</span> y)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="example-anova-for-multiple-groups-in-r-2" class="slide level2">
+<h2>Example ANOVA for multiple groups in <em>R</em></h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href=""></a><span class="fu">ggplot</span>(dat_groups, <span class="fu">aes</span>(<span class="at">x =</span> group, <span class="at">y =</span> y)) <span class="sc">+</span></span>
+<span id="cb16-2"><a href=""></a>    <span class="fu">geom_jitter</span>(<span class="fu">aes</span>(<span class="at">color =</span> group)) <span class="sc">+</span></span>
+<span id="cb16-3"><a href=""></a>    <span class="fu">scale_color_discrete</span>(<span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"tomato"</span>, <span class="st">"purple4"</span>, <span class="st">"dodgerblue3"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-16-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section id="example-anova-for-multiple-groups-in-r-3" class="slide level2">
 <h2>Example ANOVA for multiple groups in <em>R</em></h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a>mod_group <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> group, <span class="at">data =</span> dat_groups)</span>
-<span id="cb5-2"><a href=""></a><span class="fu">anova</span>(mod_group)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href=""></a>mod_group <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> group, <span class="at">data =</span> dat_groups)</span>
+<span id="cb17-2"><a href=""></a><span class="fu">anova</span>(mod_group)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
 
 Response: y
-          Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
-group      2 27.9643  13.982  46.758 1.695e-09 ***
-Residuals 27  8.0738   0.299                      
+          Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+group      2 25.349 12.6744  53.105 4.387e-10 ***
+Residuals 27  6.444  0.2387                      
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
@@ -297,7 +614,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-5-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-18-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
 </figure>
 </div>
 </div>
@@ -315,12 +632,12 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <h2>Pos hoc tests and multiple comparisons</h2>
 <p>Which groups are different? Just do <span class="math inline">\(t\)</span>-tests between all pairwise comparisons, right?</p>
 <ul>
-<li>The problem is that doing multiple <span class="math inline">\(t\)</span>-tests leads to a false positive rate <span class="math inline">\(&gt; \alpha\)</span></li>
+<li>The problem: doing multiple <span class="math inline">\(t\)</span>-tests leads to a false positive rate <span class="math inline">\(&gt; \alpha\)</span></li>
 <li>If we do 3 pairwise comparisons with <span class="math inline">\(t\)</span>-tests and <span class="math inline">\(\alpha = 0.05\)</span> for each one, then probability of at least 1 false positive is:</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a>prob_false_positive <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">dbinom</span>(<span class="dv">0</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">prob =</span> <span class="fl">0.05</span>)</span>
-<span id="cb7-2"><a href=""></a>prob_false_positive</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href=""></a>prob_false_positive <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">dbinom</span>(<span class="dv">0</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">prob =</span> <span class="fl">0.05</span>)</span>
+<span id="cb19-2"><a href=""></a>prob_false_positive</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.142625</code></pre>
 </div>
@@ -329,8 +646,8 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <section id="pos-hoc-tests-and-multiple-comparisons-1" class="slide level2">
 <h2>Pos hoc tests and multiple comparisons</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a>prob_false_positive <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">dbinom</span>(<span class="dv">0</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">prob =</span> <span class="fl">0.05</span>)</span>
-<span id="cb9-2"><a href=""></a>prob_false_positive</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href=""></a>prob_false_positive <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">dbinom</span>(<span class="dv">0</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">prob =</span> <span class="fl">0.05</span>)</span>
+<span id="cb21-2"><a href=""></a>prob_false_positive</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.142625</code></pre>
 </div>
@@ -341,20 +658,19 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <h2>Pos hoc tests and multiple comparisons</h2>
 <p>So we use a post hoc test:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="co"># annoying, but we have to pass the model through the `aov` function</span></span>
-<span id="cb11-2"><a href=""></a>aov_group <span class="ot">&lt;-</span> <span class="fu">aov</span>(mod_group)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a><span class="co"># "Tukey Honest Significant Difference"</span></span>
-<span id="cb12-2"><a href=""></a><span class="fu">TukeyHSD</span>(aov_group)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href=""></a><span class="co"># annoying, but we have to pass the model through the `aov` function</span></span>
+<span id="cb23-2"><a href=""></a>aov_group <span class="ot">&lt;-</span> <span class="fu">aov</span>(mod_group)</span>
+<span id="cb23-3"><a href=""></a></span>
+<span id="cb23-4"><a href=""></a><span class="co"># "Tukey Honest Significant Difference"</span></span>
+<span id="cb23-5"><a href=""></a><span class="fu">TukeyHSD</span>(aov_group)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="pos-hoc-tests-and-multiple-comparisons-3" class="slide level2">
 <h2>Pos hoc tests and multiple comparisons</h2>
 <p>So we use a post hoc test:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a><span class="co"># "Tukey Honest Significant Difference"</span></span>
-<span id="cb13-2"><a href=""></a><span class="fu">TukeyHSD</span>(aov_group)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a><span class="co"># "Tukey Honest Significant Difference"</span></span>
+<span id="cb24-2"><a href=""></a><span class="fu">TukeyHSD</span>(aov_group)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Tukey multiple comparisons of means
     95% family-wise confidence level
@@ -362,10 +678,10 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 Fit: aov(formula = mod_group)
 
 $group
-        diff       lwr      upr     p adj
-B-A 1.190566 0.5842168 1.796915 0.0001250
-C-A 2.364904 1.7585549 2.971253 0.0000000
-C-B 1.174338 0.5679892 1.780687 0.0001493</code></pre>
+         diff       lwr      upr     p adj
+B-A 0.9207382 0.3790361 1.462440 0.0007109
+C-A 2.2398370 1.6981348 2.781539 0.0000000
+C-B 1.3190988 0.7773967 1.860801 0.0000056</code></pre>
 </div>
 </div>
 </section>
@@ -397,20 +713,20 @@ C-B 1.174338 0.5679892 1.780687 0.0001493</code></pre>
 <section id="example-multi-factor-anova-in-r" class="slide level2">
 <h2>Example multi-factor ANOVA in <em>R</em></h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a><span class="co"># make some pretend data</span></span>
-<span id="cb15-2"><a href=""></a>restoration <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"restored"</span>, <span class="st">"control"</span>), <span class="at">each =</span> <span class="dv">30</span>))</span>
-<span id="cb15-3"><a href=""></a>impact <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"low"</span>, <span class="st">"high"</span>), <span class="dv">30</span>),</span>
-<span id="cb15-4"><a href=""></a>                 <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"low"</span>, <span class="st">"high"</span>))</span>
-<span id="cb15-5"><a href=""></a></span>
-<span id="cb15-6"><a href=""></a><span class="co"># compute expected response</span></span>
-<span id="cb15-7"><a href=""></a>fish_biomass <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">*</span> <span class="fu">as.numeric</span>(impact) <span class="sc">+</span> <span class="dv">3</span> <span class="sc">*</span> <span class="fu">as.numeric</span>(restoration) <span class="sc">-</span></span>
-<span id="cb15-8"><a href=""></a>  <span class="dv">1</span> <span class="sc">*</span> <span class="fu">as.numeric</span>(impact) <span class="sc">*</span> <span class="fu">as.numeric</span>(restoration)</span>
-<span id="cb15-9"><a href=""></a></span>
-<span id="cb15-10"><a href=""></a><span class="co"># add some noise</span></span>
-<span id="cb15-11"><a href=""></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb15-12"><a href=""></a>fish_biomass <span class="ot">&lt;-</span> fish_biomass <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">60</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
-<span id="cb15-13"><a href=""></a></span>
-<span id="cb15-14"><a href=""></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(restoration, impact, fish_biomass)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href=""></a><span class="co"># make some pretend data</span></span>
+<span id="cb26-2"><a href=""></a>restoration <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"restored"</span>, <span class="st">"control"</span>), <span class="at">each =</span> <span class="dv">30</span>))</span>
+<span id="cb26-3"><a href=""></a>impact <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"low"</span>, <span class="st">"high"</span>), <span class="dv">30</span>),</span>
+<span id="cb26-4"><a href=""></a>                 <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"low"</span>, <span class="st">"high"</span>))</span>
+<span id="cb26-5"><a href=""></a></span>
+<span id="cb26-6"><a href=""></a><span class="co"># compute expected response</span></span>
+<span id="cb26-7"><a href=""></a>fish_biomass <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">*</span> <span class="fu">as.numeric</span>(impact) <span class="sc">+</span> <span class="dv">3</span> <span class="sc">*</span> <span class="fu">as.numeric</span>(restoration) <span class="sc">-</span></span>
+<span id="cb26-8"><a href=""></a>  <span class="dv">1</span> <span class="sc">*</span> <span class="fu">as.numeric</span>(impact) <span class="sc">*</span> <span class="fu">as.numeric</span>(restoration)</span>
+<span id="cb26-9"><a href=""></a></span>
+<span id="cb26-10"><a href=""></a><span class="co"># add some noise</span></span>
+<span id="cb26-11"><a href=""></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb26-12"><a href=""></a>fish_biomass <span class="ot">&lt;-</span> fish_biomass <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">60</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb26-13"><a href=""></a></span>
+<span id="cb26-14"><a href=""></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(restoration, impact, fish_biomass)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="example-multi-factor-anova-in-r-1" class="slide level2">
@@ -430,10 +746,10 @@ C-B 1.174338 0.5679892 1.780687 0.0001493</code></pre>
 <section id="example-multi-factor-anova-in-r-2" class="slide level2">
 <h2>Example multi-factor ANOVA in <em>R</em></h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href=""></a><span class="fu">ggplot</span>(dat, <span class="fu">aes</span>(<span class="at">x =</span> restoration, <span class="at">y =</span> fish_biomass,</span>
-<span id="cb17-2"><a href=""></a>                <span class="at">fill =</span> impact)) <span class="sc">+</span></span>
-<span id="cb17-3"><a href=""></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb17-4"><a href=""></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"YlGnBu"</span>, <span class="at">direction =</span> <span class="sc">-</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href=""></a><span class="fu">ggplot</span>(dat, <span class="fu">aes</span>(<span class="at">x =</span> restoration, <span class="at">y =</span> fish_biomass,</span>
+<span id="cb28-2"><a href=""></a>                <span class="at">fill =</span> impact)) <span class="sc">+</span></span>
+<span id="cb28-3"><a href=""></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb28-4"><a href=""></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"YlGnBu"</span>, <span class="at">direction =</span> <span class="sc">-</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="example-multi-factor-anova-in-r-3" class="slide level2">
@@ -442,7 +758,7 @@ C-B 1.174338 0.5679892 1.780687 0.0001493</code></pre>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-27-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
 </figure>
 </div>
 </div>
@@ -451,8 +767,8 @@ C-B 1.174338 0.5679892 1.780687 0.0001493</code></pre>
 <section id="example-multi-factor-anova-in-r-4" class="slide level2">
 <h2>Example multi-factor ANOVA in <em>R</em></h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href=""></a>mod <span class="ot">&lt;-</span> <span class="fu">lm</span>(fish_biomass <span class="sc">~</span> impact <span class="sc">+</span> restoration, <span class="at">data =</span> dat)</span>
-<span id="cb18-2"><a href=""></a><span class="fu">anova</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href=""></a>mod <span class="ot">&lt;-</span> <span class="fu">lm</span>(fish_biomass <span class="sc">~</span> impact <span class="sc">+</span> restoration, <span class="at">data =</span> dat)</span>
+<span id="cb29-2"><a href=""></a><span class="fu">anova</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
 
@@ -470,7 +786,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <h2>Example multi-factor ANOVA in <em>R</em></h2>
 <p>How do we see the estimate of the effects?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a><span class="fu">summary</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href=""></a><span class="fu">summary</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -501,7 +817,7 @@ F-statistic: 58.32 on 2 and 57 DF,  p-value: 1.632e-14</code></pre>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-17-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-30-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
 </figure>
 </div>
 </div>
@@ -512,9 +828,9 @@ F-statistic: 58.32 on 2 and 57 DF,  p-value: 1.632e-14</code></pre>
 <h2>Example multi-factor ANOVA in <em>R</em> <strong>with interactions</strong></h2>
 <p>The asterisk <code>*</code> between terms allows for interactions</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a>mod_interactions <span class="ot">&lt;-</span> <span class="fu">lm</span>(fish_biomass <span class="sc">~</span> impact <span class="sc">*</span> restoration,</span>
-<span id="cb22-2"><a href=""></a>                       <span class="at">data =</span> dat)</span>
-<span id="cb22-3"><a href=""></a><span class="fu">anova</span>(mod_interactions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href=""></a>mod_interactions <span class="ot">&lt;-</span> <span class="fu">lm</span>(fish_biomass <span class="sc">~</span> impact <span class="sc">*</span> restoration,</span>
+<span id="cb33-2"><a href=""></a>                       <span class="at">data =</span> dat)</span>
+<span id="cb33-3"><a href=""></a><span class="fu">anova</span>(mod_interactions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
 
@@ -533,7 +849,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <h2>Example multi-factor ANOVA in <em>R</em> <strong>with interactions</strong></h2>
 <p>And the interaction effect is meaningful!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a><span class="fu">summary</span>(mod_interactions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href=""></a><span class="fu">summary</span>(mod_interactions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -567,8 +883,8 @@ F-statistic: 46.93 on 3 and 56 DF,  p-value: 2.685e-15</code></pre>
 <h2>Example multi-factor ANOVA in <em>R</em> <strong>with interactions</strong></h2>
 <p>If you want to do a post-hock test, how would you do it? <em>Just like before!</em></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href=""></a>aov_interactions <span class="ot">&lt;-</span> <span class="fu">aov</span>(mod_interactions)</span>
-<span id="cb26-2"><a href=""></a><span class="fu">TukeyHSD</span>(aov_interactions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href=""></a>aov_interactions <span class="ot">&lt;-</span> <span class="fu">aov</span>(mod_interactions)</span>
+<span id="cb37-2"><a href=""></a><span class="fu">TukeyHSD</span>(aov_interactions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
