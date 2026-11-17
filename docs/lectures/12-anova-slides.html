@@ -540,9 +540,9 @@ F = \frac{MS_{group}}{MS_{error}}
 <span id="cb13-7"><a href=""></a><span class="fu">head</span>(dat_groups, <span class="at">n =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  group         y
-1     A 1.2218022
-2     A 0.9340506
-3     A 1.0216734</code></pre>
+1     A 0.9281438
+2     A 2.0525816
+3     A 1.8934747</code></pre>
 </div>
 </div>
 </section>
@@ -584,8 +584,8 @@ F = \frac{MS_{group}}{MS_{error}}
 
 Response: y
           Df Sum Sq Mean Sq F value    Pr(&gt;F)    
-group      2 25.349 12.6744  53.105 4.387e-10 ***
-Residuals 27  6.444  0.2387                      
+group      2 25.345 12.6723  50.391 7.693e-10 ***
+Residuals 27  6.790  0.2515                      
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
@@ -679,9 +679,9 @@ Fit: aov(formula = mod_group)
 
 $group
          diff       lwr      upr     p adj
-B-A 0.9207382 0.3790361 1.462440 0.0007109
-C-A 2.2398370 1.6981348 2.781539 0.0000000
-C-B 1.3190988 0.7773967 1.860801 0.0000056</code></pre>
+B-A 0.9728723 0.4168185 1.528926 0.0005128
+C-A 2.2447992 1.6887454 2.800853 0.0000000
+C-B 1.2719269 0.7158731 1.827981 0.0000147</code></pre>
 </div>
 </div>
 </section>
@@ -704,11 +704,96 @@ C-B 1.3190988 0.7773967 1.860801 0.0000056</code></pre>
 <ol type="1">
 <li>What is a multi-factor ANOVA, when do you use it, and how?</li>
 </ol>
-</section></section>
-<section>
-<section id="to-the-board-1" class="title-slide slide level1 center">
-<h1>To the board…</h1>
-
+</section>
+<section id="a-motivating-hypothetical-example" class="slide level2">
+<h2>A motivating (hypothetical) example</h2>
+<p><strong>fish biomass responding to restoration efforts in high and low impact areas</strong></p>
+<ul>
+<li class="fragment">Restoration was carried out at some sites along a coast</li>
+<li class="fragment">Similar sites were left alone as controls</li>
+<li class="fragment">Restoration and control sites were situated in areas of low and high human impact</li>
+</ul>
+<div class="fragment">
+<p><span class="alert">Question</span>: does restoration increase fish biomass, and does it work as well where human impact is high as where it is low?</p>
+</div>
+</section>
+<section id="a-motivating-hypothetical-example-sampling-sites" class="slide level2">
+<h2>A motivating (hypothetical) example: sampling sites</h2>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-24-1.png" class="quarto-figure quarto-figure-center" style="width:8.5in"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><em>A cartoon map, not real locations: 15 sites for each combination of restoration and human impact</em></p>
+</section>
+<section id="two-explanatory-variables" class="slide level2">
+<h2>Two explanatory variables</h2>
+<div class="no-bold-header">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: center;">Low impact</th>
+<th style="text-align: center;">High impact</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Restored</strong></td>
+<td style="text-align: center;">15 sites</td>
+<td style="text-align: center;">15 sites</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Control</strong></td>
+<td style="text-align: center;">15 sites</td>
+<td style="text-align: center;">15 sites</td>
+</tr>
+</tbody>
+</table>
+</div>
+<ul>
+<li class="fragment"><span class="alert">Response</span>: fish biomass</li>
+<li class="fragment"><span class="alert">Explanatory variables</span>: restoration (restored or control) and human impact (low or high)</li>
+</ul>
+<div class="fragment">
+<p>Every combination of the two factors (explanatory variables) is sampled</p>
+</div>
+</section>
+<section id="multi-factor-anova-a-question-for-each-factor" class="slide level2">
+<h2>Multi-factor ANOVA: a question for each factor</h2>
+<ul>
+<li class="fragment">Restoration: <span class="math inline">\(H_0\)</span>: <span class="math inline">\(\mu_{restored} = \mu_{control}\)</span></li>
+<li class="fragment">Human impact: <span class="math inline">\(H_0\)</span>: <span class="math inline">\(\mu_{low} = \mu_{high}\)</span></li>
+</ul>
+<div class="fragment">
+<p>Each factor is compared across the levels of the other factor, and gets its own <span class="math inline">\(F\)</span>-test</p>
+<p><span class="math display">\[
+F = \frac{MS_{factor}}{MS_{error}}
+\]</span></p>
+</div>
+<div class="fragment">
+<p>A third question: does the effect of restoration <span class="alert">depend on</span> human impact? We’ll get to this <span class="alert">interaction</span> soon</p>
+</div>
+</section>
+<section id="partitioning-variation-with-two-factors" class="slide level2">
+<h2>Partitioning variation with two factors</h2>
+<p><span class="math display">\[
+SS_Y = SS_{impact} + SS_{restoration} + SS_{error}
+\]</span></p>
+<ul>
+<li class="fragment">Each factor’s sum of squares measures how far its group means are from the overall mean, <span class="math inline">\(\overline{Y}\)</span></li>
+<li class="fragment"><span class="math inline">\(SS_{error}\)</span> is the variation left over within each combination of the factors</li>
+</ul>
+<div class="fragment">
+<p>With an interaction there is one more piece</p>
+<p><span class="math display">\[
+SS_Y = SS_{impact} + SS_{restoration} + SS_{impact \times restoration} + SS_{error}
+\]</span></p>
+</div>
 </section>
 <section id="example-multi-factor-anova-in-r" class="slide level2">
 <h2>Example multi-factor ANOVA in <em>R</em></h2>
@@ -758,7 +843,7 @@ C-B 1.3190988 0.7773967 1.860801 0.0000056</code></pre>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-27-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-28-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
 </figure>
 </div>
 </div>
@@ -817,7 +902,7 @@ F-statistic: 58.32 on 2 and 57 DF,  p-value: 1.632e-14</code></pre>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-30-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
+<p><img data-src="12-anova-slides_files/figure-revealjs/unnamed-chunk-31-1.png" class="quarto-figure quarto-figure-center" style="width:5in"></p>
 </figure>
 </div>
 </div>

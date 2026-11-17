@@ -692,7 +692,135 @@ The adjusted Confidence Intervals and $P$-values make sure that the overall $\al
 
 1. What is a multi-factor ANOVA, when do you use it, and how?
 
-# To the board...
+## A motivating (hypothetical) example
+
+**fish biomass responding to restoration efforts in high and low impact areas**
+
+::: {.incremental}
+- Restoration was carried out at some sites along a coast
+- Similar sites were left alone as controls
+- Restoration and control sites were situated in areas of low and high human impact
+:::
+
+::: {.fragment}
+[Question]{.alert}: does restoration increase fish biomass, and does it work as well where human impact is high as where it is low?
+:::
+
+```{r map-helpers}
+#| include: false
+
+# ---- cartoon map of the hypothetical sampling sites -------------------------
+
+# a squiggly coastline, land to the north and sea to the south
+coast_y <- function(x) {
+    0.5 + 0.55 * sin(0.9 * x) + 0.3 * sin(2.3 * x + 1) + 0.12 * sin(5 * x)
+}
+
+coast <- data.frame(x = seq(-7, 7, length.out = 400))
+coast$y <- coast_y(coast$x)
+land <- rbind(coast, data.frame(x = c(7, -7), y = c(3.2, 3.2)))
+
+# sites sit just offshore in three staggered rows, alternating restored and control
+make_sites <- function(x, impact) {
+    i <- seq_along(x)
+    offset <- c(0.6, 1.1, 1.6)[i %% 3 + 1]
+    data.frame(x = x,
+               y = coast_y(x) - offset,
+               impact = impact,
+               restoration = ifelse(i %% 2 == 1, "restored", "control"))
+}
+
+# 30 high impact sites along the west half, 30 low impact sites along the east half
+sites <- rbind(make_sites(seq(-6.5, -0.5, length.out = 30), "high"),
+               make_sites(seq(0.5, 6.5, length.out = 30), "low"))
+sites$impact <- factor(sites$impact, levels = c("low", "high"))
+sites$restoration <- factor(sites$restoration, levels = c("restored", "control"))
+
+sites_map <- function() {
+    ggplot() +
+        geom_polygon(data = land, aes(x, y), fill = "#cfe3bf") +
+        geom_line(data = coast, aes(x, y), color = "grey50", linewidth = 1.2) +
+        geom_point(data = sites, aes(x, y, fill = impact, shape = restoration),
+                   size = 4.5, stroke = 0.8, color = "black") +
+        scale_fill_brewer(palette = "YlGnBu", direction = -1) +
+        scale_shape_manual(values = c(restored = 24, control = 21)) +
+        labs(fill = "Human impact", shape = "Restoration") +
+        guides(fill = guide_legend(override.aes = list(shape = 21, size = 5), order = 1),
+               shape = guide_legend(order = 2)) +
+        coord_equal(xlim = c(-7, 7), ylim = c(-3.6, 3.2), expand = FALSE) +
+        theme_void(base_size = 18) +
+        theme(panel.background = element_rect(fill = "#dbeaf4", color = NA))
+}
+```
+
+## A motivating (hypothetical) example: sampling sites
+
+```{r}
+#| fig-align: center
+#| fig-width: 9.5
+#| fig-height: 4.6
+#| out-width: "8.5in"
+
+sites_map()
+```
+
+*A cartoon map, not real locations: 15 sites for each combination of restoration and human impact*
+
+## Two explanatory variables
+
+::: {.no-bold-header}
+|  | Low impact | High impact |
+|:---|:---:|:---:|
+| **Restored** | 15 sites | 15 sites |
+| **Control** | 15 sites | 15 sites |
+:::
+
+::: {.incremental}
+- [Response]{.alert}: fish biomass
+- [Explanatory variables]{.alert}: restoration (restored or control) and human impact (low or high)
+:::
+
+::: {.fragment}
+Every combination of the two factors (explanatory variables) is sampled
+:::
+
+## Multi-factor ANOVA: a question for each factor
+
+::: {.incremental}
+- Restoration: $H_0$: $\mu_{restored} = \mu_{control}$
+- Human impact: $H_0$: $\mu_{low} = \mu_{high}$
+:::
+
+::: {.fragment}
+Each factor is compared across the levels of the other factor, and gets its own $F$-test
+
+$$
+F = \frac{MS_{factor}}{MS_{error}}
+$$
+:::
+
+::: {.fragment}
+A third question: does the effect of restoration [depend on]{.alert} human impact? We'll get to this [interaction]{.alert} soon
+:::
+
+## Partitioning variation with two factors
+
+$$
+SS_Y = SS_{impact} + SS_{restoration} + SS_{error}
+$$
+
+::: {.incremental}
+- Each factor's sum of squares measures how far its group means are from the overall mean, $\overline{Y}$
+- $SS_{error}$ is the variation left over within each combination of the factors
+:::
+
+::: {.fragment}
+With an interaction there is one more piece
+
+$$
+SS_Y = SS_{impact} + SS_{restoration} + SS_{impact \times restoration} + SS_{error}
+$$
+:::
 
 ## Example multi-factor ANOVA in *R*
 
